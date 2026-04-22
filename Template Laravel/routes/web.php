@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NilaiController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -39,3 +40,7 @@ Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+
+//Nilai
+Route::get('/nilai', [NilaiController::class, 'index']);
+Route::post('/nilai/store', [NilaiController::class, 'store']);
