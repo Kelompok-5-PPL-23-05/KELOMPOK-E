@@ -17,11 +17,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Buat User Guru jika belum ada, atau ambil yang existing
-        $userGuru = clone User::firstOrCreate(
-            ['username' => 'Guru1'],
+        // 1. Buat User Admin
+        User::firstOrCreate(
+            ['username' => 'admin1'],
             [
-                'password' => Hash::make('Guru123'),
+                'password' => Hash::make('admin123'),
+                'role' => 'admin'
+            ]
+        );
+
+        // 2. Buat User Guru
+        $userGuru = User::firstOrCreate(
+            ['username' => 'guru1'],
+            [
+                'password' => Hash::make('guru123'),
                 'role' => 'guru'
             ]
         );
