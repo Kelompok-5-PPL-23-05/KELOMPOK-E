@@ -71,7 +71,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Hapus Siswa
+     * Hapus Siswaaa
      */
     public function destroySiswa($id)
     {
