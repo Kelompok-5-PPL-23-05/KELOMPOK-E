@@ -36,6 +36,11 @@ Route::middleware('auth')->group(function () {
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
+        // ─── Admin Siswa ──────────────────────────────────────────
+    Route::get('/admin/siswa',          [AdminController::class, 'siswa'])->name('admin.siswa');
+    Route::post('/admin/siswa',         [AdminController::class, 'storeSiswa'])->name('admin.siswa.store');
+    Route::delete('/admin/siswa/{id}',  [AdminController::class, 'destroySiswa'])->name('admin.siswa.destroy');
+
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
