@@ -129,6 +129,37 @@ class AdminController extends Controller
         return view('admin.siswa.preview', compact('previewData'));
     }
 
+    public function siswaImportSave(Request $request)
+    {
+        $previewData = session('import_siswa_data');
+
+        if (!$previewData) {
+            return redirect()->route('admin.siswa.index')->with('error', 'Sesi upload kedaluwarsa.');
+        }
+
+        $berhasil = 0;
+        foreach ($previewData as $row) {
+            // Hanya simpan data yang kelasnya valid (ditemukan di DB)
+            if ($row['status'] === 'Valid') {
+                Siswa::create([
+                    'nama_siswa'    => $row['nama_siswa'],
+                    'Kelasid_kelas' => $row['id_kelas'],
+                ]);
+                $berhasil++;
+            }
+        }
+
+        // Hapus session setelah disimpan
+        session()->forget('import_siswa_data');
+
+        return redirect()->route('admin.siswa.index')->with('success', "$berhasil data siswa berhasil diunggah secara terpusat.");
+    }
+
+    public function siswaDestroy($id)
+    {
+        Siswa::findOrFail($id)->delete();
+        return back()->with('success', 'Siswa berhasil dihapus.');
+    }
     
     public function lembagaIndex()
     {
