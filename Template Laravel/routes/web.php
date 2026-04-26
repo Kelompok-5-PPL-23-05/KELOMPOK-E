@@ -28,6 +28,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
     Route::post('/admin/siswa/import-save', [AdminController::class, 'siswaImportSave'])->name('admin.siswa.import.save');
     Route::delete('/admin/siswa/{id}', [AdminController::class, 'siswaDestroy'])->name('admin.siswa.destroy');
-   
+
+    Route::get('/admin/lembaga', [AdminController::class, 'lembagaIndex'])->name('admin.lembaga.index');
+    Route::post('/admin/lembaga/import-preview', [AdminController::class, 'lembagaImportPreview'])->name('admin.lembaga.import.preview');
+    Route::post('/admin/lembaga/import-save', [AdminController::class, 'lembagaImportSave'])->name('admin.lembaga.import.save');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
