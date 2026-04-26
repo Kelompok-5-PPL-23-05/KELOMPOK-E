@@ -422,7 +422,10 @@
                                             <span class="badge badge-green">Aktif</span>
                                         </td>
                                         <td style="text-align:center;">
-                                            <a href="#" class="action-link">Lihat Detail</a>
+                                            <a href="{{ route('dashboard.student-detail', $s->id_siswa) }}{{ $selectedMapel ? '?mapel_id='.$selectedMapel.'&kelas_id='.$selectedKelas : '' }}"
+                                               class="action-link">
+                                                Lihat Detail
+                                            </a>
                                         </td>
                                     </tr>
                                 @endforeach

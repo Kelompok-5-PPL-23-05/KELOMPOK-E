@@ -8,6 +8,8 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Siswa;
+use App\Models\Nilai;
+use App\Models\Absensi;
 
 class DashboardController extends Controller
 {
@@ -104,5 +106,57 @@ class DashboardController extends Controller
         }
 
         return view('dashboard-manage-students', compact('guru', 'mataPelajaran', 'siswa', 'kelas', 'selectedMapel', 'selectedKelas'));
+    }
+
+    /**
+     * Tampilkan detail siswa: info, nilai per mapel, dan absensi
+     */
+    public function studentDetail(Request $request, $id)
+    {
+        $user = Auth::user();
+        $guru = Guru::where('Userid_user', $user->id_user)->first();
+
+        $siswa = Siswa::with(['kelas'])->findOrFail($id);
+
+        $selectedMapel = $request->get('mapel_id');
+        $selectedKelas = $siswa->Kelasid_kelas;
+
+        // Validasi: guru hanya bisa lihat siswa dari mapel yang diampu
+        if ($selectedMapel) {
+            $isAllowed = $guru->mataPelajaran()
+                ->where('id_mapel', $selectedMapel)
+                ->exists();
+
+            if (!$isAllowed) {
+                return back()->with('error', 'Anda tidak berhak mengakses data siswa ini!');
+            }
+        }
+
+        // Ambil nilai siswa untuk mapel yang dipilih (atau semua mapel yang diampu guru)
+        $mapelIds = $guru->mataPelajaran->pluck('id_mapel');
+        $nilaiList = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
+            ->whereIn('Mata_Pelajaranid_mapel', $mapelIds)
+            ->with('mataPelajaran')
+            ->get();
+
+        // Jika ada filter mapel spesifik, ambil hanya yang itu
+        $nilaiMapel = null;
+        if ($selectedMapel) {
+            $nilaiMapel = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
+                ->where('Mata_Pelajaranid_mapel', $selectedMapel)
+                ->first();
+        }
+
+        // Absensi siswa
+        $absensi = Absensi::where('Siswaid_siswa', $siswa->id_siswa)->first();
+
+        $mataPelajaran = $guru->mataPelajaran;
+        $kelas         = Kelas::all();
+
+        return view('dashboard-student-detail', compact(
+            'guru', 'siswa', 'nilaiList', 'nilaiMapel',
+            'absensi', 'mataPelajaran', 'kelas',
+            'selectedMapel', 'selectedKelas'
+        ));
     }
 }

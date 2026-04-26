@@ -30,6 +30,9 @@ Route::middleware('auth')->group(function () {
     // Kelola siswa berdasarkan mata pelajaran
     Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
 
+    // Detail siswa
+    Route::get('/dashboard/student/{id}', [DashboardController::class, 'studentDetail'])->name('dashboard.student-detail');
+
     // ─── Absensi ──────────────────────────────────────────────
     Route::get('/absensi',        [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/absensi',       [AbsensiController::class, 'store'])->name('absensi.store');
