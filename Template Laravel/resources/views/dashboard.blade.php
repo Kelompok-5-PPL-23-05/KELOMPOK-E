@@ -380,8 +380,25 @@
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Mata Pelajaran
                 </div>
                 <div class="nav-children open" id="c-mapel">
-                    <div class="nav-child-item">Bahasa Indonesia</div>
-                    <div class="nav-child-item">Bahasa Inggris</div>
+                    @if ($guru)
+                        <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            ⚙️ Pilih Mata Pelajaran
+                        </a>
+                        <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            👥 Kelola Siswa
+                        </a>
+                        @forelse ($mataPelajaran as $mapel)
+                            <div class="nav-child-item">{{ $mapel->nama_mapel }}</div>
+                        @empty
+                            <div class="nav-child-item" style="color: #999; font-style: italic;">
+                                Belum memilih mata pelajaran
+                            </div>
+                        @endforelse
+                    @else
+                        <div class="nav-child-item" style="color: #999; font-style: italic;">
+                            Data guru tidak ditemukan
+                        </div>
+                    @endif
                 </div>
             </div>
 
