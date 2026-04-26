@@ -22,5 +22,8 @@ Route::middleware('auth')->group(function () {
         // TODO: simpan nilai
         return back()->with('success', 'Nilai berhasil disimpan!');
     })->name('nilai.store');
+
+    Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
+    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
