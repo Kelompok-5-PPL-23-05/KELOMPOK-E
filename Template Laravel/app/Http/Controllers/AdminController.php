@@ -77,6 +77,20 @@ class AdminController extends Controller
         return back()->with('success', 'Data master siswa berhasil diunggah dan disimpan ke database secara otomatis.');
     }
 
+    /**
+     * Fungsi dasar untuk tombol "Tambah Siswa" manual
+     */
+    public function siswaStore(Request $request)
+    {
+        $request->validate([
+            'nama_siswa' => 'required|string|max:255',
+            'Kelasid_kelas' => 'required|exists:kelas,id_kelas'
+        ]);
+
+        Siswa::create($request->all());
+        return back()->with('success', 'Siswa berhasil ditambahkan.');
+    }
+
     public function lembagaIndex()
     {
         // Mengambil semua data lembaga untuk ditampilkan di tabel
