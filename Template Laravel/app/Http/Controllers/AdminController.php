@@ -42,6 +42,41 @@ class AdminController extends Controller
         return view('admin.siswa.index', compact('siswa', 'kelas'));
     }
     
+    public function siswaImport(Request $request)
+    {
+        // 1. Validasi Data Sebelum Simpan (Subtask 4)
+        // Memastikan file yang diupload ada, berformat CSV, dan ukurannya tidak lebih dari 2MB
+        $request->validate([
+            'file_master' => 'required|mimes:csv,txt|max:2048',
+        ], [
+            'file_master.required' => 'Pilih file terlebih dahulu.',
+            'file_master.mimes' => 'Format file harus CSV.'
+        ]);
+
+        // 2. Simpan Data ke Database (Subtask 3)
+        $file = $request->file('file_master');
+        $path = $file->getRealPath();
+        
+        // Membaca isi file CSV
+        $data = array_map('str_getcsv', file($path));
+
+        // Looping untuk menyimpan setiap baris data secara otomatis
+        foreach ($data as $index => $row) {
+            // Abaikan baris pertama jika itu adalah header kolom (Nama, ID Kelas)
+            if ($index === 0) continue; 
+
+            // Validasi data di dalam sel CSV (pastikan tidak kosong)
+            if (!empty($row[0]) && !empty($row[1])) {
+                Siswa::create([
+                    'nama_siswa'    => trim($row[0]),
+                    'Kelasid_kelas' => (int) trim($row[1]),
+                ]);
+            }
+        }
+
+        return back()->with('success', 'Data master siswa berhasil diunggah dan disimpan ke database secara otomatis.');
+    }
+
     public function lembagaIndex()
     {
         // Mengambil semua data lembaga untuk ditampilkan di tabel
