@@ -237,4 +237,22 @@ class AdminController extends Controller
         session(['import_lembaga_data' => $previewData]);
         return view('admin.lembaga.preview', compact('previewData'));
     }
+
+    public function lembagaImportSave(Request $request)
+    {
+        $previewData = session('import_lembaga_data');
+
+        foreach ($previewData as $row) {
+            if ($row['status'] === 'Valid') {
+                Lembaga::create([
+                    'nama_lembaga' => $row['nama_lembaga'],
+                    'alamat'       => $row['alamat'],
+                    'kontak'       => $row['kontak'],
+                ]);
+            }
+        }
+
+        session()->forget('import_lembaga_data');
+        return redirect()->route('admin.lembaga.index')->with('success', 'Data lembaga berhasil disimpan secara terpusat.');
+    }
 }
