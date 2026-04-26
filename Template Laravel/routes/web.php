@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\AbsensiController;
+use App\Http\Controllers\AdminController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -17,11 +19,22 @@ Route::middleware('guest')->group(function () {
 
 // Protected routes (harus login)
 Route::middleware('auth')->group(function () {
+
+    // ─── Guru Dashboard ───────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    // ─── Absensi ──────────────────────────────────────────────
+    Route::get('/absensi',        [AbsensiController::class, 'index'])->name('absensi.index');
+    Route::post('/absensi',       [AbsensiController::class, 'store'])->name('absensi.store');
+    Route::get('/absensi/rekap',  [AbsensiController::class, 'rekap'])->name('absensi.rekap');
+
+    // ─── Nilai (placeholder) ──────────────────────────────────
     Route::post('/nilai', function () {
-        // TODO: simpan nilai
         return back()->with('success', 'Nilai berhasil disimpan!');
     })->name('nilai.store');
+
+    // ─── Admin Dashboard ──────────────────────────────────────
+    Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
     Route::post('/admin/siswa', [AdminController::class, 'siswaStore'])->name('admin.siswa.store');
