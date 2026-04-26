@@ -24,6 +24,7 @@ Route::middleware('auth')->group(function () {
     })->name('nilai.store');
 
     Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
+    Route::post('/admin/siswa', [AdminController::class, 'siswaStore'])->name('admin.siswa.store');
     Route::post('/admin/siswa/import', [AdminController::class, 'siswaImport'])->name('admin.siswa.import');
     Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
     Route::post('/admin/siswa/import-save', [AdminController::class, 'siswaImportSave'])->name('admin.siswa.import.save');
