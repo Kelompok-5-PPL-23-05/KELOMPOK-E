@@ -388,7 +388,9 @@
                             👥 Kelola Siswa
                         </a>
                         @forelse ($mataPelajaran as $mapel)
-                            <div class="nav-child-item">{{ $mapel->nama_mapel }}</div>
+                            <a href="{{ route('dashboard.manage-students') }}?mapel_id={{ $mapel->id_mapel }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
+                                {{ $mapel->nama_mapel }}
+                            </a>
                         @empty
                             <div class="nav-child-item" style="color: #999; font-style: italic;">
                                 Belum memilih mata pelajaran
@@ -426,21 +428,37 @@
     <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
         
+        <form action="{{ route('dashboard') }}" method="GET" id="filterForm">
         <div class="filter-row">
             <div class="filter-group">
                 <label>Pilih Kelas</label>
-                <select class="filter-select">
-                    <option>Paket A Kelas 3</option>
+                <select id="filter-kelas" name="kelas_id" class="filter-select" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">-- Pilih Kelas --</option>
+                    @forelse ($kelas as $k)
+                        <option value="{{ $k->id_kelas }}" {{ $selectedKelas == $k->id_kelas ? 'selected' : '' }}>
+                            {{ $k->nama_kelas }}
+                        </option>
+                    @empty
+                        <option disabled>Tidak ada kelas</option>
+                    @endforelse
                 </select>
             </div>
             
             <div class="filter-group">
                 <label>Pilih Mata Pelajaran</label>
-                <select class="filter-select">
-                    <option>Bahasa Indonesia</option>
+                <select id="filter-mapel" name="mapel_id" class="filter-select" onchange="document.getElementById('filterForm').submit()">
+                    <option value="">-- Pilih Mata Pelajaran --</option>
+                    @forelse ($mataPelajaran as $mapel)
+                        <option value="{{ $mapel->id_mapel }}" {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
+                            {{ $mapel->nama_mapel }}
+                        </option>
+                    @empty
+                        <option disabled>Belum ada mata pelajaran</option>
+                    @endforelse
                 </select>
             </div>
         </div>
+        </form>
 
         <form action="#" method="POST">
             <!-- NAMA SISWA 1 -->
