@@ -25,7 +25,8 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
     Route::post('/admin/siswa/import', [AdminController::class, 'siswaImport'])->name('admin.siswa.import');
-   
+    Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
+
    
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
