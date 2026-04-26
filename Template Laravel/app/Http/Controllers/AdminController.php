@@ -160,6 +160,44 @@ class AdminController extends Controller
         Siswa::findOrFail($id)->delete();
         return back()->with('success', 'Siswa berhasil dihapus.');
     }
+
+    public function kelasIndex()
+    {
+        // Mengambil semua kelas beserta jumlah siswa di masing-masing kelas
+        $kelas = Kelas::withCount('siswa')->get();
+        return view('admin.kelas.index', compact('kelas'));
+    }
+
+    /**
+     * Menyimpan Data Kelas Baru
+     */
+    public function kelasStore(Request $request)
+    {
+        $request->validate([
+            'nama_kelas' => 'required|string|max:255|unique:kelas,nama_kelas',
+        ], [
+            'nama_kelas.required' => 'Nama kelas wajib diisi.',
+            'nama_kelas.unique' => 'Nama kelas ini sudah ada.'
+        ]);
+
+        Kelas::create([
+            'nama_kelas' => $request->nama_kelas
+        ]);
+
+        return back()->with('success', 'Kelas berhasil ditambahkan.');
+    }
+
+    /**
+     * Menghapus Data Kelas
+     */
+    public function kelasDestroy($id)
+    {
+        // Karena di migration Anda menggunakan onDelete('cascade'),
+        // jika kelas dihapus, siswa di dalamnya juga akan terhapus.
+        Kelas::findOrFail($id)->delete();
+        return back()->with('success', 'Kelas berhasil dihapus.');
+    }
+
     
     public function lembagaIndex()
     {
