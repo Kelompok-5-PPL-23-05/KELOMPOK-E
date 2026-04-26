@@ -77,9 +77,6 @@ class AdminController extends Controller
         return back()->with('success', 'Data master siswa berhasil diunggah dan disimpan ke database secara otomatis.');
     }
 
-    /**
-     * Fungsi dasar untuk tombol "Tambah Siswa" manual
-     */
     public function siswaStore(Request $request)
     {
         $request->validate([
@@ -91,6 +88,48 @@ class AdminController extends Controller
         return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
 
+    public function siswaImportPreview(Request $request)
+    {
+        $request->validate([
+            'file_master' => 'required|mimes:csv,txt|max:2048',
+        ], [
+            'file_master.mimes' => 'Format file wajib CSV.'
+        ]);
+
+        $file = $request->file('file_master');
+        $data = array_map('str_getcsv', file($file->getRealPath()));
+        
+        $semuaKelas = Kelas::pluck('id_kelas', 'nama_kelas')->toArray();
+
+        $previewData = [];
+
+        foreach ($data as $index => $row) {
+            if ($index === 0) continue; // Abaikan baris header CSV
+
+            $nama_siswa = trim($row[0] ?? '');
+            $nama_kelas = trim($row[1] ?? '');
+
+            if (empty($nama_siswa)) continue;
+
+            // Cari id_kelas berdasarkan nama kelas yang diketik di CSV
+            // Jika tidak ada, beri nilai null
+            $id_kelas = $semuaKelas[$nama_kelas] ?? null;
+
+            $previewData[] = [
+                'nama_siswa' => $nama_siswa,
+                'nama_kelas' => $nama_kelas,
+                'id_kelas'   => $id_kelas,
+                'status'     => $id_kelas ? 'Valid' : 'Kelas Tidak Ditemukan'
+            ];
+        }
+
+        
+        session(['import_siswa_data' => $previewData]);
+        
+        return view('admin.siswa.preview', compact('previewData'));
+    }
+
+    
     public function lembagaIndex()
     {
         // Mengambil semua data lembaga untuk ditampilkan di tabel
