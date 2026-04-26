@@ -206,4 +206,35 @@ class AdminController extends Controller
         
         return view('admin.lembaga.index', compact('lembaga'));
     }
+
+    public function lembagaIndex()
+    {
+        $lembaga = Lembaga::all();
+        
+        return view('admin.lembaga.index', compact('lembaga'));
+    }
+
+    public function lembagaImportPreview(Request $request)
+    {
+       $request->validate([
+            'file_master' => 'required|mimes:csv,txt|max:2048',
+        ]);
+
+        $file = $request->file('file_master');
+        $data = array_map('str_getcsv', file($file->getRealPath()));
+        
+        $previewData = [];
+        foreach ($data as $index => $row) {
+            if ($index === 0) continue;
+            $previewData[] = [
+                'nama_lembaga' => trim($row[0] ?? ''),
+                'alamat'       => trim($row[1] ?? ''),
+                'kontak'       => trim($row[2] ?? ''),
+                'status'       => !empty($row[0]) ? 'Valid' : 'Nama Wajib Diisi'
+            ];
+        }
+
+        session(['import_lembaga_data' => $previewData]);
+        return view('admin.lembaga.preview', compact('previewData'));
+    }
 }
