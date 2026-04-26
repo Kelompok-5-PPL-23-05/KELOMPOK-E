@@ -164,6 +164,72 @@
             border-radius: 8px; padding: 11px 15px; font-size: 13px;
             color: #2b6cb0; margin-bottom: 18px;
         }
+
+        /* Filter Mapel Bar */
+        .filter-bar {
+            background: #fff;
+            border-radius: 14px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-bar label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            white-space: nowrap;
+        }
+        .filter-bar-select {
+            appearance: none;
+            background: #f7fafc url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") no-repeat right 12px center;
+            background-size: 16px;
+            border: 1.5px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 10px 40px 10px 14px;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+            color: #1a1a2e;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            min-width: 220px;
+        }
+        .filter-bar-select:focus {
+            border-color: #4a6fa5;
+            box-shadow: 0 0 0 3px rgba(74,111,165,0.15);
+        }
+        .filter-bar-select.active-filter {
+            border-color: #4a6fa5;
+            background-color: #ebf4ff;
+            font-weight: 600;
+            color: #2c5282;
+        }
+        .filter-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #ebf4ff;
+            color: #2c5282;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .filter-tag-clear {
+            background: none;
+            border: none;
+            color: #4a6fa5;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 1;
+            padding: 0;
+            font-weight: 700;
+        }
+        .filter-tag-clear:hover { color: #e53e3e; }
     </style>
 </head>
 <body>
@@ -257,6 +323,43 @@
                 ← Kembali ke Daftar Siswa
             </a>
         </div>
+
+        {{-- ── Dropdown Filter Mata Pelajaran ── --}}
+        <div class="filter-bar">
+            <label for="dd-mapel">🎯 Filter Mata Pelajaran:</label>
+            <select
+                id="dd-mapel"
+                class="filter-bar-select {{ $selectedMapel ? 'active-filter' : '' }}"
+                onchange="applyMapelFilter(this.value)"
+            >
+                <option value="">-- Semua Mata Pelajaran --</option>
+                @foreach ($mataPelajaran as $m)
+                    <option value="{{ $m->id_mapel }}" {{ $selectedMapel == $m->id_mapel ? 'selected' : '' }}>
+                        {{ $m->nama_mapel }}
+                    </option>
+                @endforeach
+            </select>
+
+            @if ($selectedMapel && $mataPelajaran->firstWhere('id_mapel', $selectedMapel))
+                <span class="filter-tag">
+                    {{ $mataPelajaran->firstWhere('id_mapel', $selectedMapel)->nama_mapel }}
+                    <button class="filter-tag-clear" onclick="applyMapelFilter('')" title="Hapus filter">×</button>
+                </span>
+            @endif
+        </div>
+
+        <script>
+            function applyMapelFilter(mapelId) {
+                const url = new URL(window.location.href);
+                if (mapelId) {
+                    url.searchParams.set('mapel_id', mapelId);
+                } else {
+                    url.searchParams.delete('mapel_id');
+                }
+                window.location.href = url.toString();
+            }
+        </script>
+
 
         <!-- Profile Card -->
         <div class="profile-card">
