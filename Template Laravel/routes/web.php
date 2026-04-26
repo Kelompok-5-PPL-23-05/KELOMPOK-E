@@ -33,5 +33,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/lembaga/import-preview', [AdminController::class, 'lembagaImportPreview'])->name('admin.lembaga.import.preview');
     Route::post('/admin/lembaga/import-save', [AdminController::class, 'lembagaImportSave'])->name('admin.lembaga.import.save');
 
+    Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.kelas.index');
+    Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
+    
+    Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
