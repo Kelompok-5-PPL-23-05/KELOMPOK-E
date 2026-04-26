@@ -35,6 +35,13 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats', 'kelas', 'guruList'));
     }
 
+    public function siswaIndex()
+    {
+        $siswa = Siswa::with('kelas')->get();
+        $kelas = Kelas::all();
+        return view('admin.siswa.index', compact('siswa', 'kelas'));
+    }
+    
     public function lembagaIndex()
     {
         // Mengambil semua data lembaga untuk ditampilkan di tabel
