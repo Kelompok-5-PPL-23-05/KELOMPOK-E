@@ -16,13 +16,21 @@ class NilaiController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_siswa' => 'required',
+            'nama_siswa.*' => 'required',
             'kelas' => 'required',
             'mata_pelajaran' => 'required',
-            'nilai' => 'required|integer|min:1|max:100',
+            'nilai.*' => 'required|integer|min:1|max:100',
         ]);
 
-        Nilai::create($request->all());
+        foreach ($request->nama_siswa as $i => $nama) {
+            Nilai::create([
+                'nama_siswa' => $nama,
+                'kelas' => $request->kelas,
+                'mata_pelajaran' => $request->mata_pelajaran,
+                'nilai' => $request->nilai[$i],
+                'catatan' => $request->catatan[$i] ?? null,
+            ]);
+        }
 
         return redirect()->back()->with('success', 'Nilai berhasil disimpan');
     }
