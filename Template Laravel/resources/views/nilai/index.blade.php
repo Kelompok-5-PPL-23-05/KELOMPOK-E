@@ -14,7 +14,15 @@
 
 <input type="hidden" name="nama_siswa[]" value="Nama Siswa {{$i}}">
 
-<input type="number" name="nilai[]" min="1" max="100" placeholder="1-100">
+<input 
+type="number"
+name="nilai[]"
+min="1"
+max="100"
+step="1"
+placeholder="1-100"
+oninput="batasNilai(this)"
+>
 
 <input type="text" name="catatan[]" placeholder="Catatan siswa">
 
@@ -22,3 +30,21 @@
 
 <button type="submit">Submit</button>
 </form>
+
+<form action="/nilai/store" method="POST">
+....
+</form>
+
+<script>
+function batasNilai(input) {
+    let nilai = parseInt(input.value);
+
+    if (nilai > 100) {
+        input.value = 100;
+    }
+
+    if (nilai < 1 && input.value !== "") {
+        input.value = 1;
+    }
+}
+</script>
