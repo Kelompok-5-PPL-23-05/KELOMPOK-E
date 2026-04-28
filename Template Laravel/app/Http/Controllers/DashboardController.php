@@ -21,9 +21,12 @@ class DashboardController extends Controller
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        $siswa = [];
-        if ($selectedKelas) {
-            $siswa = Siswa::where('Kelasid_kelas', $selectedKelas)->get();
+        $siswa = collect();
+
+        for ($i = 1; $i <= 35; $i++) {
+            $siswa->push((object)[
+                'nama_siswa' => 'Nama Siswa '.$i
+            ]);
         }
 
         return view('dashboard', compact('kelas', 'mataPelajaran', 'siswa', 'selectedKelas', 'selectedMapel'));

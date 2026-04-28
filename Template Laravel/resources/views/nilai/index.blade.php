@@ -9,7 +9,7 @@
 <option>Bahasa Indonesia</option>
 </select>
 
-@for($i=1;$i<=3;$i++)
+@for($i=1;$i<=35;$i++)
 <h3>Nama Siswa {{$i}}</h3>
 
 <input type="hidden" name="nama_siswa[]" value="Nama Siswa {{$i}}">
