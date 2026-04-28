@@ -16,23 +16,60 @@ export default function App() {
     localStorage.setItem("selectedKelas", e.target.value);
   };
 
-  return (
-    <div>
-      <h2>Pilih Kelas</h2>
-      <select value={selectedKelas} onChange={handlePilihKelas}>
-        <option value="">-- Pilih Kelas --</option>
-        {kelasList.map(kelas => (
-          <option key={kelas.id_kelas} value={kelas.id_kelas}>
-            {kelas.nama_kelas}
-          </option>
-        ))}
-      </select>
+  const selectedNama = kelasList.find(k => k.id_kelas == selectedKelas)?.nama_kelas;
 
-      {selectedKelas && (
-        <p>Kelas dipilih: <strong>
-          {kelasList.find(k => k.id_kelas == selectedKelas)?.nama_kelas}
-        </strong></p>
-      )}
+  return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-md">
+        
+        {/* Header */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="bg-blue-800 text-white rounded-lg px-3 py-1 text-sm font-bold">
+            PKBM
+          </div>
+          <h1 className="text-xl font-bold text-gray-800">E-Rapor PKBM</h1>
+        </div>
+
+        <h2 className="text-lg font-semibold text-gray-700 mb-2">Pilih Kelas</h2>
+        <p className="text-sm text-gray-400 mb-6">
+          Pilih kelas yang Anda ampu untuk mengelola data siswa
+        </p>
+
+        {/* Dropdown */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-600 mb-2">
+            Kelas
+          </label>
+          <select
+            value={selectedKelas}
+            onChange={handlePilihKelas}
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">-- Pilih Kelas --</option>
+            {kelasList.map(kelas => (
+              <option key={kelas.id_kelas} value={kelas.id_kelas}>
+                {kelas.nama_kelas}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Info kelas dipilih */}
+        {selectedKelas && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex items-center gap-2">
+            <span className="text-blue-600 text-sm font-medium">✓ Kelas dipilih:</span>
+            <span className="text-blue-800 font-semibold text-sm">{selectedNama}</span>
+          </div>
+        )}
+
+        {/* Tombol lanjut */}
+        {selectedKelas && (
+          <button className="mt-4 w-full bg-blue-800 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-900 transition">
+            Lanjut →
+          </button>
+        )}
+
+      </div>
     </div>
   );
 }
