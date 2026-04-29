@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AbsensiController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -26,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/nilai', function () {
         return back()->with('success', 'Nilai berhasil disimpan!');
     })->name('nilai.store');
+
+    // ─── Absensi (PPLE-66, 67, 68, 69) ───────────────────────
+    Route::get('/absensi',        [AbsensiController::class, 'index']) ->name('absensi.index');
+    Route::post('/absensi',       [AbsensiController::class, 'store']) ->name('absensi.store');
+    Route::get('/absensi/rekap',  [AbsensiController::class, 'rekap']) ->name('absensi.rekap');
 
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');

@@ -390,6 +390,11 @@
                 Masukkan Nilai
             </a>
 
+            <!-- Absensi -->
+            <a href="{{ route('absensi.index') }}" class="nav-item-single">
+                Absensi
+            </a>
+
             <!-- Rapor Siswa -->
             <div class="nav-item-single" style="border-bottom:none;">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
