@@ -370,8 +370,8 @@
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Data Siswa
                 </div>
                 <div class="nav-children" id="c-siswa">
-                    <div class="nav-child-item">Daftar Siswa</div>
-                    <div class="nav-child-item">Tambah Siswa</div>
+                    <a href="{{ route('admin.siswa') }}" class="nav-child-item">Daftar Siswa</a>
+                    <a href="{{ route('admin.siswa') }}#tambah" class="nav-child-item">Tambah Siswa</a>
                 </div>
             </div>
 

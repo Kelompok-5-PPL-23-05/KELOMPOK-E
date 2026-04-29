@@ -488,6 +488,11 @@
         @if($errors->any())
             document.getElementById('modal-tambah').classList.add('show');
         @endif
+
+        // Auto buka modal jika URL mengandung #tambah
+        if (window.location.hash === '#tambah') {
+            document.getElementById('modal-tambah').classList.add('show');
+        }
     </script>
 </body>
 </html>
