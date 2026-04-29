@@ -192,8 +192,9 @@
         /* ════════════ MAIN CONTENT ════════════ */
         .main-content {
             flex: 1;
-            padding: 50px 30px 50px 30px;
+            padding: 50px 30px;
             overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .filter-row {
@@ -231,8 +232,15 @@
         }
 
         /* Student Card Structure */
+
+        .student-list{
+            width:100%;
+            display:block;
+        }
         .student-row {
             margin-bottom: 30px;
+            width: 100%;
+            display: block;
         }
 
         .student-name {
@@ -255,6 +263,7 @@
             display: flex;
             gap: 24px;
             align-items: flex-start;
+            width: 100%;
         }
 
         .input-group {
@@ -461,72 +470,64 @@
         </form>
 
         <form action="#" method="POST">
-            <!-- NAMA SISWA 1 -->
-            <div class="student-row">
-                <div class="student-name">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                    </svg>
-                    NAMA SISWA 1
-                </div>
-                <div class="input-row">
-                    <div class="input-group nilai">
-                        <label>Masukkan nilai <span class="required">*</span></label>
-                        <input type="number" class="form-input" placeholder="1 - 100" min="1" max="100">
-                    </div>
-                    <div class="input-group catatan">
-                        <label>Catatan</label>
-                        <input type="text" class="form-input" placeholder="Catatan untuk siswa">
-                    </div>
-                </div>
+
+    <div class="student-list">
+
+    @for($i = 1; $i <= 35; $i++)
+    <div class="student-row">
+        <div class="student-name">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+
+            NAMA SISWA {{ $i }}
+        </div>
+
+        <div class="input-row">
+
+            <div class="input-group nilai">
+                <label>Masukkan nilai <span class="required">*</span></label>
+
+                <input
+                    type="number"
+                    class="form-input"
+                    placeholder="1 - 100"
+                    min="1"
+                    max="100"
+                    oninput="batasNilai(this)">
             </div>
 
-            <!-- NAMA SISWA 2 -->
-            <div class="student-row">
-                <div class="student-name">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                    </svg>
-                    NAMA SISWA 2
-                </div>
-                <div class="input-row">
-                    <div class="input-group nilai">
-                        <label>Masukkan nilai <span class="required">*</span></label>
-                        <input type="number" class="form-input" placeholder="1 - 100" min="1" max="100">
-                    </div>
-                    <div class="input-group catatan">
-                        <label>Catatan</label>
-                        <input type="text" class="form-input" placeholder="Catatan untuk siswa">
-                    </div>
-                </div>
+            <div class="input-group catatan">
+                <label>Catatan</label>
+
+                <input type="text" class="form-input" placeholder="Catatan untuk siswa">
             </div>
 
-            <!-- NAMA SISWA 3 -->
-            <div class="student-row">
-                <div class="student-name">
-                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                    </svg>
-                    NAMA SISWA 3
-                </div>
-                <div class="input-row">
-                    <div class="input-group nilai">
-                        <label>Masukkan nilai <span class="required">*</span></label>
-                        <input type="number" class="form-input" placeholder="1 - 100" min="1" max="100">
-                    </div>
-                    <div class="input-group catatan">
-                        <label>Catatan</label>
-                        <input type="text" class="form-input" placeholder="Catatan untuk siswa">
-                    </div>
-                </div>
-            </div>
+        </div>
+    </div>
+    @endfor
 
-            <div class="submit-wrapper">
-                <button type="button" class="btn-submit">Submit</button>
-            </div>
-            
-        </form>
+    </div>
+
+    <div class="submit-wrapper">
+        <button type="button" class="btn-submit">Submit</button>
+    </div>
+
+</form>
     </main>
+
+<script>
+function batasNilai(input){
+    if(input.value > 100){
+        input.value = 100;
+    }
+
+    if(input.value < 1 && input.value != ''){
+        input.value = 1;
+    }
+}
+</script>
 
 </body>
 </html>
