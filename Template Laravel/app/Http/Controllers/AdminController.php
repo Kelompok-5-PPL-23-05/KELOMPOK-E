@@ -134,4 +134,4 @@ class AdminController extends Controller
 
         return redirect()->route('admin.lembaga')->with('success', 'Data lembaga berhasil diperbarui!');
     }
-}
+}  
