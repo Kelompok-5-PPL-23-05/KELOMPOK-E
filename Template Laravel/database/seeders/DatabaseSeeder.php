@@ -9,6 +9,7 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Siswa;
+use Database\Seeders\AdminSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,8 +18,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // 0. Buat akun admin default
+        $this->call(AdminSeeder::class);
+
         // 1. Buat User Guru jika belum ada, atau ambil yang existing
-        $userGuru = clone User::firstOrCreate(
+        $userGuru = User::firstOrCreate(
             ['username' => 'Guru1'],
             [
                 'password' => Hash::make('Guru123'),
@@ -27,7 +31,7 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. Buat Data Guru terkait 
-        Guru::firstOrCreate(
+        $guru = Guru::firstOrCreate(
             ['Userid_user' => $userGuru->id_user],
             [
                 'nama_guru' => 'Bapak Guru Satu'
@@ -40,11 +44,18 @@ class DatabaseSeeder extends Seeder
         $kelasC2 = Kelas::firstOrCreate(['nama_kelas' => 'Paket C Kelas 2']);
 
         // 4. Buat Data Mata Pelajaran
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
+        $bahasaIndonesia = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
+        $bahasaInggris = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
+        $matematika = MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
 
-        // 5. Buat Data Siswa untuk Kelas 'Paket A Kelas 3'
+        // 5. Attach mata pelajaran ke guru (relasi many-to-many)
+        // Guru1 mengampu Bahasa Indonesia dan Matematika
+        $guru->mataPelajaran()->syncWithoutDetaching([
+            $bahasaIndonesia->id_mapel,
+            $matematika->id_mapel
+        ]);
+
+        // 6. Buat Data Siswa untuk Kelas 'Paket A Kelas 3'
         $siswaData = [
             'Agus Setiawan',
             'Budi Santoso',
