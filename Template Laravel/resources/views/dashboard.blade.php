@@ -436,40 +436,6 @@
 
     <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
-<<<<<<< HEAD
-        
-        <form action="{{ route('dashboard') }}" method="GET" id="filterForm">
-        <div class="filter-row">
-            <div class="filter-group">
-                <label>Pilih Kelas</label>
-                <select id="filter-kelas" name="kelas_id" class="filter-select" onchange="document.getElementById('filterForm').submit()">
-                    <option value="">-- Pilih Kelas --</option>
-                    @forelse ($kelas as $k)
-                        <option value="{{ $k->id_kelas }}" {{ $selectedKelas == $k->id_kelas ? 'selected' : '' }}>
-                            {{ $k->nama_kelas }}
-                        </option>
-                    @empty
-                        <option disabled>Tidak ada kelas</option>
-                    @endforelse
-                </select>
-            </div>
-            
-            <div class="filter-group">
-                <label>Pilih Mata Pelajaran</label>
-                <select id="filter-mapel" name="mapel_id" class="filter-select" onchange="document.getElementById('filterForm').submit()">
-                    <option value="">-- Pilih Mata Pelajaran --</option>
-                    @forelse ($mataPelajaran as $mapel)
-                        <option value="{{ $mapel->id_mapel }}" {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
-                            {{ $mapel->nama_mapel }}
-                        </option>
-                    @empty
-                        <option disabled>Belum ada mata pelajaran</option>
-                    @endforelse
-                </select>
-            </div>
-        </div>
-        </form>
-=======
 
         {{-- ── Flash Messages ── --}}
         @if(session('success'))
@@ -490,7 +456,8 @@
                 @foreach($errors->all() as $error){{ $error }}<br>@endforeach
             </div>
         @endif
->>>>>>> a482adb78031b5b7a116fd25fea0494327d1937d
+
+
 
         {{-- ── Filter Form (GET) ── --}}
         <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
