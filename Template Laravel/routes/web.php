@@ -28,10 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/absensi',       [AbsensiController::class, 'store'])->name('absensi.store');
     Route::get('/absensi/rekap',  [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 
-    // ─── Nilai (placeholder) ──────────────────────────────────
-    Route::post('/nilai', function () {
-        return back()->with('success', 'Nilai berhasil disimpan!');
-    })->name('nilai.store');
+    // ─── Nilai ────────────────────────────────────────────────
+    Route::get('/nilai',         [NilaiController::class, 'index'])->name('nilai.index');
+    Route::post('/nilai/store',  [NilaiController::class, 'store'])->name('nilai.store');
 
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
