@@ -19,17 +19,11 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-<<<<<<< HEAD
         $user = Auth::user();
 
         // Ambil data guru yang login
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-=======
-      
-        $user = Auth::user();
-        
->>>>>>> 571f747830eb76534f5ed3d671d7c521d9db7600
         // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = $guru
