@@ -14,35 +14,45 @@ use App\Models\Absensi;
 class DashboardController extends Controller
 {
     /**
-     * Tampilkan halaman dashboard/homepage
+     * Tampilkan halaman dashboard guru.
+     * Guru memilih kelas dan mata pelajaran via dropdown; daftar siswa difilter.
      */
     public function index(Request $request)
     {
         $user = Auth::user();
-        
+
         // Ambil data guru yang login
         $guru = Guru::where('Userid_user', $user->id_user)->first();
-        
-        // Jika user adalah guru, tampilkan hanya mata pelajaran yang diampu
-        if ($user->role === 'guru' && $guru) {
-            $mataPelajaran = $guru->mataPelajaran; // Dari relasi many-to-many
-        } else {
-            $mataPelajaran = MataPelajaran::all();
-        }
 
-        $kelas = Kelas::all();
+        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
+        $mataPelajaran = $guru
+            ? $guru->mataPelajaran
+            : MataPelajaran::orderBy('nama_mapel')->get();
+
+        // Pilihan dari query string (?kelas_id=x&mapel_id=y)
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        $siswa = collect();
+        // Ambil data kelas terpilih (untuk heading / info)
+        $kelasTerpilih = $selectedKelas
+            ? Kelas::find($selectedKelas)
+            : null;
 
-        for ($i = 1; $i <= 35; $i++) {
-            $siswa->push((object)[
-                'nama_siswa' => 'Nama Siswa '.$i
-            ]);
-        }
+        // Ambil siswa berdasarkan kelas terpilih; kosong jika belum memilih
+        $siswa = $selectedKelas
+            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
+            : collect();
 
-        return view('dashboard', compact('kelas', 'mataPelajaran', 'siswa', 'selectedKelas', 'selectedMapel', 'guru'));
+        return view('dashboard', compact(
+            'kelasList',
+            'mataPelajaran',
+            'siswa',
+            'selectedKelas',
+            'selectedMapel',
+            'kelasTerpilih',
+            'guru'
+        ));
     }
 
     /**
@@ -53,7 +63,7 @@ class DashboardController extends Controller
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
         $mataPelajaranDiampu = $guru->mataPelajaran()->pluck('id_mapel')->toArray();
-        $semuaMataPelajaran = MataPelajaran::all();
+        $semuaMataPelajaran  = MataPelajaran::all();
 
         return view('dashboard-select-mapel', compact('guru', 'mataPelajaranDiampu', 'semuaMataPelajaran'));
     }
@@ -67,7 +77,7 @@ class DashboardController extends Controller
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
         $validated = $request->validate([
-            'mata_pelajaran_ids' => 'required|array|min:1',
+            'mata_pelajaran_ids'   => 'required|array|min:1',
             'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel',
         ]);
 
@@ -79,13 +89,15 @@ class DashboardController extends Controller
     }
 
     /**
-     * Tampilkan data siswa berdasarkan mata pelajaran yang dipilih
+     * Tampilkan daftar siswa berdasarkan kelas dan mata pelajaran yang dipilih.
+     * Subtask 1 : Query siswa berdasarkan kelas
+     * Subtask 2 : Tampilkan tabel siswa
      */
     public function manageStudents(Request $request)
     {
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
-        
+
         $selectedMapel = $request->get('mapel_id');
         $selectedKelas = $request->get('kelas_id');
 
@@ -100,15 +112,37 @@ class DashboardController extends Controller
             }
         }
 
+        // Daftar mapel yang diampu guru (untuk dropdown filter)
         $mataPelajaran = $guru->mataPelajaran;
-        $kelas = Kelas::all();
-        
-        $siswa = [];
+
+        // Semua kelas (untuk dropdown filter)
+        $kelas = Kelas::orderBy('nama_kelas')->get();
+
+        // ── Subtask 1: Query siswa berdasarkan kelas ──────────────────────────
+        // Jika kelas sudah dipilih, ambil siswa dari kelas tersebut beserta
+        // relasi kelas-nya (eager load) agar kolom "Kelas" di tabel terisi.
+        $siswa = collect();
         if ($selectedKelas) {
-            $siswa = Siswa::where('Kelasid_kelas', $selectedKelas)->get();
+            $siswa = Siswa::with('kelas')
+                ->where('Kelasid_kelas', $selectedKelas)
+                ->orderBy('nama_siswa')
+                ->get();
         }
 
-        return view('dashboard-manage-students', compact('guru', 'mataPelajaran', 'siswa', 'kelas', 'selectedMapel', 'selectedKelas'));
+        // Informasi kelas & mapel terpilih (untuk heading tabel)
+        $kelasTerpilih = $selectedKelas ? Kelas::find($selectedKelas) : null;
+        $mapelTerpilih = $selectedMapel ? MataPelajaran::find($selectedMapel) : null;
+
+        return view('dashboard-manage-students', compact(
+            'guru',
+            'mataPelajaran',
+            'kelas',
+            'siswa',
+            'selectedMapel',
+            'selectedKelas',
+            'kelasTerpilih',
+            'mapelTerpilih'
+        ));
     }
 
     /**
@@ -135,8 +169,8 @@ class DashboardController extends Controller
             }
         }
 
-        // Ambil nilai siswa untuk mapel yang dipilih (atau semua mapel yang diampu guru)
-        $mapelIds = $guru->mataPelajaran->pluck('id_mapel');
+        // Ambil nilai siswa untuk mapel yang diampu guru
+        $mapelIds  = $guru->mataPelajaran->pluck('id_mapel');
         $nilaiList = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
             ->whereIn('Mata_Pelajaranid_mapel', $mapelIds)
             ->with('mataPelajaran')

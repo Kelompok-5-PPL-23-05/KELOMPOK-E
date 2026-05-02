@@ -381,19 +381,21 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
                 </svg>
                 Daftar Siswa
-                @if ($selectedMapel && $selectedKelas)
+                @if ($mapelTerpilih && $kelasTerpilih)
                     <span style="font-size:13px; font-weight:500; color:#718096; margin-left:4px;">
-                        — {{ $mataPelajaran->firstWhere('id_mapel', $selectedMapel)->nama_mapel ?? '' }}
-                        &bull; {{ $kelas->firstWhere('id_kelas', $selectedKelas)->nama_kelas ?? '' }}
+                        — {{ $mapelTerpilih->nama_mapel }}
+                        &bull; {{ $kelasTerpilih->nama_kelas }}
                     </span>
                 @endif
             </div>
 
             @if ($selectedMapel && $selectedKelas)
-                @if (count($siswa) > 0)
+                @if ($siswa->count() > 0)
                     <div class="stats-row">
                         <div class="stat-chip">
-                            <span class="stat-num">{{ count($siswa) }}</span> Siswa
+                            <span class="stat-num">{{ $siswa->count() }}</span>
+                            &nbsp;Siswa ditemukan di kelas
+                            <strong>{{ $kelasTerpilih->nama_kelas ?? '-' }}</strong>
                         </div>
                     </div>
 
@@ -422,7 +424,7 @@
                                             <span class="badge badge-green">Aktif</span>
                                         </td>
                                         <td style="text-align:center;">
-                                            <a href="{{ route('dashboard.student-detail', $s->id_siswa) }}{{ $selectedMapel ? '?mapel_id='.$selectedMapel.'&kelas_id='.$selectedKelas : '' }}"
+                                            <a href="{{ route('dashboard.student-detail', $s->id_siswa) }}?mapel_id={{ $selectedMapel }}&kelas_id={{ $selectedKelas }}"
                                                class="action-link">
                                                 Lihat Detail
                                             </a>
@@ -435,13 +437,23 @@
                 @else
                     <div class="no-data">
                         <div class="no-data-icon">📭</div>
-                        <p>Tidak ada siswa dalam kelas yang dipilih.</p>
+                        <p>Tidak ada siswa dalam kelas <strong>{{ $kelasTerpilih->nama_kelas ?? '' }}</strong>.</p>
                     </div>
                 @endif
+            @elseif ($selectedKelas && !$selectedMapel)
+                <div class="no-data">
+                    <div class="no-data-icon">📚</div>
+                    <p>Silakan pilih <strong>mata pelajaran</strong> juga untuk melihat daftar siswa.</p>
+                </div>
+            @elseif ($selectedMapel && !$selectedKelas)
+                <div class="no-data">
+                    <div class="no-data-icon">🏫</div>
+                    <p>Silakan pilih <strong>kelas</strong> juga untuk melihat daftar siswa.</p>
+                </div>
             @else
                 <div class="no-data">
                     <div class="no-data-icon">👆</div>
-                    <p>Silakan pilih mata pelajaran dan kelas untuk melihat daftar siswa.</p>
+                    <p>Silakan pilih <strong>mata pelajaran</strong> dan <strong>kelas</strong> untuk melihat daftar siswa.</p>
                 </div>
             @endif
         </div>
