@@ -192,9 +192,8 @@
         /* ════════════ MAIN CONTENT ════════════ */
         .main-content {
             flex: 1;
-            padding: 50px 30px;
+            padding: 50px 30px 50px 30px;
             overflow-y: auto;
-            overflow-x: hidden;
         }
 
         .filter-row {
@@ -232,15 +231,8 @@
         }
 
         /* Student Card Structure */
-
-        .student-list{
-            width:100%;
-            display:block;
-        }
         .student-row {
             margin-bottom: 30px;
-            width: 100%;
-            display: block;
         }
 
         .student-name {
@@ -263,7 +255,6 @@
             display: flex;
             gap: 24px;
             align-items: flex-start;
-            width: 100%;
         }
 
         .input-group {
@@ -491,8 +482,7 @@
             </p>
         @endif
 
-        {{-- ── Prompt jika belum pilih kelas ── --}}
-        @if(!$selectedKelas)
+        @if(!$selectedKelas || !$selectedMapel)
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
@@ -534,8 +524,13 @@
                             <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
                             <div class="input-group nilai">
                                 <label>Masukkan nilai <span class="required">*</span></label>
-                                <input type="number" name="nilai[{{ $loop->index }}][angka]" class="form-input" placeholder="1 - 100"
-                                       min="1" max="100" oninput="batasNilai(this)">
+                                <input type="number"
+                                       name="nilai[{{ $loop->index }}][angka]"
+                                       class="form-input"
+                                       placeholder="1 - 100"
+                                       min="1"
+                                       max="100"
+                                       required>
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
@@ -544,31 +539,19 @@
                         </div>
                     </div>
                     @endforeach
-
-                    {{-- ── Sisa slot kosong sampai 35 ── --}}
-                    @for($i = $siswa->count() + 1; $i <= 35; $i++)
-                    <div class="student-row">
-                        <div class="student-name">
-                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-                            </svg>
-                            NAMA SISWA {{ $i }}
+                    
+                    @if($siswa->isEmpty())
+                        <div style="
+                            background:#fff;
+                            padding:24px;
+                            border-radius:10px;
+                            text-align:center;
+                            color:#666;
+                            box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+                            Belum ada siswa pada kelas ini.
                         </div>
-                        <div class="input-row">
-                            <div class="input-group nilai">
-                                <label>Masukkan nilai <span class="required">*</span></label>
-                                <input type="number" class="form-input" placeholder="1 - 100"
-                                       min="1" max="100" oninput="batasNilai(this)">
-                            </div>
-                            <div class="input-group catatan">
-                                <label>Catatan</label>
-                                <input type="text" class="form-input" placeholder="Catatan untuk siswa">
-                            </div>
-                        </div>
-                    </div>
-                    @endfor
-
+                    @endif
+                    
                 </div>
 
                 <div class="submit-wrapper">
@@ -578,18 +561,6 @@
         @endif
 
     </main>
-
-<script>
-function batasNilai(input){
-    if(input.value > 100){
-        input.value = 100;
-    }
-
-    if(input.value < 1 && input.value != ''){
-        input.value = 1;
-    }
-}
-</script>
 
 </body>
 </html>
