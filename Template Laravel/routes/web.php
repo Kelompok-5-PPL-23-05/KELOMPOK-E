@@ -22,6 +22,16 @@ Route::middleware('auth')->group(function () {
 
     // ─── Guru Dashboard ───────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Pilih mata pelajaran yang diampu
+    Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');
+    Route::post('/dashboard/store-mapel', [DashboardController::class, 'storeMapel'])->name('dashboard.store-mapel');
+    
+    // Kelola siswa berdasarkan mata pelajaran
+    Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
+
+    // Detail siswa
+    Route::get('/dashboard/student/{id}', [DashboardController::class, 'studentDetail'])->name('dashboard.student-detail');
 
     // ─── Absensi ──────────────────────────────────────────────
     Route::get('/absensi',        [AbsensiController::class, 'index'])->name('absensi.index');
