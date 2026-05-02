@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Kelas;
 use App\Models\Siswa;
 use App\Models\Absensi;
+use App\Models\Guru;
 
 class AbsensiController extends Controller
 {
@@ -14,15 +16,22 @@ class AbsensiController extends Controller
      */
     public function index(Request $request)
     {
-        $kelasList    = Kelas::all();
+        $kelasList     = Kelas::all();
         $selectedKelas = $request->get('kelas_id');
-        $siswa        = [];
+        $siswa         = [];
+
+        // Ambil data guru yang login (untuk sidebar)
+        $guru          = Guru::where('Userid_user', Auth::user()->id_user)->first();
+        $mataPelajaran = $guru ? $guru->mataPelajaran : collect();
 
         if ($selectedKelas) {
             $siswa = Siswa::where('Kelasid_kelas', $selectedKelas)->get();
         }
 
-        return view('absensi.index', compact('kelasList', 'selectedKelas', 'siswa'));
+        return view('absensi.index', compact(
+            'kelasList', 'selectedKelas', 'siswa',
+            'guru', 'mataPelajaran'
+        ));
     }
 
     /**
@@ -79,6 +88,10 @@ class AbsensiController extends Controller
         $selectedKelas = $request->get('kelas_id');
         $rekap         = [];
 
+        // Ambil data guru yang login (untuk sidebar)
+        $guru          = Guru::where('Userid_user', Auth::user()->id_user)->first();
+        $mataPelajaran = $guru ? $guru->mataPelajaran : collect();
+
         if ($selectedKelas) {
             $siswaList = Siswa::where('Kelasid_kelas', $selectedKelas)->get();
 
@@ -96,6 +109,9 @@ class AbsensiController extends Controller
             }
         }
 
-        return view('absensi.rekap', compact('kelasList', 'selectedKelas', 'rekap'));
+        return view('absensi.rekap', compact(
+            'kelasList', 'selectedKelas', 'rekap',
+            'guru', 'mataPelajaran'
+        ));
     }
 }

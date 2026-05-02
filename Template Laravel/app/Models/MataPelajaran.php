@@ -15,4 +15,19 @@ class MataPelajaran extends Model
     {
         return $this->hasMany(Nilai::class, 'Mata_Pelajaranid_mapel', 'id_mapel');
     }
+
+    /**
+     * Relasi many-to-many dengan Guru
+     */
+    public function guru()
+    {
+        return $this->belongsToMany(
+            Guru::class,
+            'guru_mata_pelajaran',
+            'mapel_id',
+            'guru_id',
+            'id_mapel',
+            'id_guru'
+        );
+    }
 }

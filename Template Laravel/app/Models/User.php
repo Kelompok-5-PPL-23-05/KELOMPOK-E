@@ -9,7 +9,8 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
+    
+    protected $table = 'users';
     /**
      * Primary key sesuai ERD
      */
@@ -32,14 +33,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Gunakan 'username' sebagai field autentikasi (bukan email)
-     * Ini dipakai oleh Auth::attempt() untuk mencari user di DB
-     */
-    public function getAuthIdentifierName(): string
-    {
-        return 'username';
-    }
+    // /**
+    //  * Gunakan 'username' sebagai field autentikasi (bukan email)
+    //  * Ini dipakai oleh Auth::attempt() untuk mencari user di DB
+    //  */
+    // public function getAuthIdentifierName(): string
+    // {
+    //     return 'username';
+    // }
 
     /**
      * Get the attributes that should be cast.
