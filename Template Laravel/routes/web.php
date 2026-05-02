@@ -41,6 +41,10 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/siswa',         [AdminController::class, 'storeSiswa'])->name('admin.siswa.store');
     Route::delete('/admin/siswa/{id}',  [AdminController::class, 'destroySiswa'])->name('admin.siswa.destroy');
 
+    // ─── Admin Lembaga ─────────────────────────────────────────
+    Route::get('/admin/lembaga',       [AdminController::class, 'lembaga'])->name('admin.lembaga');
+    Route::get('/admin/lembaga/edit',  [AdminController::class, 'lembagaEdit'])->name('admin.lembaga.edit');
+    Route::post('/admin/lembaga/edit', [AdminController::class, 'updateLembaga'])->name('admin.lembaga.update');
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
