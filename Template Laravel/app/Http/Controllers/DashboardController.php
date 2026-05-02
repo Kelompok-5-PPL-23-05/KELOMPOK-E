@@ -11,21 +11,39 @@ use App\Models\Siswa;
 class DashboardController extends Controller
 {
     /**
-     * Tampilkan halaman dashboard/homepage
+     * Tampilkan halaman dashboard guru.
+     * Guru memilih kelas via dropdown; daftar siswa difilter berdasarkan kelas terpilih.
      */
     public function index(Request $request)
     {
-        $kelas = Kelas::all();
-        $mataPelajaran = MataPelajaran::all();
+      
+        $user = Auth::user();
+        
+        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
+        $kelasList    = Kelas::orderBy('nama_kelas')->get();
+        $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
 
+        // Pilihan dari query string (?kelas_id=x&mapel_id=y)
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        $siswa = [];
-        if ($selectedKelas) {
-            $siswa = Siswa::where('Kelasid_kelas', $selectedKelas)->get();
-        }
+        // Ambil data kelas terpilih (untuk heading / info)
+        $kelasTerpilih = $selectedKelas
+            ? Kelas::find($selectedKelas)
+            : null;
 
-        return view('dashboard', compact('kelas', 'mataPelajaran', 'siswa', 'selectedKelas', 'selectedMapel'));
+        // Ambil siswa berdasarkan kelas terpilih; kosong jika belum memilih
+        $siswa = $selectedKelas
+            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
+            : collect();
+
+        return view('dashboard', compact(
+            'kelasList',
+            'mataPelajaran',
+            'siswa',
+            'selectedKelas',
+            'selectedMapel',
+            'kelasTerpilih'
+        ));
     }
 }
