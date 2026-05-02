@@ -35,25 +35,31 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Buat Data Guru terkait 
-        Guru::firstOrCreate(
+        // 3. Buat Data Guru terkait
+        $guru = Guru::firstOrCreate(
             ['Userid_user' => $userGuru->id_user],
             [
                 'nama_guru' => 'Bapak Guru Satu'
             ]
         );
 
-        // 3. Buat Data Kelas
+        // 4. Buat Data Kelas
         $kelasA3 = Kelas::firstOrCreate(['nama_kelas' => 'Paket A Kelas 3']);
         $kelasB1 = Kelas::firstOrCreate(['nama_kelas' => 'Paket B Kelas 1']);
         $kelasC2 = Kelas::firstOrCreate(['nama_kelas' => 'Paket C Kelas 2']);
 
-        // 4. Buat Data Mata Pelajaran
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
-        MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
+        // 5. Buat Data Mata Pelajaran
+        $bahasaIndonesia = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
+        $bahasaInggris   = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
+        $matematika      = MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
 
-        // 5. Buat Data Siswa — masing-masing di kelas berbeda
+        // 6. Attach mata pelajaran ke guru (relasi many-to-many)
+        $guru->mataPelajaran()->syncWithoutDetaching([
+            $bahasaIndonesia->id_mapel,
+            $matematika->id_mapel
+        ]);
+
+        // 7. Buat Data Siswa — masing-masing di kelas berbeda
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Agus Setiawan'],
             ['Kelasid_kelas' => $kelasA3->id_kelas]   // Paket A Kelas 3

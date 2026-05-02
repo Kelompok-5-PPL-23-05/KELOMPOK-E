@@ -93,6 +93,7 @@
             flex-shrink: 0;
         }
 
+        /* Nav Menu */
         .nav-menu {
             flex: 1;
             padding: 0;
@@ -144,6 +145,11 @@
             cursor: pointer;
         }
 
+        .nav-child-item .chevron {
+            width: 14px;
+            height: 14px;
+        }
+
         .nav-item-single {
             display: flex;
             align-items: center;
@@ -190,10 +196,22 @@
             overflow-y: auto;
         }
 
-        .page-header { margin-bottom: 40px; }
-        .page-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-        .page-subtitle { font-size: 14px; color: #444; }
+        .page-header {
+            margin-bottom: 40px;
+        }
 
+        .page-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #444;
+        }
+
+        /* ═══ STAT CARDS ═══ */
         .stat-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -212,21 +230,35 @@
         }
 
         .stat-icon {
-            width: 48px; height: 48px;
+            width: 48px;
+            height: 48px;
             border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             flex-shrink: 0;
         }
 
         .stat-icon svg { width: 24px; height: 24px; color: #fff; stroke: #fff; }
+
         .stat-icon.blue   { background-color: #4a6fa5; }
         .stat-icon.green  { background-color: #27ae60; }
         .stat-icon.orange { background-color: #e67e22; }
         .stat-icon.purple { background-color: #8e44ad; }
 
-        .stat-info h3 { font-size: 28px; font-weight: 700; line-height: 1; }
-        .stat-info p  { font-size: 13px; color: #666; margin-top: 4px; }
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: 700;
+            line-height: 1;
+        }
 
+        .stat-info p {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* ═══ TABLE ═══ */
         .table-wrapper {
             background: #fff;
             border-radius: 10px;
@@ -236,13 +268,22 @@
         }
 
         .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             padding: 18px 24px;
             border-bottom: 1px solid #eee;
+        }
+
+        .table-title {
             font-size: 15px;
             font-weight: 700;
         }
 
-        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
         .data-table thead th {
             background-color: #4a6fa5;
@@ -253,7 +294,10 @@
             font-weight: 600;
         }
 
-        .data-table thead th:first-child { text-align: center; width: 50px; }
+        .data-table thead th:first-child {
+            text-align: center;
+            width: 50px;
+        }
 
         .data-table tbody td {
             padding: 13px 16px;
@@ -261,22 +305,41 @@
             border-bottom: 1px solid #f0f0f0;
         }
 
-        .data-table tbody td:first-child { text-align: center; color: #888; font-weight: 600; }
+        .data-table tbody td:first-child {
+            text-align: center;
+            color: #888;
+            font-weight: 600;
+        }
+
         .data-table tbody tr:hover { background-color: #f5f8fb; }
         .data-table tbody tr:last-child td { border-bottom: none; }
 
-        .badge { display: inline-block; padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .badge {
+            display: inline-block;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
         .badge-count { background: #e2e3e5; color: #383d41; }
         .badge-green { background: #d4edda; color: #155724; }
 
-        .empty-state { text-align: center; padding: 50px 20px; color: #888; font-size: 14px; }
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #888;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
 
+    <!-- ════════════ SIDEBAR ════════════ -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <button class="hamburger-btn"><span></span><span></span><span></span></button>
+            <button class="hamburger-btn">
+                <span></span><span></span><span></span>
+            </button>
             <span class="sidebar-brand">E-Rapor</span>
         </div>
 
@@ -375,6 +438,7 @@
         </div>
     </aside>
 
+    <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
 
         <div class="page-header">
@@ -382,11 +446,13 @@
             <p class="page-subtitle">Selamat datang, <strong>{{ Auth::user()->username }}</strong>. Berikut ringkasan data E-Rapor PKBM.</p>
         </div>
 
-        <!-- STAT CARDS -->
+        <!-- ═══ STAT CARDS ═══ -->
         <div class="stat-cards">
             <div class="stat-card">
                 <div class="stat-icon blue">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/></svg>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                    </svg>
                 </div>
                 <div class="stat-info">
                     <h3>{{ $stats['total_siswa'] }}</h3>
@@ -396,7 +462,9 @@
 
             <div class="stat-card">
                 <div class="stat-icon green">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/></svg>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
+                    </svg>
                 </div>
                 <div class="stat-info">
                     <h3>{{ $stats['total_guru'] }}</h3>
@@ -406,7 +474,9 @@
 
             <div class="stat-card">
                 <div class="stat-icon orange">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21"/></svg>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21"/>
+                    </svg>
                 </div>
                 <div class="stat-info">
                     <h3>{{ $stats['total_kelas'] }}</h3>
@@ -416,7 +486,9 @@
 
             <div class="stat-card">
                 <div class="stat-icon purple">
-                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                    <svg fill="none" viewBox="0 0 24 24" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
                 </div>
                 <div class="stat-info">
                     <h3>{{ $stats['total_mapel'] }}</h3>
@@ -425,12 +497,20 @@
             </div>
         </div>
 
-        <!-- RINGKASAN PER KELAS -->
+        <!-- ═══ RINGKASAN SISWA PER KELAS ═══ -->
         <div class="table-wrapper">
-            <div class="table-header">Ringkasan Siswa per Kelas</div>
+            <div class="table-header">
+                <div class="table-title">Ringkasan Siswa per Kelas</div>
+            </div>
             @if($kelas->count() > 0)
             <table class="data-table">
-                <thead><tr><th>No</th><th>Nama Kelas</th><th>Jumlah Siswa</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Kelas</th>
+                        <th>Jumlah Siswa</th>
+                    </tr>
+                </thead>
                 <tbody>
                     @foreach($kelas as $i => $k)
                     <tr>
@@ -446,12 +526,21 @@
             @endif
         </div>
 
-        <!-- DAFTAR GURU -->
+        <!-- ═══ DAFTAR GURU ═══ -->
         <div class="table-wrapper">
-            <div class="table-header">Daftar Guru</div>
+            <div class="table-header">
+                <div class="table-title">Daftar Guru</div>
+            </div>
             @if($guruList->count() > 0)
             <table class="data-table">
-                <thead><tr><th>No</th><th>Nama Guru</th><th>Username</th><th>Status</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama Guru</th>
+                        <th>Username</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
                 <tbody>
                     @foreach($guruList as $i => $g)
                     <tr>
