@@ -531,14 +531,15 @@
                             {{ strtoupper($s->nama_siswa) }}
                         </div>
                         <div class="input-row">
+                            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
                             <div class="input-group nilai">
                                 <label>Masukkan nilai <span class="required">*</span></label>
-                                <input type="number" class="form-input" placeholder="1 - 100"
+                                <input type="number" name="nilai[{{ $loop->index }}][angka]" class="form-input" placeholder="1 - 100"
                                        min="1" max="100" oninput="batasNilai(this)">
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
-                                <input type="text" class="form-input" placeholder="Catatan untuk siswa">
+                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
                             </div>
                         </div>
                     </div>
@@ -571,7 +572,7 @@
                 </div>
 
                 <div class="submit-wrapper">
-                    <button type="button" class="btn-submit">Submit</button>
+                    <button type="submit" class="btn-submit">Submit</button>
                 </div>
             </form>
         @endif
