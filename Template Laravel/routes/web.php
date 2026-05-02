@@ -5,7 +5,6 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\NilaiController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -36,15 +35,21 @@ Route::middleware('auth')->group(function () {
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-        // ─── Admin Siswa ──────────────────────────────────────────
-    Route::get('/admin/siswa',          [AdminController::class, 'siswa'])->name('admin.siswa');
-    Route::post('/admin/siswa',         [AdminController::class, 'storeSiswa'])->name('admin.siswa.store');
-    Route::delete('/admin/siswa/{id}',  [AdminController::class, 'destroySiswa'])->name('admin.siswa.destroy');
+    Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
+    Route::post('/admin/siswa', [AdminController::class, 'siswaStore'])->name('admin.siswa.store');
+    Route::post('/admin/siswa/import', [AdminController::class, 'siswaImport'])->name('admin.siswa.import');
+    Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
+    Route::post('/admin/siswa/import-save', [AdminController::class, 'siswaImportSave'])->name('admin.siswa.import.save');
+    Route::delete('/admin/siswa/{id}', [AdminController::class, 'siswaDestroy'])->name('admin.siswa.destroy');
 
-    // ─── Admin Lembaga ─────────────────────────────────────────
-    Route::get('/admin/lembaga',       [AdminController::class, 'lembaga'])->name('admin.lembaga');
-    Route::get('/admin/lembaga/edit',  [AdminController::class, 'lembagaEdit'])->name('admin.lembaga.edit');
-    Route::post('/admin/lembaga/edit', [AdminController::class, 'updateLembaga'])->name('admin.lembaga.update');
-    // Logout
+    Route::get('/admin/lembaga', [AdminController::class, 'lembagaIndex'])->name('admin.lembaga.index');
+    Route::post('/admin/lembaga/import-preview', [AdminController::class, 'lembagaImportPreview'])->name('admin.lembaga.import.preview');
+    Route::post('/admin/lembaga/import-save', [AdminController::class, 'lembagaImportSave'])->name('admin.lembaga.import.save');
+
+    Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.kelas.index');
+    Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
+    
+    Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
+
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

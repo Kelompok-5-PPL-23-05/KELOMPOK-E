@@ -16,6 +16,9 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
+      
+        $user = Auth::user();
+        
         // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
         $kelasList    = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
