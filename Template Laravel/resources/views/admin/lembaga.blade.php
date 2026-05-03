@@ -132,7 +132,7 @@
                     Lembaga
                 </div>
                 <div class="nav-children open" id="c-lembaga">
-                    <a href="{{ route('admin.lembaga') }}" class="nav-child-item active">Profil Lembaga</a>
+                    <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item active">Profil Lembaga</a>
                     <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Edit Lembaga</a>
                 </div>
             </div>
