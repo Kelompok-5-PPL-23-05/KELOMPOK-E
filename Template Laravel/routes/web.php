@@ -51,9 +51,12 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/siswa/import', [AdminController::class, 'siswaImport'])->name('admin.siswa.import');
     Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
     Route::post('/admin/siswa/import-save', [AdminController::class, 'siswaImportSave'])->name('admin.siswa.import.save');
+    Route::put('/admin/siswa/{id}', [AdminController::class, 'siswaUpdate'])->name('admin.siswa.update');
     Route::delete('/admin/siswa/{id}', [AdminController::class, 'siswaDestroy'])->name('admin.siswa.destroy');
 
-    Route::get('/admin/lembaga', [AdminController::class, 'lembagaIndex'])->name('admin.lembaga.index');
+    Route::get('/admin/lembaga',       [AdminController::class, 'lembagaIndex'])->name('admin.lembaga.index');
+    Route::get('/admin/lembaga/edit',  [AdminController::class, 'lembagaEdit'])->name('admin.lembaga.edit');
+    Route::post('/admin/lembaga/edit', [AdminController::class, 'updateLembaga'])->name('admin.lembaga.update');
     Route::post('/admin/lembaga/import-preview', [AdminController::class, 'lembagaImportPreview'])->name('admin.lembaga.import.preview');
     Route::post('/admin/lembaga/import-save', [AdminController::class, 'lembagaImportSave'])->name('admin.lembaga.import.save');
 
