@@ -373,11 +373,6 @@
                     <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Daftar Siswa</a>
                     <a href="{{ route('admin.siswa.index') }}#tambah" class="nav-child-item">Tambah Siswa</a>
                 </div>
-            </div>
-            <div class="nav-children" id="c-siswa">
-            <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Daftar Siswa</a>
-            <a href="{{ route('admin.siswa.index') }}#tambah" class="nav-child-item">Tambah Siswa</a>
-        </div>
         </div>
 
         <!-- Data Kelas -->
@@ -413,22 +408,10 @@
             </div>
         </div>
 
-<<<<<<< HEAD
-            <!-- Lembaga -->
-            <div class="nav-section">
-                <div class="nav-section-title" onclick="this.classList.toggle('open'); document.getElementById('c-lembaga').classList.toggle('open');">
-                    <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Lembaga
-                </div>
-                <div class="nav-children open" id="c-lembaga">
-                    <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>
-                    <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Data Lembaga</a>
-                </div>
-=======
         <!-- Lembaga -->
         <div class="nav-section">
             <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-lembaga').classList.toggle('open');">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Lembaga
->>>>>>> 97dd2146cc6a73a4bf77f433b565f69916417a16
             </div>
             <div class="nav-children open" id="c-lembaga">
             <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>

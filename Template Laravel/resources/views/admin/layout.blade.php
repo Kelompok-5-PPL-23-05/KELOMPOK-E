@@ -593,10 +593,6 @@
             </a>
 
             
-<<<<<<< HEAD
-
-=======
->>>>>>> 97dd2146cc6a73a4bf77f433b565f69916417a16
         </div>
 
         <div class="sidebar-footer">

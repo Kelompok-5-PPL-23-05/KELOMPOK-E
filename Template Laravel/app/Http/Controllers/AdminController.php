@@ -105,21 +105,7 @@ class AdminController extends Controller
         return back()->with('success', 'Data siswa berhasil diperbarui.');
     }
 
-    public function siswaUpdate(Request $request, $id)
-    {
-        $request->validate([
-            'nama_siswa'    => 'required|string|max:255',
-            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
-        ]);
-
-        $siswa = Siswa::findOrFail($id);
-        $siswa->update([
-            'nama_siswa'    => $request->nama_siswa,
-            'Kelasid_kelas' => $request->Kelasid_kelas,
-        ]);
-
-        return back()->with('success', 'Data siswa berhasil diperbarui.');
-    }
+    
 
     /**
      * Validasi file, mapping nama kelas, dan tampilkan Preview
