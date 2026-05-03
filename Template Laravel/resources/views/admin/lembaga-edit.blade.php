@@ -91,7 +91,11 @@
                 </div>
                 <div class="nav-children" id="c-siswa">
                     <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Daftar Siswa</a>
+<<<<<<< HEAD
                     <a href="{{ route('admin.siswa.index') }}#tambah" class="nav-child-item">Tambah Siswa</a>
+=======
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Tambah Siswa</a>
+>>>>>>> 97dd2146cc6a73a4bf77f433b565f69916417a16
                 </div>
             </div>
             <div class="nav-section">

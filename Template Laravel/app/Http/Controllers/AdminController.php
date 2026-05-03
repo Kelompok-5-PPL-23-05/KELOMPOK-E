@@ -88,6 +88,22 @@ class AdminController extends Controller
         Siswa::create($request->all());
         return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
+    
+    public function siswaUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_siswa'    => 'required|string|max:255',
+            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
+        ]);
+
+        $siswa = Siswa::findOrFail($id);
+        $siswa->update([
+            'nama_siswa'    => $request->nama_siswa,
+            'Kelasid_kelas' => $request->Kelasid_kelas,
+        ]);
+
+        return back()->with('success', 'Data siswa berhasil diperbarui.');
+    }
 
     public function siswaUpdate(Request $request, $id)
     {
@@ -212,6 +228,7 @@ class AdminController extends Controller
      * Menampilkan halaman Data Lembaga dan Form Upload
      */
     public function lembagaIndex()
+    
     {
         $lembaga = Lembaga::all();
         return view('admin.lembaga.index', compact('lembaga'));
