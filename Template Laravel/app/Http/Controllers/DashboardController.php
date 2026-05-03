@@ -24,9 +24,6 @@ class DashboardController extends Controller
         // Ambil data guru yang login
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-      
-        $user = Auth::user();
-        
         // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = $guru
