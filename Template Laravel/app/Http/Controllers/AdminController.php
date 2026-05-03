@@ -88,6 +88,22 @@ class AdminController extends Controller
         Siswa::create($request->all());
         return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
+    
+    public function siswaUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_siswa'    => 'required|string|max:255',
+            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
+        ]);
+
+        $siswa = Siswa::findOrFail($id);
+        $siswa->update([
+            'nama_siswa'    => $request->nama_siswa,
+            'Kelasid_kelas' => $request->Kelasid_kelas,
+        ]);
+
+        return back()->with('success', 'Data siswa berhasil diperbarui.');
+    }
 
     /**
      * Validasi file, mapping nama kelas, dan tampilkan Preview
@@ -196,10 +212,44 @@ class AdminController extends Controller
      * Menampilkan halaman Data Lembaga dan Form Upload
      */
     public function lembagaIndex()
+    
     {
         $lembaga = Lembaga::all();
         return view('admin.lembaga.index', compact('lembaga'));
     }
+
+    public function lembagaEdit()
+{
+    if (Auth::user()->role !== 'admin') abort(403);
+    $lembaga = Lembaga::first();
+    return view('admin.lembaga-edit', compact('lembaga'));
+}
+
+public function updateLembaga(Request $request)
+{
+    if (Auth::user()->role !== 'admin') abort(403);
+
+    $request->validate([
+        'nama_lembaga'   => 'required|string|max:255',
+        'alamat'         => 'required|string',
+        'no_telepon'     => 'required|string|max:20',
+        'email'          => 'required|email|max:255',
+        'kepala_lembaga' => 'required|string|max:255',
+    ]);
+
+    $lembaga = Lembaga::first();
+    if ($lembaga) {
+        $lembaga->update($request->only([
+            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+        ]));
+    } else {
+        Lembaga::create($request->only([
+            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+        ]));
+    }
+
+    return redirect()->route('admin.lembaga.edit')->with('success', 'Data lembaga berhasil diperbarui!');
+}
 
     /**
      * Validasi Format dan Tampilkan Preview Data Lembaga
