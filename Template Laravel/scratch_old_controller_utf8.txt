@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers;
 
@@ -23,7 +23,7 @@ class DashboardController extends Controller
         // Ambil data guru yang login
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
+        // Dropdown data
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = $guru
             ? $guru->mataPelajaran
@@ -54,19 +54,15 @@ class DashboardController extends Controller
 
     /**
      * Form pilih mata pelajaran
-     * Subtask: Buat dropdown mapel
-     * Subtask: Ambil data mapel dari database
      */
     public function selectMapel()
     {
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Ambil data mapel dari database
         $mataPelajaranDiampu = $guru->mataPelajaran()->pluck('id_mapel')->toArray();
         $semuaMataPelajaran  = MataPelajaran::all();
 
-        // View yang menampilkan dropdown mapel
         return view('dashboard-select-mapel', compact(
             'guru',
             'mataPelajaranDiampu',
@@ -76,7 +72,6 @@ class DashboardController extends Controller
 
     /**
      * Simpan mapel yang diampu
-     * Subtask: Simpan pilihan mapel
      */
     public function storeMapel(Request $request)
     {
@@ -88,7 +83,6 @@ class DashboardController extends Controller
             'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel',
         ]);
 
-        // Simpan pilihan mapel ke database (sync relasi)
         $guru->mataPelajaran()->sync($validated['mata_pelajaran_ids']);
 
         return redirect()->route('dashboard')
