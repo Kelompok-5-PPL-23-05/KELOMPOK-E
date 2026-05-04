@@ -641,29 +641,32 @@
                         </svg>
                         <p>Tidak ada mata pelajaran tersedia.</p>
                     </div>
-                @else
-                    <div class="mapel-grid" id="mapel-grid">
-                        @foreach ($semuaMataPelajaran as $mapel)
-                            @php
-                                $isChecked = in_array($mapel->id_mapel, $mataPelajaranDiampu);
-                                $icons = ['📚','📖','✏️','🔬','🧮','🌍','🎨','🏃','💻','🎵'];
-                                $icon = $icons[$loop->index % count($icons)];
-                            @endphp
-                            <label class="mapel-card {{ $isChecked ? 'selected' : '' }}" for="mapel_{{ $mapel->id_mapel }}" id="card_{{ $mapel->id_mapel }}">
-                                <input
-                                    type="checkbox"
-                                    id="mapel_{{ $mapel->id_mapel }}"
-                                    name="mata_pelajaran_ids[]"
-                                    value="{{ $mapel->id_mapel }}"
-                                    {{ $isChecked ? 'checked' : '' }}
-                                    onchange="updateCard(this)"
-                                >
-                                <div class="mapel-card-icon">{{ $icon }}</div>
-                                <div class="mapel-name">{{ $mapel->nama_mapel }}</div>
-                            </label>
-                        @endforeach
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label for="mata_pelajaran_ids" style="display:block; font-size:14px; font-weight:600; margin-bottom:10px; color:#1a1a2e;">
+                            Pilih Mata Pelajaran (Dropdown)
+                        </label>
+                        <select 
+                            name="mata_pelajaran_ids[]" 
+                            id="mata_pelajaran_ids" 
+                            multiple 
+                            style="width: 100%; padding: 12px; border: 1.5px solid #ccd6e4; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 14px; min-height: 200px; outline: none; transition: border-color 0.2s;"
+                            onchange="updateCounter()">
+                            @foreach ($semuaMataPelajaran as $mapel)
+                                @php
+                                    $isSelected = in_array($mapel->id_mapel, $mataPelajaranDiampu);
+                                @endphp
+                                <option 
+                                    value="{{ $mapel->id_mapel }}" 
+                                    {{ $isSelected ? 'selected' : '' }}
+                                    style="padding: 10px; border-bottom: 1px solid #f0f4f8;">
+                                    {{ $mapel->nama_mapel }}
+                                </option>
+                            @endforeach
+                        </select>
+                        <p style="font-size:12px; color:#718096; margin-top:8px;">
+                            💡 <i>Tips: Tahan tombol <b>Ctrl</b> (Windows) atau <b>Command</b> (Mac) pada keyboard untuk memilih lebih dari satu mata pelajaran.</i>
+                        </p>
                     </div>
-                @endif
 
                 <div class="divider"></div>
 
@@ -701,23 +704,24 @@
     </main>
 
     <script>
-        function updateCard(checkbox) {
-            const label = checkbox.closest('.mapel-card');
-            if (checkbox.checked) {
-                label.classList.add('selected');
-            } else {
-                label.classList.remove('selected');
-            }
-            updateCounter();
-        }
-
         function updateCounter() {
-            const count = document.querySelectorAll('#mapel-grid input[type="checkbox"]:checked').length;
-            document.getElementById('counter-badge').textContent = count;
+            const select = document.getElementById('mata_pelajaran_ids');
+            let count = 0;
+            if (select) {
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].selected) {
+                        count++;
+                    }
+                }
+                const badge = document.getElementById('counter-badge');
+                if (badge) {
+                    badge.textContent = count;
+                }
+            }
         }
 
         // Init counter on load
-        updateCounter();
+        document.addEventListener('DOMContentLoaded', updateCounter);
     </script>
 
 </body>

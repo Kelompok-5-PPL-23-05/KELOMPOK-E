@@ -35,6 +35,7 @@ class AdminController extends Controller
 
         return view('admin.dashboard', compact('stats', 'kelas', 'guruList'));
     }
+
     /**
      * Menampilkan halaman Data Siswa
      */
@@ -46,12 +47,10 @@ class AdminController extends Controller
     }
 
     /**
-     *Validasi dan Simpan Data Master dari Form Upload
+     * Validasi dan Simpan Data Master dari Form Upload
      */
     public function siswaImport(Request $request)
     {
-        // 1. Validasi Data Sebelum Simpan
-        // Memastikan file yang diupload ada, berformat CSV, dan ukurannya tidak lebih dari 2MB
         $request->validate([
             'file_master' => 'required|mimes:csv,txt|max:2048',
         ], [
@@ -59,19 +58,12 @@ class AdminController extends Controller
             'file_master.mimes' => 'Format file harus CSV.'
         ]);
 
-        // 2. Simpan Data ke Database (Subtask 3)
         $file = $request->file('file_master');
         $path = $file->getRealPath();
-        
-        // Membaca isi file CSV
         $data = array_map('str_getcsv', file($path));
 
-        // Looping untuk menyimpan setiap baris data secara otomatis
         foreach ($data as $index => $row) {
-            // Abaikan baris pertama jika itu adalah header kolom (Nama, ID Kelas)
-            if ($index === 0) continue; 
-
-            // Validasi data di dalam sel CSV (pastikan tidak kosong)
+            if ($index === 0) continue;
             if (!empty($row[0]) && !empty($row[1])) {
                 Siswa::create([
                     'nama_siswa'    => trim($row[0]),
@@ -97,12 +89,29 @@ class AdminController extends Controller
         return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
     
+    public function siswaUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_siswa'    => 'required|string|max:255',
+            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
+        ]);
+
+        $siswa = Siswa::findOrFail($id);
+        $siswa->update([
+            'nama_siswa'    => $request->nama_siswa,
+            'Kelasid_kelas' => $request->Kelasid_kelas,
+        ]);
+
+        return back()->with('success', 'Data siswa berhasil diperbarui.');
+    }
+
+    
+
     /**
-     *Validasi file, mapping nama kelas, dan tampilkan Preview
+     * Validasi file, mapping nama kelas, dan tampilkan Preview
      */
     public function siswaImportPreview(Request $request)
     {
-        //Validasi Format File
         $request->validate([
             'file_master' => 'required|mimes:csv,txt|max:2048',
         ], [
@@ -111,24 +120,15 @@ class AdminController extends Controller
 
         $file = $request->file('file_master');
         $data = array_map('str_getcsv', file($file->getRealPath()));
-        
-        // Ambil semua kelas dari database untuk dicocokkan namanya
         $semuaKelas = Kelas::pluck('id_kelas', 'nama_kelas')->toArray();
-
         $previewData = [];
 
         foreach ($data as $index => $row) {
             if ($index === 0) continue;
-            
             $nama_siswa = trim($row[0] ?? '');
             $nama_kelas = trim($row[1] ?? '');
-
             if (empty($nama_siswa)) continue;
-
-            // Cari id_kelas berdasarkan nama kelas yang diketik di CSV
-            // Jika tidak ada, beri nilai null
             $id_kelas = $semuaKelas[$nama_kelas] ?? null;
-
             $previewData[] = [
                 'nama_siswa' => $nama_siswa,
                 'nama_kelas' => $nama_kelas,
@@ -137,15 +137,12 @@ class AdminController extends Controller
             ];
         }
 
-        // Simpan data preview sementara ke Session
         session(['import_siswa_data' => $previewData]);
-
-        //Mengarahkan ke halaman Preview
         return view('admin.siswa.preview', compact('previewData'));
     }
 
     /**
-     *Simpan Data ke Sistem setelah di-preview
+     * Simpan Data ke Sistem setelah di-preview
      */
     public function siswaImportSave(Request $request)
     {
@@ -157,7 +154,6 @@ class AdminController extends Controller
 
         $berhasil = 0;
         foreach ($previewData as $row) {
-            // Hanya simpan data yang kelasnya valid (ditemukan di DB)
             if ($row['status'] === 'Valid') {
                 Siswa::create([
                     'nama_siswa'    => $row['nama_siswa'],
@@ -167,9 +163,7 @@ class AdminController extends Controller
             }
         }
 
-        // Hapus session setelah disimpan
         session()->forget('import_siswa_data');
-
         return redirect()->route('admin.siswa.index')->with('success', "$berhasil data siswa berhasil diunggah secara terpusat.");
     }
 
@@ -187,7 +181,6 @@ class AdminController extends Controller
      */
     public function kelasIndex()
     {
-        // Mengambil semua kelas beserta jumlah siswa di masing-masing kelas
         $kelas = Kelas::withCount('siswa')->get();
         return view('admin.kelas.index', compact('kelas'));
     }
@@ -204,10 +197,7 @@ class AdminController extends Controller
             'nama_kelas.unique' => 'Nama kelas ini sudah ada.'
         ]);
 
-        Kelas::create([
-            'nama_kelas' => $request->nama_kelas
-        ]);
-
+        Kelas::create(['nama_kelas' => $request->nama_kelas]);
         return back()->with('success', 'Kelas berhasil ditambahkan.');
     }
 
@@ -216,8 +206,6 @@ class AdminController extends Controller
      */
     public function kelasDestroy($id)
     {
-        // Karena di migration Anda menggunakan onDelete('cascade'),
-        // jika kelas dihapus, siswa di dalamnya juga akan terhapus.
         Kelas::findOrFail($id)->delete();
         return back()->with('success', 'Kelas berhasil dihapus.');
     }
@@ -226,30 +214,60 @@ class AdminController extends Controller
      * Menampilkan halaman Data Lembaga dan Form Upload
      */
     public function lembagaIndex()
+    
     {
-        // Mengambil semua data lembaga untuk ditampilkan di tabel
         $lembaga = Lembaga::all();
-        
         return view('admin.lembaga.index', compact('lembaga'));
     }
 
+        public function lembagaEdit()
+        {
+            if (Auth::user()->role !== 'admin') abort(403);
+            $lembaga = Lembaga::first();
+            return view('admin.lembaga-edit', compact('lembaga'));
+        }
+
+    public function updateLembaga(Request $request)
+{
+    if (Auth::user()->role !== 'admin') abort(403);
+
+    $request->validate([
+        'nama_lembaga'   => 'required|string|max:255',
+        'alamat'         => 'required|string',
+        'no_telepon'     => 'required|string|max:20',
+        'email'          => 'required|email|max:255',
+        'kepala_lembaga' => 'required|string|max:255',
+    ]);
+
+    $lembaga = Lembaga::first();
+    if ($lembaga) {
+        $lembaga->update($request->only([
+            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+        ]));
+    } else {
+        Lembaga::create($request->only([
+            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+        ]));
+    }
+
+    return redirect()->route('admin.lembaga.edit')->with('success', 'Data lembaga berhasil diperbarui!');
+}
+
     /**
-     * Subtask 2 & 3: Validasi Format dan Tampilkan Preview Data Lembaga
+     * Validasi Format dan Tampilkan Preview Data Lembaga
      */
     public function lembagaImportPreview(Request $request)
     {
-        //Validasi format file
         $request->validate([
             'file_master' => 'required|mimes:csv,txt|max:2048',
         ]);
 
         $file = $request->file('file_master');
         $data = array_map('str_getcsv', file($file->getRealPath()));
-        
         $previewData = [];
-        foreach ($data as $index => $row) {
-            if ($index === 0) continue; // Skip header CSV
 
+        foreach ($data as $index => $row) {
+            if ($index === 0) continue;
             $previewData[] = [
                 'nama_lembaga' => trim($row[0] ?? ''),
                 'alamat'       => trim($row[1] ?? ''),
@@ -263,7 +281,7 @@ class AdminController extends Controller
     }
 
     /**
-     *Simpan Data ke Sistem
+     * Simpan Data Lembaga ke Sistem
      */
     public function lembagaImportSave(Request $request)
     {

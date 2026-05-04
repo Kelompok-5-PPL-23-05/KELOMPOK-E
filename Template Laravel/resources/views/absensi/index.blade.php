@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard — E-Rapor PKBM</title>
+    <title>Input Absensi — E-Rapor PKBM</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -121,7 +121,7 @@
             transition: transform 0.2s ease;
             transform: rotate(-90deg);
         }
-        
+
         .nav-section-title.open .arrow {
             transform: rotate(0deg);
         }
@@ -130,7 +130,7 @@
             display: none;
             padding-bottom: 12px;
         }
-        
+
         .nav-children.open {
             display: block;
         }
@@ -164,6 +164,7 @@
 
         .nav-item-single.active {
             background-color: #ccd6e4;
+            font-weight: 600;
         }
 
         .nav-item-single .arrow {
@@ -192,14 +193,27 @@
         /* ════════════ MAIN CONTENT ════════════ */
         .main-content {
             flex: 1;
-            padding: 50px 30px 50px 30px;
+            padding: 50px 30px;
             overflow-y: auto;
         }
 
+        /* Flash message */
+        .alert-success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 28px;
+            font-size: 14px;
+        }
+
+        /* Filter row */
         .filter-row {
             display: flex;
             gap: 40px;
-            margin-bottom: 40px;
+            margin-bottom: 10px;
+            align-items: flex-end;
         }
 
         .filter-group {
@@ -230,72 +244,127 @@
             outline: none;
         }
 
-        /* Student Card Structure */
+        .btn-filter {
+            height: 48px;
+            background-color: #6c8bbf;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: 'Poppins', sans-serif;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-filter:hover { background-color: #5575a8; }
+
+        .rekap-link-row {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 28px;
+        }
+
+        .rekap-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a6a9e;
+            text-decoration: none;
+            border: 1.5px solid #4a6a9e;
+            border-radius: 8px;
+            padding: 8px 18px;
+            background: transparent;
+            font-family: 'Poppins', sans-serif;
+            transition: background 0.18s, color 0.18s;
+        }
+
+        .rekap-link svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        .rekap-link:hover {
+            background: #4a6a9e;
+            color: #fff;
+        }
+
+        .rekap-link:hover svg { stroke: #fff; }
+
+        /* Header kehadiran */
+        .absensi-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 2px solid #9fb3ce;
+            margin-bottom: 8px;
+        }
+
+        .absensi-header span {
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            color: #333;
+        }
+
+        .absensi-header span:first-child { text-align: left; }
+
+        /* Student Row */
         .student-row {
-            margin-bottom: 30px;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 12px;
+            align-items: center;
+            margin-bottom: 16px;
         }
 
         .student-name {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 15px;
+            gap: 10px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 8px;
             text-transform: uppercase;
         }
 
         .student-name svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             stroke-width: 2px;
+            flex-shrink: 0;
         }
 
-        .input-row {
-            display: flex;
-            gap: 24px;
-            align-items: flex-start;
-        }
-
-        .input-group {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .input-group.nilai {
-            width: 220px;
-        }
-
-        .input-group.catatan {
-            flex: 1; /* takes remaining space */
-        }
-
-        .input-group label {
-            font-size: 13px;
-            font-weight: 500;
-            color: #000;
-        }
-
-        .input-group label .required {
-            color: #e53e3e;
-        }
-
-        .form-input {
+        .absensi-input {
             width: 100%;
             height: 44px;
             background-color: #fff;
             border: none;
             border-radius: 4px;
-            padding: 0 16px;
+            padding: 0 12px;
             font-size: 14px;
             font-family: 'Poppins', sans-serif;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             outline: none;
+            text-align: center;
         }
 
-        .form-input::placeholder {
-            color: #888;
+        .absensi-input.is-invalid {
+            border: 2px solid #e53e3e;
+        }
+
+        .absensi-input::placeholder { color: #aaa; }
+
+        /* Error text */
+        .error-text {
+            font-size: 11px;
+            color: #e53e3e;
+            margin-top: 2px;
+            text-align: center;
         }
 
         .submit-wrapper {
@@ -317,11 +386,15 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
             transition: transform 0.1s;
         }
-        
-        .btn-submit:active {
-            transform: scale(0.98);
-        }
 
+        .btn-submit:active { transform: scale(0.98); }
+
+        .no-siswa {
+            text-align: center;
+            color: #666;
+            margin-top: 40px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -361,15 +434,15 @@
                 <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-kelas').classList.toggle('open');">
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Kelas
                 </div>
-                <div class="nav-children open" id="c-kelas">
-                    <div class="nav-child-item">
-                        Paket A <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                <div class="nav-children" id="c-kelas">
+                    <div class="nav-child-item">Paket A
+                        <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     </div>
-                    <div class="nav-child-item">
-                        Paket B <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    <div class="nav-child-item">Paket B
+                        <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     </div>
-                    <div class="nav-child-item">
-                        Paket C <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                    <div class="nav-child-item">Paket C
+                        <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
                     </div>
                 </div>
             </div>
@@ -405,12 +478,12 @@
             </div>
 
             <!-- Masukkan Nilai -->
-            <a href="#" class="nav-item-single active">
+            <a href="{{ route('dashboard') }}" class="nav-item-single">
                 Masukkan Nilai
             </a>
 
-            <!-- Absensi -->
-            <a href="{{ route('absensi.index') }}" class="nav-item-single">
+            <!-- Absensi (ACTIVE) -->
+            <a href="{{ route('absensi.index') }}" class="nav-item-single active">
                 Absensi
             </a>
 
@@ -423,9 +496,7 @@
         <div class="sidebar-footer">
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
-                <button type="submit" class="logout-btn">
-                    Keluar
-                </button>
+                <button type="submit" class="logout-btn">Keluar</button>
             </form>
         </div>
     </aside>
@@ -433,160 +504,187 @@
     <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
 
-        {{-- ── Flash Messages ── --}}
+        {{-- Flash success --}}
         @if(session('success'))
-            <div style="
-                background-color:#d4edda; color:#155724;
-                border:1px solid #c3e6cb; border-radius:8px;
-                padding:14px 20px; margin-bottom:24px;
-                font-size:14px; font-weight:500;">
-                {{ session('success') }}
-            </div>
-        @endif
-        @if($errors->any())
-            <div style="
-                background-color:#f8d7da; color:#721c24;
-                border:1px solid #f5c6cb; border-radius:8px;
-                padding:14px 20px; margin-bottom:24px;
-                font-size:14px; font-weight:500;">
-                @foreach($errors->all() as $error){{ $error }}<br>@endforeach
-            </div>
+            <div class="alert-success" id="flash-msg">{{ session('success') }}</div>
         @endif
 
-
-
-        {{-- ── Filter Form (GET) ── --}}
-        <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
-
+        {{-- Filter Kelas --}}
+        <form method="GET" action="{{ route('absensi.index') }}">
             <div class="filter-row">
-                {{-- Dropdown Pilih Kelas --}}
                 <div class="filter-group">
-                    <label for="kelas_id">Pilih Kelas</label>
-                    <select
-                        id="kelas_id"
-                        name="kelas_id"
-                        class="filter-select"
-                        onchange="document.getElementById('filter-form').submit()">
-                        <option value="">— Pilih Kelas —</option>
+                    <label>Pilih Kelas</label>
+                    <select name="kelas_id" id="kelas_id" class="filter-select">
+                        <option value="">-- Pilih Kelas --</option>
                         @foreach($kelasList as $kelas)
-                            <option
-                                value="{{ $kelas->id_kelas }}"
+                            <option value="{{ $kelas->id_kelas }}"
                                 {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
                                 {{ $kelas->nama_kelas }}
                             </option>
                         @endforeach
                     </select>
                 </div>
-
-                {{-- Dropdown Pilih Mata Pelajaran --}}
-                <div class="filter-group">
-                    <label for="mapel_id">Pilih Mata Pelajaran</label>
-                    <select
-                        id="mapel_id"
-                        name="mapel_id"
-                        class="filter-select"
-                        onchange="document.getElementById('filter-form').submit()">
-                        <option value="">— Pilih Mata Pelajaran —</option>
-                        @foreach($mataPelajaran as $mapel)
-                            <option
-                                value="{{ $mapel->id_mapel }}"
-                                {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
-                                {{ $mapel->nama_mapel }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
+                <button type="submit" class="btn-filter">Tampilkan</button>
             </div>
-
         </form>
 
-        {{-- ── Info heading kelas terpilih ── --}}
-        @if($kelasTerpilih)
-            <p style="font-size:15px; font-weight:600; margin-bottom:20px; color:#2c3e50;">
-                Kelas: {{ $kelasTerpilih->nama_kelas }}
-                <span style="font-weight:400; color:#555;">({{ $siswa->count() }} siswa)</span>
-            </p>
+        {{-- Link ke Rekap --}}
+        @if($selectedKelas)
+            <div class="rekap-link-row">
+                <a href="{{ route('absensi.rekap', ['kelas_id' => $selectedKelas]) }}" class="rekap-link">
+                    {{-- SVG: bar-chart --}}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="20" x2="18" y2="10"/>
+                        <line x1="12" y1="20" x2="12" y2="4"/>
+                        <line x1="6"  y1="20" x2="6"  y2="14"/>
+                        <line x1="2"  y1="20" x2="22" y2="20"/>
+                    </svg>
+                    Lihat Rekap Kehadiran
+                    {{-- SVG: arrow-right --}}
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M14 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            </div>
         @endif
 
-        @if(!$selectedKelas || !$selectedMapel)
-            <div style="
-                background:#fff; border-radius:10px;
-                padding:48px 24px; text-align:center;
-                box-shadow:0 2px 6px rgba(0,0,0,0.06);
-                color:#888;">
-                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
-                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21
-                             M6.75 6.75h.75m-.75 3h.75m-.75 3h.75
-                             m3-6h.75m-.75 3h.75m-.75 3h.75
-                             M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25
-                             c.621 0 1.125.504 1.125 1.125V21
-                             M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
-                </svg>
-                <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
-            </div>
+        {{-- Form Input Absensi --}}
+        @if($selectedKelas && count($siswa) > 0)
 
-        {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
-        @else
-            <form action="{{ route('nilai.store') }}" method="POST">
+            {{-- Validasi server-side errors --}}
+            @if($errors->any())
+                <div style="background:#fff3cd;border:1px solid #ffc107;color:#856404;border-radius:8px;padding:12px 20px;margin-bottom:20px;font-size:13px;">
+                    <strong>Terdapat kesalahan input:</strong>
+                    <ul style="margin-top:6px;padding-left:20px;">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('absensi.store') }}" method="POST" id="absensi-form">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
-                <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
 
-                <div class="student-list">
+                {{-- Header kolom --}}
+                <div class="absensi-header">
+                    <span>Nama Siswa</span>
+                    <span>Hadir</span>
+                    <span>Sakit</span>
+                    <span>Izin</span>
+                    <span>Alfa</span>
+                </div>
 
-                    {{-- ── Siswa nyata dari database (dengan nama) ── --}}
-                    @foreach($siswa as $s)
+                @foreach($siswa as $index => $s)
+                    {{-- Ambil data absensi yang sudah ada (jika ada) --}}
+                    @php
+                        $existingAbsensi = \App\Models\Absensi::where('Siswaid_siswa', $s->id_siswa)->first();
+                    @endphp
+
                     <div class="student-row">
+                        {{-- Nama Siswa --}}
                         <div class="student-name">
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                             </svg>
                             {{ strtoupper($s->nama_siswa) }}
                         </div>
-                        <div class="input-row">
-                            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
-                            <div class="input-group nilai">
-                                <label>Masukkan nilai <span class="required">*</span></label>
-                                <input type="number"
-                                       name="nilai[{{ $loop->index }}][angka]"
-                                       class="form-input"
-                                       placeholder="1 - 100"
-                                       min="1"
-                                       max="100"
-                                       required>
-                            </div>
-                            <div class="input-group catatan">
-                                <label>Catatan</label>
-                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
-                            </div>
+
+                        <input type="hidden" name="absensi[{{ $index }}][siswa_id]" value="{{ $s->id_siswa }}">
+
+                        {{-- Hadir --}}
+                        <div>
+                            <input type="number"
+                                   id="hadir_{{ $s->id_siswa }}"
+                                   name="absensi[{{ $index }}][hadir]"
+                                   class="absensi-input @error('absensi.'.$index.'.hadir') is-invalid @enderror"
+                                   placeholder="0"
+                                   min="0"
+                                   value="{{ old('absensi.'.$index.'.hadir', $existingAbsensi?->hadir ?? 0) }}"
+                                   required>
+                        </div>
+
+                        {{-- Sakit --}}
+                        <div>
+                            <input type="number"
+                                   id="sakit_{{ $s->id_siswa }}"
+                                   name="absensi[{{ $index }}][sakit]"
+                                   class="absensi-input @error('absensi.'.$index.'.sakit') is-invalid @enderror"
+                                   placeholder="0"
+                                   min="0"
+                                   value="{{ old('absensi.'.$index.'.sakit', $existingAbsensi?->sakit ?? 0) }}"
+                                   required>
+                        </div>
+
+                        {{-- Izin --}}
+                        <div>
+                            <input type="number"
+                                   id="izin_{{ $s->id_siswa }}"
+                                   name="absensi[{{ $index }}][izin]"
+                                   class="absensi-input @error('absensi.'.$index.'.izin') is-invalid @enderror"
+                                   placeholder="0"
+                                   min="0"
+                                   value="{{ old('absensi.'.$index.'.izin', $existingAbsensi?->izin ?? 0) }}"
+                                   required>
+                        </div>
+
+                        {{-- Alfa --}}
+                        <div>
+                            <input type="number"
+                                   id="alfa_{{ $s->id_siswa }}"
+                                   name="absensi[{{ $index }}][alfa]"
+                                   class="absensi-input @error('absensi.'.$index.'.alfa') is-invalid @enderror"
+                                   placeholder="0"
+                                   min="0"
+                                   value="{{ old('absensi.'.$index.'.alfa', $existingAbsensi?->alfa ?? 0) }}"
+                                   required>
                         </div>
                     </div>
-                    @endforeach
-                    
-                    @if($siswa->isEmpty())
-                        <div style="
-                            background:#fff;
-                            padding:24px;
-                            border-radius:10px;
-                            text-align:center;
-                            color:#666;
-                            box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-                            Belum ada siswa pada kelas ini.
-                        </div>
-                    @endif
-                    
-                </div>
+                @endforeach
 
                 <div class="submit-wrapper">
-                    <button type="submit" class="btn-submit">Submit</button>
+                    <button type="submit" class="btn-submit">Simpan Absensi</button>
                 </div>
             </form>
+
+        @elseif($selectedKelas && count($siswa) === 0)
+            <p class="no-siswa">Tidak ada siswa pada kelas ini.</p>
+        @else
+            <p class="no-siswa">Pilih kelas terlebih dahulu untuk menampilkan daftar siswa.</p>
         @endif
 
     </main>
+
+    <script>
+        // Auto-dismiss flash message setelah 4 detik
+        const flash = document.getElementById('flash-msg');
+        if (flash) {
+            setTimeout(() => {
+                flash.style.transition = 'opacity 0.5s';
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 500);
+            }, 4000);
+        }
+
+        // PPLE-67: Validasi client-side — nilai tidak boleh negatif
+        document.getElementById('absensi-form')?.addEventListener('submit', function(e) {
+            let valid = true;
+            const inputs = this.querySelectorAll('input[type="number"]');
+            inputs.forEach(input => {
+                input.classList.remove('is-invalid');
+                const val = parseInt(input.value, 10);
+                if (isNaN(val) || val < 0) {
+                    input.classList.add('is-invalid');
+                    valid = false;
+                }
+            });
+            if (!valid) {
+                e.preventDefault();
+                alert('Pastikan semua nilai tidak negatif dan sudah terisi.');
+            }
+        });
+    </script>
 
 </body>
 </html>
