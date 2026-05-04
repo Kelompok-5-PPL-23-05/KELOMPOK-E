@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -480,7 +481,6 @@
             stroke: #a0aec0;
         }
 
-        /* Info box */
         .info-hint {
             background: #ebf8ff;
             border-left: 4px solid #4299e1;
@@ -492,6 +492,41 @@
             display: flex;
             gap: 10px;
             align-items: flex-start;
+        }
+
+        /* Choices.js Customization to match theme */
+        .choices__inner {
+            background-color: #fff;
+            border: 1.5px solid #ccd6e4;
+            border-radius: 10px;
+            padding: 7px 10px 3px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .choices.is-focused .choices__inner {
+            border-color: #4a6fa5;
+        }
+        .choices__list--multiple .choices__item {
+            background-color: #4a6fa5;
+            border: 1px solid #3b5d8a;
+            border-radius: 6px;
+            font-family: 'Poppins', sans-serif;
+        }
+        .choices[data-type*=select-multiple] .choices__button {
+            border-left: 1px solid #3b5d8a;
+            margin-left: 5px;
+        }
+        .choices__list--dropdown {
+            font-family: 'Poppins', sans-serif;
+            border-radius: 10px;
+            border: 1.5px solid #ccd6e4;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-top: 5px;
+        }
+        .choices__list--dropdown .choices__item--selectable.is-highlighted {
+            background-color: #eef2f6;
+            color: #1a1a2e;
         }
     </style>
 </head>
@@ -650,22 +685,20 @@
                             name="mata_pelajaran_ids[]" 
                             id="mata_pelajaran_ids" 
                             multiple 
-                            style="width: 100%; padding: 12px; border: 1.5px solid #ccd6e4; border-radius: 10px; font-family: 'Poppins', sans-serif; font-size: 14px; min-height: 200px; outline: none; transition: border-color 0.2s;"
-                            onchange="updateCounter()">
+                            style="width: 100%; display: none;">
                             @foreach ($semuaMataPelajaran as $mapel)
                                 @php
                                     $isSelected = in_array($mapel->id_mapel, $mataPelajaranDiampu);
                                 @endphp
                                 <option 
                                     value="{{ $mapel->id_mapel }}" 
-                                    {{ $isSelected ? 'selected' : '' }}
-                                    style="padding: 10px; border-bottom: 1px solid #f0f4f8;">
+                                    {{ $isSelected ? 'selected' : '' }}>
                                     {{ $mapel->nama_mapel }}
                                 </option>
                             @endforeach
                         </select>
                         <p style="font-size:12px; color:#718096; margin-top:8px;">
-                            💡 <i>Tips: Tahan tombol <b>Ctrl</b> (Windows) atau <b>Command</b> (Mac) pada keyboard untuk memilih lebih dari satu mata pelajaran.</i>
+                            💡 <i>Ketik untuk mencari mata pelajaran. Anda dapat memilih lebih dari satu mata pelajaran.</i>
                         </p>
                     </div>
                 @endif
@@ -705,6 +738,7 @@
 
     </main>
 
+    <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
     <script>
         function updateCounter() {
             const select = document.getElementById('mata_pelajaran_ids');
@@ -722,8 +756,26 @@
             }
         }
 
-        // Init counter on load
-        document.addEventListener('DOMContentLoaded', updateCounter);
+        // Init counter and Choices.js on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectElement = document.getElementById('mata_pelajaran_ids');
+            if (selectElement) {
+                const choices = new Choices(selectElement, {
+                    removeItemButton: true,
+                    searchPlaceholderValue: 'Cari mata pelajaran...',
+                    placeholder: true,
+                    placeholderValue: 'Silakan ketik atau pilih mapel',
+                    noResultsText: 'Tidak ada hasil ditemukan',
+                    noChoicesText: 'Tidak ada pilihan lagi untuk dipilih',
+                    itemSelectText: 'Klik untuk memilih',
+                });
+                
+                // Update counter whenever an item is added or removed
+                selectElement.addEventListener('addItem', updateCounter);
+                selectElement.addEventListener('removeItem', updateCounter);
+            }
+            updateCounter();
+        });
     </script>
 
 </body>
