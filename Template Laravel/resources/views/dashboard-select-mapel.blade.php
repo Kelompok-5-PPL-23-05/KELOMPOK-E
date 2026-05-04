@@ -641,6 +641,7 @@
                         </svg>
                         <p>Tidak ada mata pelajaran tersedia.</p>
                     </div>
+                @else
                     <div class="form-group" style="margin-bottom: 24px;">
                         <label for="mata_pelajaran_ids" style="display:block; font-size:14px; font-weight:600; margin-bottom:10px; color:#1a1a2e;">
                             Pilih Mata Pelajaran (Dropdown)
@@ -667,6 +668,7 @@
                             💡 <i>Tips: Tahan tombol <b>Ctrl</b> (Windows) atau <b>Command</b> (Mac) pada keyboard untuk memilih lebih dari satu mata pelajaran.</i>
                         </p>
                     </div>
+                @endif
 
                 <div class="divider"></div>
 
