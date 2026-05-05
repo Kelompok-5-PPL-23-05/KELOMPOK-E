@@ -59,39 +59,28 @@ class DashboardController extends Controller
         
         $progressNilai = $totalSiswa > 0 ? round(($totalSiswaDinilai / $totalSiswa) * 100) : 0;
 
-        $kelasStats = Kelas::with(['siswa'])->get()->map(function($k) {
-            $totalNilai = 0;
-            $countNilai = 0;
+        $kelasStats = Kelas::all()->map(function($k) {
+            $rataRata = 0;
             
-            foreach($k->siswa as $s) {
-                // Relasi nilai mungkin mengembalikan koleksi
-                $nilais = $s->nilai ?? collect();
-                foreach($nilais as $n) {
-                    $val = $n->nilai_angka ?? $n->nilai ?? 0;
-                    if (is_numeric($val) && $val > 0) {
-                        $totalNilai += $val;
-                        $countNilai++;
-                    }
+            try {
+                // Mengambil nilai rata-rata dari tabel nilais (yang menggunakan kolom string 'kelas')
+                $avg = Nilai::where('kelas', $k->nama_kelas)->avg('nilai');
+                if ($avg) {
+                    $rataRata = round($avg, 2);
                 }
-            }
-            
-            // Alternatif jika relasi gagal dan mengambil dari tabel nilais
-            if ($countNilai == 0) {
+            } catch (\Exception $e) {
+                // Jika tabelnya berbeda (misal menggunakan FK id_siswa di tabel nilai)
                 try {
-                    $avg = Nilai::where('kelas', $k->nama_kelas)->avg('nilai');
+                    $siswaIds = Siswa::where('Kelasid_kelas', $k->id_kelas)->pluck('id_siswa');
+                    $avg = \Illuminate\Support\Facades\DB::table('nilai')->whereIn('Siswaid_siswa', $siswaIds)->avg('nilai_angka');
                     if ($avg) {
                         $rataRata = round($avg, 2);
-                        return (object) [
-                            'nama_kelas' => $k->nama_kelas,
-                            'rata_rata' => $rataRata,
-                        ];
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception $e2) {
                     // Abaikan jika error
                 }
             }
             
-            $rataRata = $countNilai > 0 ? round($totalNilai / $countNilai, 2) : 0;
             return (object) [
                 'nama_kelas' => $k->nama_kelas,
                 'rata_rata' => $rataRata,
