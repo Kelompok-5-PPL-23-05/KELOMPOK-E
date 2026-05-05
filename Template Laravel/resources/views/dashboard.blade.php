@@ -509,12 +509,46 @@
         @endif
 
         @if(!$selectedKelas || !$selectedMapel)
+            {{-- ── DASHBOARD STATISTIK ── --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                
+                {{-- Progress Card --}}
+                <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Progres Input Nilai</h3>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <span style="font-size: 14px; color:#666;">Siswa Dinilai: <strong>{{ $totalSiswaDinilai }}</strong> dari <strong>{{ $totalSiswa }}</strong></span>
+                        <span style="font-size: 18px; font-weight: 700; color: #4CAF50;">{{ $progressNilai }}%</span>
+                    </div>
+                    <div style="width: 100%; background-color: #e0e0e0; border-radius: 8px; height: 12px; overflow: hidden;">
+                        <div style="width: {{ $progressNilai }}%; background-color: #4CAF50; height: 100%; border-radius: 8px; transition: width 0.5s ease-in-out;"></div>
+                    </div>
+                </div>
+
+                {{-- Rata-rata Kelas Card --}}
+                <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                    <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Rata-rata Nilai per Kelas</h3>
+                    
+                    @if($kelasStats->isEmpty())
+                        <p style="font-size: 14px; color:#888;">Belum ada data kelas.</p>
+                    @else
+                        <div style="display: flex; flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; padding-right: 8px;">
+                            @foreach($kelasStats as $ks)
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6c8bbf;">
+                                <span style="font-size: 14px; font-weight: 500; color: #333;">Kelas {{ $ks->nama_kelas }}</span>
+                                <span style="font-size: 15px; font-weight: 700; color: #1a73e8;">{{ $ks->rata_rata }}</span>
+                            </div>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
                 box-shadow:0 2px 6px rgba(0,0,0,0.06);
                 color:#888;">
-                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;display:inline-block"
                      fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                           d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21
@@ -524,7 +558,7 @@
                              c.621 0 1.125.504 1.125 1.125V21
                              M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
                 </svg>
-                <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
+                <p style="font-size:14px;">Silakan pilih kelas dan mata pelajaran untuk melihat daftar siswa.</p>
             </div>
 
         {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}

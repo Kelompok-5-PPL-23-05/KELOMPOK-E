@@ -41,6 +41,63 @@ class DashboardController extends Controller
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
 
+        // ---- Statistik Dashboard ----
+        $totalSiswa = Siswa::count();
+        $totalSiswaDinilai = 0;
+        
+        try {
+            // Jika menggunakan tabel 'nilai' (dengan relasi FK id_siswa)
+            $totalSiswaDinilai = Nilai::distinct('Siswaid_siswa')->count('Siswaid_siswa');
+        } catch (\Exception $e) {
+            // Jika menggunakan tabel 'nilais' (dengan kolom nama_siswa string)
+            try {
+                $totalSiswaDinilai = Nilai::distinct('nama_siswa')->count('nama_siswa');
+            } catch (\Exception $e2) {
+                $totalSiswaDinilai = 0;
+            }
+        }
+        
+        $progressNilai = $totalSiswa > 0 ? round(($totalSiswaDinilai / $totalSiswa) * 100) : 0;
+
+        $kelasStats = Kelas::with(['siswa'])->get()->map(function($k) {
+            $totalNilai = 0;
+            $countNilai = 0;
+            
+            foreach($k->siswa as $s) {
+                // Relasi nilai mungkin mengembalikan koleksi
+                $nilais = $s->nilai ?? collect();
+                foreach($nilais as $n) {
+                    $val = $n->nilai_angka ?? $n->nilai ?? 0;
+                    if (is_numeric($val) && $val > 0) {
+                        $totalNilai += $val;
+                        $countNilai++;
+                    }
+                }
+            }
+            
+            // Alternatif jika relasi gagal dan mengambil dari tabel nilais
+            if ($countNilai == 0) {
+                try {
+                    $avg = Nilai::where('kelas', $k->nama_kelas)->avg('nilai');
+                    if ($avg) {
+                        $rataRata = round($avg, 2);
+                        return (object) [
+                            'nama_kelas' => $k->nama_kelas,
+                            'rata_rata' => $rataRata,
+                        ];
+                    }
+                } catch (\Exception $e) {
+                    // Abaikan jika error
+                }
+            }
+            
+            $rataRata = $countNilai > 0 ? round($totalNilai / $countNilai, 2) : 0;
+            return (object) [
+                'nama_kelas' => $k->nama_kelas,
+                'rata_rata' => $rataRata,
+            ];
+        });
+
         return view('dashboard', compact(
             'kelasList',
             'mataPelajaran',
@@ -48,7 +105,11 @@ class DashboardController extends Controller
             'selectedKelas',
             'selectedMapel',
             'kelasTerpilih',
-            'guru'
+            'guru',
+            'totalSiswa',
+            'totalSiswaDinilai',
+            'progressNilai',
+            'kelasStats'
         ));
     }
 
