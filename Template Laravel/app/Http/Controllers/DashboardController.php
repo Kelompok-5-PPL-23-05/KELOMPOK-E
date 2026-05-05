@@ -23,22 +23,10 @@ class DashboardController extends Controller
         // Ambil data guru yang login
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
+        // Ambil semua kelas dan mata pelajaran dari DB untuk statistik
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = $guru
             ? $guru->mataPelajaran
-            : MataPelajaran::orderBy('nama_mapel')->get();
-
-        // Filter
-        $selectedKelas = $request->get('kelas_id');
-        $selectedMapel = $request->get('mapel_id');
-
-        $kelasTerpilih = $selectedKelas
-            ? Kelas::find($selectedKelas)
-            : null;
-
-        $siswa = $selectedKelas
-            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
 
         // ---- Statistik Dashboard ----
@@ -88,17 +76,49 @@ class DashboardController extends Controller
         });
 
         return view('dashboard', compact(
+            'guru',
+            'kelasList',
+            'mataPelajaran',
+            'totalSiswa',
+            'totalSiswaDinilai',
+            'progressNilai',
+            'kelasStats'
+        ));
+    }
+
+    /**
+     * Halaman Input Nilai (Terpisah).
+     */
+    public function inputNilai(Request $request)
+    {
+        $user = Auth::user();
+        $guru = Guru::where('Userid_user', $user->id_user)->first();
+
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
+        $mataPelajaran = $guru
+            ? $guru->mataPelajaran
+            : MataPelajaran::orderBy('nama_mapel')->get();
+
+        // Filter
+        $selectedKelas = $request->get('kelas_id');
+        $selectedMapel = $request->get('mapel_id');
+
+        $kelasTerpilih = $selectedKelas
+            ? Kelas::find($selectedKelas)
+            : null;
+
+        $siswa = $selectedKelas
+            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
+            : collect();
+
+        return view('input-nilai', compact(
             'kelasList',
             'mataPelajaran',
             'siswa',
             'selectedKelas',
             'selectedMapel',
             'kelasTerpilih',
-            'guru',
-            'totalSiswa',
-            'totalSiswaDinilai',
-            'progressNilai',
-            'kelasStats'
+            'guru'
         ));
     }
 

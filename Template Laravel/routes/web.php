@@ -22,6 +22,7 @@ Route::middleware('auth')->group(function () {
 
     // ─── Guru Dashboard ───────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/input-nilai', [DashboardController::class, 'inputNilai'])->name('input-nilai');
 
     // Pilih mata pelajaran yang diampu
     Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');

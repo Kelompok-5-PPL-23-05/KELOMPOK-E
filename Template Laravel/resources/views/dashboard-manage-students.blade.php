@@ -248,6 +248,12 @@
             </div>
         </div>
         <div class="nav-menu">
+            <!-- Dashboard Link -->
+            <a href="{{ route('dashboard') }}" class="nav-item-single">
+                <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:16px; height:16px; margin-right:10px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+            </a>
+
             <div class="nav-section">
                 <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-akun').classList.toggle('open');">
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Akun Pengguna
@@ -258,10 +264,10 @@
                 </div>
             </div>
             <div class="nav-section">
-                <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-kelas').classList.toggle('open');">
+                <div class="nav-section-title" onclick="this.classList.toggle('open'); document.getElementById('c-kelas').classList.toggle('open');">
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Kelas
                 </div>
-                <div class="nav-children open" id="c-kelas">
+                <div class="nav-children" id="c-kelas">
                     @forelse ($kelas as $k)
                         <div class="nav-child-item">{{ $k->nama_kelas }}</div>
                     @empty
@@ -280,14 +286,9 @@
                     <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item active" style="text-decoration:none; color:inherit;">
                         👥 Kelola Siswa
                     </a>
-                    @forelse ($mataPelajaran as $m)
-                        <div class="nav-child-item">{{ $m->nama_mapel }}</div>
-                    @empty
-                        <div class="nav-child-item" style="color:#999; font-style:italic;">Belum memilih</div>
-                    @endforelse
                 </div>
             </div>
-            <a href="{{ route('dashboard') }}" class="nav-item-single">Masukkan Nilai</a>
+            <a href="{{ route('input-nilai') }}" class="nav-item-single">Masukkan Nilai</a>
             <div class="nav-item-single" style="border-bottom:none;">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
             </div>
