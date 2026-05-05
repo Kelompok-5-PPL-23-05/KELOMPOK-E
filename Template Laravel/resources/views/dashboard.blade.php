@@ -444,46 +444,120 @@
             </div>
         @endif
 
-        {{-- ── DASHBOARD STATISTIK ── --}}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
-            
-            {{-- Progress Card --}}
-            <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-                <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Progres Input Nilai</h3>
-                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                    <span style="font-size: 14px; color:#666;">Siswa Dinilai: <strong>{{ $totalSiswaDinilai }}</strong> dari <strong>{{ $totalSiswa }}</strong></span>
-                    <span style="font-size: 18px; font-weight: 700; color: #4CAF50;">{{ $progressNilai }}%</span>
-                </div>
-                <div style="width: 100%; background-color: #e0e0e0; border-radius: 8px; height: 12px; overflow: hidden;">
-                    <div style="width: {{ $progressNilai }}%; background-color: #4CAF50; height: 100%; border-radius: 8px; transition: width 0.5s ease-in-out;"></div>
-                </div>
-            </div>
-
-            {{-- Rata-rata Kelas Card --}}
-            <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
-                <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Rata-rata Nilai per Kelas</h3>
-                
-                @if($kelasStats->isEmpty())
-                    <p style="font-size: 14px; color:#888;">Belum ada data kelas.</p>
-                @else
-                    <div style="display: flex; flex-direction: column; gap: 12px; max-height: 200px; overflow-y: auto; padding-right: 8px;">
-                        @foreach($kelasStats as $ks)
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #6c8bbf;">
-                            <span style="font-size: 14px; font-weight: 500; color: #333;">Kelas {{ $ks->nama_kelas }}</span>
-                            <span style="font-size: 15px; font-weight: 700; color: #1a73e8;">{{ $ks->rata_rata }}</span>
-                        </div>
-                        @endforeach
-                    </div>
-                @endif
-            </div>
-        </div>
-
-        <div style="background:#fff; border-radius:12px; padding:32px; box-shadow:0 4px 12px rgba(0,0,0,0.05); text-align:center; color:#555;">
+        {{-- ── WELCOME MESSAGE (TOP) ── --}}
+        <div style="background:#fff; border-radius:12px; padding:32px; box-shadow:0 4px 12px rgba(0,0,0,0.05); text-align:center; color:#555; margin-bottom: 24px;">
             <h2 style="margin-bottom:16px; color:#333;">Selamat Datang, {{ $guru->nama_guru ?? 'Guru' }}!</h2>
             <p>Gunakan menu di samping untuk mengelola data siswa, absensi, dan menginput nilai rapor.</p>
         </div>
 
+        {{-- ── DASHBOARD STATISTIK ── --}}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+            
+            {{-- Progress Card (Line Chart) --}}
+            <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Progres Input Nilai</h3>
+                <div style="margin-bottom: 12px; font-size: 14px; color: #666;">
+                    Siswa Dinilai: <strong>{{ $totalSiswaDinilai }}</strong> dari <strong>{{ $totalSiswa }}</strong> 
+                    <span style="float: right; font-weight: 700; color: #4CAF50;">{{ $progressNilai }}%</span>
+                </div>
+                <div style="height: 200px; position: relative;">
+                    <canvas id="progressLineChart"></canvas>
+                </div>
+            </div>
+
+            {{-- Rata-rata Kelas Card (Bar Chart) --}}
+            <div style="background:#fff; border-radius:12px; padding:24px; box-shadow:0 4px 12px rgba(0,0,0,0.05);">
+                <h3 style="font-size: 16px; color:#333; margin-bottom:16px; font-weight:600;">Rata-rata Nilai per Kelas</h3>
+                <div style="height: 200px; position: relative;">
+                    @if($kelasStats->isEmpty())
+                        <p style="font-size: 14px; color:#888; text-align:center; margin-top: 80px;">Belum ada data kelas.</p>
+                    @else
+                        <canvas id="kelasBarChart"></canvas>
+                    @endif
+                </div>
+            </div>
+        </div>
+
     </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Progress Line Chart ---
+            const ctxLine = document.getElementById('progressLineChart').getContext('2d');
+            
+            new Chart(ctxLine, {
+                type: 'line',
+                data: {
+                    labels: ['Start', 'Progres', 'Target'],
+                    datasets: [{
+                        label: 'Persentase Progres',
+                        data: [0, {{ $progressNilai }}, 100],
+                        borderColor: '#4CAF50',
+                        backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                        borderWidth: 3,
+                        pointBackgroundColor: ['#fff', '#4CAF50', '#fff'],
+                        pointBorderColor: '#4CAF50',
+                        pointRadius: [0, 6, 0],
+                        pointHoverRadius: 8,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) { return value + '%'; }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // --- Kelas Bar Chart ---
+            @if(!$kelasStats->isEmpty())
+            const ctxBar = document.getElementById('kelasBarChart').getContext('2d');
+            const labelsBar = [@foreach($kelasStats as $ks) 'Kelas {{ $ks->nama_kelas }}', @endforeach];
+            const dataBar = [@foreach($kelasStats as $ks) {{ $ks->rata_rata }}, @endforeach];
+
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labelsBar,
+                    datasets: [{
+                        label: 'Rata-rata Nilai',
+                        data: dataBar,
+                        backgroundColor: 'rgba(26, 115, 232, 0.7)',
+                        borderColor: '#1a73e8',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            @endif
+        });
+    </script>
 
 </body>
 </html>
