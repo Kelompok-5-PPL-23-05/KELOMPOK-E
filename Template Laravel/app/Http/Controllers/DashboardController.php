@@ -15,7 +15,6 @@ class DashboardController extends Controller
 {
     /**
      * Tampilkan halaman dashboard guru.
-<<<<<<< HEAD
      */
     public function index(Request $request)
     {
@@ -104,26 +103,10 @@ class DashboardController extends Controller
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-=======
-     * Guru memilih kelas via dropdown; daftar siswa difilter berdasarkan kelas terpilih.
-     */
-    public function index(Request $request)
-    {
-        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
-        $kelasList    = Kelas::orderBy('nama_kelas')->get();
-        $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
-
-        // Pilihan dari query string (?kelas_id=x&mapel_id=y)
-        $selectedKelas = $request->get('kelas_id');
-        $selectedMapel = $request->get('mapel_id');
-
-        // Ambil data kelas terpilih (untuk heading / info)
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
         $kelasTerpilih = $selectedKelas
             ? Kelas::find($selectedKelas)
             : null;
 
-<<<<<<< HEAD
         $siswa = $selectedKelas
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
@@ -228,20 +211,6 @@ class DashboardController extends Controller
             'selectedKelas',
             'kelasTerpilih',
             'mapelTerpilih'
-=======
-        // Ambil siswa berdasarkan kelas terpilih; kosong jika belum memilih
-        $siswa = $selectedKelas
-            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
-            : collect();
-
-        return view('dashboard', compact(
-            'kelasList',
-            'mataPelajaran',
-            'siswa',
-            'selectedKelas',
-            'selectedMapel',
-            'kelasTerpilih'
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
         ));
     }
 

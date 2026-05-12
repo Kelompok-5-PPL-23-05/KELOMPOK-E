@@ -8,11 +8,7 @@ use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Guru;
-<<<<<<< HEAD
 use App\Models\Lembaga;
-=======
-use App\Models\Lembaga; 
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
 
 class AdminController extends Controller
 {
@@ -172,7 +168,6 @@ class AdminController extends Controller
     }
 
     /**
-<<<<<<< HEAD
      * Fungsi dasar untuk menghapus siswa
      */
     public function siswaDestroy($id)
@@ -219,44 +214,50 @@ class AdminController extends Controller
      * Menampilkan halaman Data Lembaga dan Form Upload
      */
     public function lembagaIndex()
-    
     {
         $lembaga = Lembaga::all();
         return view('admin.lembaga.index', compact('lembaga'));
     }
 
-        public function lembagaEdit()
-        {
-            if (Auth::user()->role !== 'admin') abort(403);
-            $lembaga = Lembaga::first();
-            return view('admin.lembaga-edit', compact('lembaga'));
-        }
-
-    public function updateLembaga(Request $request)
-{
-    if (Auth::user()->role !== 'admin') abort(403);
-
-    $request->validate([
-        'nama_lembaga'   => 'required|string|max:255',
-        'alamat'         => 'required|string',
-        'no_telepon'     => 'required|string|max:20',
-        'email'          => 'required|email|max:255',
-        'kepala_lembaga' => 'required|string|max:255',
-    ]);
-
-    $lembaga = Lembaga::first();
-    if ($lembaga) {
-        $lembaga->update($request->only([
-            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
-        ]));
-    } else {
-        Lembaga::create($request->only([
-            'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
-        ]));
+    public function lembagaEdit()
+    {
+        if (Auth::user()->role !== 'admin') abort(403);
+        $lembaga = Lembaga::first();
+        return view('admin.lembaga-edit', compact('lembaga'));
     }
 
-    return redirect()->route('admin.lembaga.edit')->with('success', 'Data lembaga berhasil diperbarui!');
-}
+    public function updateLembaga(Request $request)
+    {
+        if (Auth::user()->role !== 'admin') abort(403);
+
+        $request->validate([
+            'nama_lembaga'   => 'required|string|max:255',
+            'alamat'         => 'required|string',
+            'no_telepon'     => 'required|string|max:20',
+            'email'          => 'required|email|max:255',
+            'kepala_lembaga' => 'required|string|max:255',
+        ], [
+            'nama_lembaga.required'   => 'Nama lembaga wajib diisi.',
+            'alamat.required'         => 'Alamat wajib diisi.',
+            'no_telepon.required'     => 'No. telepon wajib diisi.',
+            'email.required'          => 'Email wajib diisi.',
+            'email.email'             => 'Format email tidak valid.',
+            'kepala_lembaga.required' => 'Nama kepala lembaga wajib diisi.',
+        ]);
+
+        $lembaga = Lembaga::first();
+        if ($lembaga) {
+            $lembaga->update($request->only([
+                'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+            ]));
+        } else {
+            Lembaga::create($request->only([
+                'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
+            ]));
+        }
+
+        return redirect()->route('admin.lembaga.edit')->with('success', 'Data lembaga berhasil diperbarui!');
+    }
 
     /**
      * Validasi Format dan Tampilkan Preview Data Lembaga
@@ -306,56 +307,3 @@ class AdminController extends Controller
         return redirect()->route('admin.lembaga.index')->with('success', 'Data lembaga berhasil disimpan secara terpusat.');
     }
 }
-=======
-     * Halaman Lembaga
-     */
-    public function lembaga()
-    {
-        if (Auth::user()->role !== 'admin') abort(403);
-
-        $lembaga = Lembaga::first();
-
-        return view('admin.lembaga', compact('lembaga'));
-    }
-    public function lembagaEdit()
-    {
-        if (Auth::user()->role !== 'admin') abort(403);
-        $lembaga = Lembaga::first();
-        return view('admin.lembaga-edit', compact('lembaga'));
-    }
-
-    public function updateLembaga(Request $request)
-    {
-        if (Auth::user()->role !== 'admin') abort(403);
-
-        $request->validate([
-            'nama_lembaga'   => 'required|string|max:255',
-            'alamat'         => 'required|string',
-            'no_telepon'     => 'required|string|max:20',
-            'email'          => 'required|email|max:255',
-            'kepala_lembaga' => 'required|string|max:255',
-        ], [
-            'nama_lembaga.required'   => 'Nama lembaga wajib diisi.',
-            'alamat.required'         => 'Alamat wajib diisi.',
-            'no_telepon.required'     => 'No. telepon wajib diisi.',
-            'email.required'          => 'Email wajib diisi.',
-            'email.email'             => 'Format email tidak valid.',
-            'kepala_lembaga.required' => 'Nama kepala lembaga wajib diisi.',
-        ]);
-
-        $lembaga = Lembaga::first();
-
-        if ($lembaga) {
-            $lembaga->update($request->only([
-                'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
-            ]));
-        } else {
-            Lembaga::create($request->only([
-                'nama_lembaga', 'alamat', 'no_telepon', 'email', 'kepala_lembaga'
-            ]));
-        }
-
-        return redirect()->route('admin.lembaga')->with('success', 'Data lembaga berhasil diperbarui!');
-    }
-}  
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30

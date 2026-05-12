@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NilaiController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -22,23 +23,12 @@ Route::middleware('auth')->group(function () {
 
     // ─── Guru Dashboard ───────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-<<<<<<< HEAD
     Route::get('/input-nilai', [DashboardController::class, 'inputNilai'])->name('input-nilai');
-=======
-    
-    // Pilih mata pelajaran yang diampu
-    Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');
-    Route::post('/dashboard/store-mapel', [DashboardController::class, 'storeMapel'])->name('dashboard.store-mapel');
-    
-    // Kelola siswa berdasarkan mata pelajaran
-    Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
 
     // Pilih mata pelajaran yang diampu
     Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');
     Route::post('/dashboard/store-mapel', [DashboardController::class, 'storeMapel'])->name('dashboard.store-mapel');
 
-<<<<<<< HEAD
     // Kelola siswa berdasarkan mata pelajaran
     Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
 
@@ -51,14 +41,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 
     // ─── Nilai ────────────────────────────────────────────────
-    Route::post('/nilai', function () {
-        return back()->with('success', 'Nilai berhasil disimpan!');
-    })->name('nilai.store');
-=======
-    // ─── Nilai ────────────────────────────────────────────────
     Route::get('/nilai',         [NilaiController::class, 'index'])->name('nilai.index');
     Route::post('/nilai/store',  [NilaiController::class, 'store'])->name('nilai.store');
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
 
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -81,10 +65,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
     Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
 
-    // ─── Admin Lembaga ─────────────────────────────────────────
-    Route::get('/admin/lembaga',       [AdminController::class, 'lembaga'])->name('admin.lembaga');
-    Route::get('/admin/lembaga/edit',  [AdminController::class, 'lembagaEdit'])->name('admin.lembaga.edit');
-    Route::post('/admin/lembaga/edit', [AdminController::class, 'updateLembaga'])->name('admin.lembaga.update');
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });

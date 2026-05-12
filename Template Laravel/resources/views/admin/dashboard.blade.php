@@ -408,27 +408,15 @@
             </div>
         </div>
 
-<<<<<<< HEAD
         <!-- Lembaga -->
         <div class="nav-section">
             <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-lembaga').classList.toggle('open');">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Lembaga
-=======
-            <!-- Lembaga -->
-            <div class="nav-section">
-                <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-lembaga').classList.toggle('open');">
-                    <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Lembaga
-                </div>
-                <div class="nav-children open" id="c-lembaga">
-                    <a href="{{ route('admin.lembaga') }}" class="nav-child-item">Profil Lembaga</a>
-                    <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Edit Lembaga</a>
-                </div>
->>>>>>> 66a04ddfe92903f90808120110929d4df0c7ec30
             </div>
             <div class="nav-children open" id="c-lembaga">
-            <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>
-            <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Edit Lembaga</a>
-        </div>
+                <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>
+                <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Edit Lembaga</a>
+            </div>
         </div>
 
             <!-- Dashboard (aktif) -->
