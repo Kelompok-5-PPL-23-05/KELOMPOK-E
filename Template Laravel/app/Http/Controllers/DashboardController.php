@@ -132,8 +132,8 @@ class DashboardController extends Controller
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Ambil data mapel dari database
-        $mataPelajaranDiampu = $guru->mataPelajaran()->pluck('id_mapel')->toArray();
+        // Dropdown mulai kosong, guru harus pilih sendiri
+        $mataPelajaranDiampu = [];
         $semuaMataPelajaran  = MataPelajaran::all();
 
         // View yang menampilkan dropdown mapel
