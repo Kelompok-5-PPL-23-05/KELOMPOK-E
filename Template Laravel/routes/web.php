@@ -5,7 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AbsensiController;
-
+use App\Http\Controllers\RaporController;
 // Redirect root ke login
 Route::get('/', function () {
     return redirect()->route('login');
@@ -35,6 +35,12 @@ Route::middleware('auth')->group(function () {
 
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+
+    // ─── Rapor (Admin) ────────────────────────────────────────
+    Route::get('/admin/rapor', [RaporController::class, 'index'])->name('rapor.index');
+    Route::get('/admin/rapor/arsip', [RaporController::class, 'arsip'])->name('rapor.arsip');
+    Route::post('/admin/rapor/generate/{id_siswa}', [RaporController::class, 'generatePdf'])->name('rapor.generate');
+    Route::get('/admin/rapor/download/{id_rapor}', [RaporController::class, 'download'])->name('rapor.download');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

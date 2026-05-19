@@ -362,9 +362,9 @@
             </a>
 
             <!-- Rapor Siswa -->
-            <div class="nav-item-single" style="border-bottom:none;">
+            <a href="{{ route('rapor.index') }}" class="nav-item-single" style="border-bottom:none; text-decoration:none; color:inherit;">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
-            </div>
+            </a>
         </div>
 
         <div class="sidebar-footer">
