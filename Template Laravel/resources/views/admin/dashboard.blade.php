@@ -1,4 +1,3 @@
-```blade
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -21,7 +20,8 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #a8b8cc;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             color: #000;
         }
@@ -36,6 +36,10 @@
             flex-direction: column;
             flex-shrink: 0;
             border-right: 1px solid #d0d8e4;
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            overflow-y: auto;
         }
 
         .sidebar-header {
@@ -738,4 +742,3 @@
 
 </body>
 </html>
-```

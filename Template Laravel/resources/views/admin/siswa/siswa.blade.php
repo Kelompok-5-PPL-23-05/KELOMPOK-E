@@ -13,7 +13,8 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #a8b8cc;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             color: #000;
         }
