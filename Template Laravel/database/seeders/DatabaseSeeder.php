@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 2. Buat Data Guru terkait 
+        // 3. Buat Data Guru terkait
         Guru::firstOrCreate(
             ['Userid_user' => $userGuru->id_user],
             [
@@ -43,30 +43,30 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // 3. Buat Data Kelas
+        // 4. Buat Data Kelas
         $kelasA3 = Kelas::firstOrCreate(['nama_kelas' => 'Paket A Kelas 3']);
         $kelasB1 = Kelas::firstOrCreate(['nama_kelas' => 'Paket B Kelas 1']);
         $kelasC2 = Kelas::firstOrCreate(['nama_kelas' => 'Paket C Kelas 2']);
 
-        // 4. Buat Data Mata Pelajaran
+        // 5. Buat Data Mata Pelajaran
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
 
-        // 5. Buat Data Siswa — masing-masing di kelas berbeda
+        // 6. Buat Data Siswa
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Agus Setiawan'],
-            ['Kelasid_kelas' => $kelasA3->id_kelas]   // Paket A Kelas 3
+            ['Kelasid_kelas' => $kelasA3->id_kelas]
         );
 
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Budi Santoso'],
-            ['Kelasid_kelas' => $kelasB1->id_kelas]   // Paket B Kelas 1
+            ['Kelasid_kelas' => $kelasB1->id_kelas]
         );
 
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Citra Lestari'],
-            ['Kelasid_kelas' => $kelasC2->id_kelas]   // Paket C Kelas 2
+            ['Kelasid_kelas' => $kelasC2->id_kelas]
         );
     }
 }
