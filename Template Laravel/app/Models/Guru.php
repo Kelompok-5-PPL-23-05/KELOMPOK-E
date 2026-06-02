@@ -11,7 +11,6 @@ class Guru extends Model
 
     protected $table = 'guru';
     protected $primaryKey = 'id_guru';
-    public $timestamps = false; // Add if no timestamps in table
 
     protected $fillable = [
         'Userid_user',
@@ -21,5 +20,21 @@ class Guru extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'Userid_user', 'id_user');
+    }
+
+    /**
+     * Relasi many-to-many dengan MataPelajaran
+     * Mata pelajaran yang diampu oleh guru
+     */
+    public function mataPelajaran()
+    {
+        return $this->belongsToMany(
+            MataPelajaran::class,
+            'guru_mata_pelajaran',
+            'guru_id',
+            'mapel_id',
+            'id_guru',
+            'id_mapel'
+        );
     }
 }

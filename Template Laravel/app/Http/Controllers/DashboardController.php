@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Siswa;
@@ -12,27 +13,23 @@ class DashboardController extends Controller
 {
     /**
      * Tampilkan halaman dashboard guru.
-     * Guru memilih kelas via dropdown; daftar siswa difilter berdasarkan kelas terpilih.
      */
     public function index(Request $request)
     {
-        // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
-        $kelasList    = Kelas::orderBy('nama_kelas')->get();
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
 
-        // Pilihan dari query string (?kelas_id=x&mapel_id=y)
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        // Ambil data kelas terpilih (untuk heading / info)
-        $kelasTerpilih = $selectedKelas
-            ? Kelas::find($selectedKelas)
-            : null;
+        $kelasTerpilih = $selectedKelas ? Kelas::find($selectedKelas) : null;
 
-        // Ambil siswa berdasarkan kelas terpilih; kosong jika belum memilih
         $siswa = $selectedKelas
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
+
+        // Ambil data guru yang terhubung ke user yang sedang login
+        $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
 
         return view('dashboard', compact(
             'kelasList',
@@ -40,7 +37,84 @@ class DashboardController extends Controller
             'siswa',
             'selectedKelas',
             'selectedMapel',
-            'kelasTerpilih'
+            'kelasTerpilih',
+            'guru'
+        ));
+    }
+
+    /**
+     * Tampilkan halaman pilih mata pelajaran untuk guru.
+     */
+    public function selectMapel()
+    {
+        $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
+
+        $semuaMataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
+
+        // ID mata pelajaran yang sudah dipilih guru ini
+        $mataPelajaranDiampu = $guru
+            ? $guru->mataPelajaran()->pluck('id_mapel')->toArray()
+            : [];
+
+        return view('dashboard-select-mapel', compact(
+            'guru',
+            'semuaMataPelajaran',
+            'mataPelajaranDiampu'
+        ));
+    }
+
+    /**
+     * Simpan pilihan mata pelajaran guru.
+     */
+    public function storeMapel(Request $request)
+    {
+        $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
+
+        if (!$guru) {
+            return back()->withErrors(['guru' => 'Data guru tidak ditemukan.']);
+        }
+
+        $request->validate([
+            'mata_pelajaran_ids'   => 'nullable|array',
+            'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel',
+        ]);
+
+        // Sync pilihan (hapus lama, simpan baru)
+        $guru->mataPelajaran()->sync($request->mata_pelajaran_ids ?? []);
+
+        return redirect()->route('dashboard.select-mapel')
+            ->with('success', 'Mata pelajaran berhasil disimpan!');
+    }
+
+    /**
+     * Tampilkan halaman kelola siswa berdasarkan mata pelajaran.
+     */
+    public function manageStudents(Request $request)
+    {
+        $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
+
+        // Mata pelajaran yang diampu guru ini
+        $mataPelajaran = $guru
+            ? $guru->mataPelajaran()->orderBy('nama_mapel')->get()
+            : collect();
+
+        $kelas = Kelas::orderBy('nama_kelas')->get();
+
+        $selectedMapel = $request->get('mapel_id');
+        $selectedKelas = $request->get('kelas_id');
+
+        $siswa = ($selectedKelas)
+            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
+            : collect();
+
+        return view('dashboard-manage-students', compact(
+            'guru',
+            'mataPelajaran',
+            'kelas',
+            'siswa',
+            'selectedMapel',
+            'selectedKelas'
         ));
     }
 }
+
