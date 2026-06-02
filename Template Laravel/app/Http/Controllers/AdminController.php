@@ -55,18 +55,42 @@ class AdminController extends Controller
         if (Auth::user()->role !== 'admin') abort(403);
 
         $request->validate([
-            'nama_siswa'    => 'required|string|max:255',
-            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
+            'nama_siswa'     => 'required|string|max:255',
+            'Kelasid_kelas'  => 'required|exists:kelas,id_kelas',
+            'nisn'           => 'nullable|string|max:20',
+            'nis'            => 'nullable|string|max:20',
+            'tempat_lahir'   => 'nullable|string|max:100',
+            'tanggal_lahir'  => 'nullable|date',
+            'jenis_kelamin'  => 'nullable|in:L,P',
+            'agama'          => 'nullable|string|max:50',
+            'anak_ke'        => 'nullable|integer|min:1',
+            'telepon'        => 'nullable|string|max:20',
+            'alamat'         => 'nullable|string',
+            'nomor_gawai'    => 'nullable|string|max:20',
+            'tanggal_masuk'  => 'nullable|date',
+            'kelas_masuk'    => 'nullable|string|max:10',
+            'sebagai'        => 'nullable|string|max:50',
+            'nama_ayah'      => 'nullable|string|max:100',
+            'nama_ibu'       => 'nullable|string|max:100',
+            'pekerjaan_ayah' => 'nullable|string|max:100',
+            'pekerjaan_ibu'  => 'nullable|string|max:100',
+            'nama_wali'      => 'nullable|string|max:100',
+            'pekerjaan_wali' => 'nullable|string|max:100',
         ], [
             'nama_siswa.required'    => 'Nama siswa wajib diisi.',
             'Kelasid_kelas.required' => 'Kelas wajib dipilih.',
             'Kelasid_kelas.exists'   => 'Kelas tidak valid.',
         ]);
 
-        Siswa::create([
-            'nama_siswa'    => $request->nama_siswa,
-            'Kelasid_kelas' => $request->Kelasid_kelas,
-        ]);
+        Siswa::create($request->only([
+            'nama_siswa', 'Kelasid_kelas',
+            'nisn', 'nis',
+            'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'agama',
+            'anak_ke', 'telepon', 'alamat', 'nomor_gawai',
+            'tanggal_masuk', 'kelas_masuk', 'sebagai',
+            'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu',
+            'nama_wali', 'pekerjaan_wali',
+        ]));
 
         return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil ditambahkan!');
     }

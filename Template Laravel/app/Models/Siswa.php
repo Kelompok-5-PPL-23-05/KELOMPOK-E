@@ -9,7 +9,20 @@ class Siswa extends Model
     protected $table = 'siswa';
     protected $primaryKey = 'id_siswa';
 
-    protected $fillable = ['nama_siswa', 'Kelasid_kelas'];
+    protected $fillable = [
+        'nama_siswa', 'Kelasid_kelas',
+        'nisn', 'nis',
+        'tempat_lahir', 'tanggal_lahir', 'jenis_kelamin', 'agama',
+        'anak_ke', 'telepon', 'alamat', 'nomor_gawai',
+        'tanggal_masuk', 'kelas_masuk', 'sebagai',
+        'nama_ayah', 'nama_ibu', 'pekerjaan_ayah', 'pekerjaan_ibu',
+        'nama_wali', 'pekerjaan_wali',
+    ];
+
+    protected $casts = [
+        'tanggal_lahir'  => 'date',
+        'tanggal_masuk'  => 'date',
+    ];
 
     public function kelas()
     {
