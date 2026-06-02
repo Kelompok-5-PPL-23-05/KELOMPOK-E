@@ -40,6 +40,8 @@ Route::middleware('auth')->group(function () {
     // ─── Nilai ────────────────────────────────────────────────
     Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
     Route::post('/nilai/store', [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/{nilai}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');   // PPLE-58 & PPLE-59
+    Route::put('/nilai/{nilai}', [NilaiController::class, 'update'])->name('nilai.update');    // PPLE-60 & PPLE-61
 
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');

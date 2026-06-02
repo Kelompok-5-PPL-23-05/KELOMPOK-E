@@ -8,6 +8,7 @@ use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
 use App\Models\Siswa;
+use App\Models\Nilai;
 
 class DashboardController extends Controller
 {
@@ -31,6 +32,19 @@ class DashboardController extends Controller
         // Ambil data guru yang terhubung ke user yang sedang login
         $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
 
+        // [PPLE-58] Ambil nilai tersimpan per siswa menggunakan foreign key
+        $nilaiTersimpan = collect();
+        if ($selectedKelas && $siswa->isNotEmpty()) {
+            $siswaIds = $siswa->pluck('id_siswa');
+            $query = Nilai::whereIn('Siswaid_siswa', $siswaIds);
+            if ($selectedMapel) {
+                $query = $query->where('Mata_Pelajaranid_mapel', $selectedMapel);
+            }
+            $nilaiTersimpan = $query->get()->keyBy('Siswaid_siswa');
+        }
+
+
+
         return view('dashboard', compact(
             'kelasList',
             'mataPelajaran',
@@ -38,7 +52,8 @@ class DashboardController extends Controller
             'selectedKelas',
             'selectedMapel',
             'kelasTerpilih',
-            'guru'
+            'guru',
+            'nilaiTersimpan'
         ));
     }
 

@@ -135,6 +135,22 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s;
     }
     .btn-submit:active { transform: scale(0.98); }
+
+    /* ── Tombol Edit Nilai (PPLE-11) ── */
+    .btn-edit-nilai {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      font-family: 'Poppins', sans-serif; color: #4a6fa5;
+      background-color: #e8eef6; border: 1.5px solid #c0d0e8;
+      text-decoration: none; cursor: pointer; transition: background-color 0.15s;
+    }
+    .btn-edit-nilai:hover { background-color: #d0dff0; }
+    .badge-nilai-ada {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 20px;
+      background-color: #d4edda; color: #1a6b32;
+      font-size: 12px; font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -297,20 +313,27 @@
 
       <div class="student-list">
         @foreach($siswa as $s)
+          @php $nilaiAda = $nilaiTersimpan->get($s->id_siswa); @endphp
           <div class="student-row">
             <div class="student-name">
               <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
               </svg>
               {{ strtoupper($s->nama_siswa) }}
+              {{-- [PPLE-58] Badge + tombol Edit jika nilai sudah ada --}}
+              @if($nilaiAda)
+                <span class="badge-nilai-ada">✓ Nilai: {{ $nilaiAda->nilai_angka }}</span>
+                <a href="{{ route('nilai.edit', $nilaiAda->id_nilai) }}" class="btn-edit-nilai">✏ Edit</a>
+              @endif
             </div>
+            {{-- Hidden field siswa_id agar terkirim ke controller --}}
+            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
             <div class="input-row">
               <div class="input-group nilai">
                 <label>Masukkan nilai <span class="required">*</span></label>
-                {{-- FIX 1: tambah name="nilai[id_siswa]" supaya data terkirim --}}
                 <input
                   type="number"
-                  name="nilai[{{ $s->id_siswa }}]"
+                  name="nilai[{{ $loop->index }}][angka]"
                   class="form-input"
                   placeholder="1 - 100"
                   min="1"
@@ -320,15 +343,15 @@
               </div>
               <div class="input-group catatan">
                 <label>Catatan</label>
-                {{-- FIX 1: tambah name="catatan[id_siswa]" supaya data terkirim --}}
                 <input
                   type="text"
-                  name="catatan[{{ $s->id_siswa }}]"
+                  name="nilai[{{ $loop->index }}][catatan]"
                   class="form-input"
                   placeholder="Catatan untuk siswa"
                 >
               </div>
             </div>
+
           </div>
         @endforeach
       </div>
