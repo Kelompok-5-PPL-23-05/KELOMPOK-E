@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Guru;
@@ -15,13 +16,14 @@ class DashboardController extends Controller
 {
     /**
      * Tampilkan halaman dashboard guru.
-     * Guru memilih kelas dan mata pelajaran via dropdown; daftar siswa difilter.
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
+        $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
 
         // Ambil data guru yang login
+        $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
         // Ambil semua kelas dan mata pelajaran dari DB untuk mengisi dropdown
@@ -43,6 +45,9 @@ class DashboardController extends Controller
         $siswa = $selectedKelas
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
+
+        // Ambil data guru yang terhubung ke user yang sedang login
+        $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
 
         return view('dashboard', compact(
             'kelasList',
@@ -197,3 +202,4 @@ class DashboardController extends Controller
         ));
     }
 }
+

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Guru;
 use App\Models\Kelas;
@@ -21,7 +20,11 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['username' => 'admin1'],
             [
+<<<<<<< HEAD
                 'password' => Hash::make('admin123'),
+=======
+                'password' => 'admin123',
+>>>>>>> 6e3607fcc2cb29df7a40d006dc6b79cc9a0e21a1
                 'role' => 'admin'
             ]
         );
@@ -30,7 +33,11 @@ class DatabaseSeeder extends Seeder
         $userGuru = User::firstOrCreate(
             ['username' => 'guru1'],
             [
+<<<<<<< HEAD
                 'password' => Hash::make('guru123'),
+=======
+                'password' => 'guru123',
+>>>>>>> 6e3607fcc2cb29df7a40d006dc6b79cc9a0e21a1
                 'role' => 'guru'
             ]
         );

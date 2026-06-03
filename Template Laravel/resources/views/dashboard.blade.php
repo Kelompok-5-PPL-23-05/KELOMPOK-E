@@ -415,6 +415,7 @@
             </a>
 
             <!-- Rapor Siswa -->
+             <a href="{{ route('nilai.akhir') }}" class="nav-item-single">Nilai Akhir</a>
             <div class="nav-item-single" style="border-bottom:none;">
                 <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
             </div>
@@ -509,6 +510,8 @@
         @endif
 
         @if(!$selectedKelas || !$selectedMapel)
+        {{-- ── Prompt jika belum pilih kelas ── --}}
+        @if(!$selectedKelas)
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
@@ -533,6 +536,30 @@
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
                 <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
+
+                <div style="margin-bottom: 24px;">
+                    <label style="font-size:14px; font-weight:600; display:block; margin-bottom:8px;">
+                        Jenis Nilai <span style="color:#e53e3e;">*</span>
+                    </label>
+                    <select name="jenis_nilai" style="
+                        appearance: none;
+                        background: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 40px 12px 16px;
+                        font-size: 14px;
+                        font-family: 'Poppins', sans-serif;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                        min-width: 200px;
+                        cursor: pointer;
+                        outline: none;" required>
+                        <option value="">— Pilih Jenis Nilai —</option>
+                        <option value="UTS">UTS (30%)</option>
+                        <option value="UAS">UAS (30%)</option>
+                        <option value="Tugas">Tugas (40%)</option>
+                    </select>
+                </div>
+
 
                 <div class="student-list">
 
@@ -580,11 +607,28 @@
                     
                 </div>
 
+                </div>{{-- tutup student-list --}}
+
                 <div class="submit-wrapper">
                     <button type="submit" class="btn-submit">Submit</button>
                 </div>
+
             </form>
         @endif
+        @endif
+
+    </main>
+                        
+               
+
+                </div>
+
+                <div class="submit-wrapper">
+                    <button type="button" class="btn-submit">Submit</button>
+                </div>
+            </form>
+        
+      
 
     </main>
 

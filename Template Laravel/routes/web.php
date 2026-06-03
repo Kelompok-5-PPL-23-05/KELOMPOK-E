@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AbsensiController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\NilaiController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -22,6 +23,13 @@ Route::middleware('auth')->group(function () {
 
     // ─── Guru Dashboard ───────────────────────────────────────
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    
+    // Pilih mata pelajaran yang diampu
+    Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');
+    Route::post('/dashboard/store-mapel', [DashboardController::class, 'storeMapel'])->name('dashboard.store-mapel');
+    
+    // Kelola siswa berdasarkan mata pelajaran
+    Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
 
     // Pilih mata pelajaran yang diampu
     Route::get('/dashboard/select-mapel', [DashboardController::class, 'selectMapel'])->name('dashboard.select-mapel');
@@ -64,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
     Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
 
+    Route::get('/nilai-akhir', [NilaiController::class, 'nilaiAkhir'])->name('nilai.akhir');
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
