@@ -2,17 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Rapor extends Model
 {
+    use HasFactory;
+
     protected $table = 'rapor';
     protected $primaryKey = 'id_rapor';
 
     protected $fillable = [
-        'Siswaid_siswa',
-        'mata_pelajaran',
         'nilai_akhir',
+        'Siswaid_siswa',
+        'file_path',
     ];
 
     public function siswa()
