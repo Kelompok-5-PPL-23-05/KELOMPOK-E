@@ -9,7 +9,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
+    
+    protected $table = 'users';
+    protected $primaryKey = 'id_user';
     /**
      * The attributes that are mass assignable.
      */
@@ -27,14 +29,14 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    /**
-     * Beritahu Laravel bahwa primary key bukan 'id' default
-     * Ini WAJIB agar middleware 'auth' bisa mengenali user dari session
-     */
-    public function getAuthIdentifierName(): string
-    {
-        return 'id_user';
-    }
+    // /**
+    //  * Gunakan 'username' sebagai field autentikasi (bukan email)
+    //  * Ini dipakai oleh Auth::attempt() untuk mencari user di DB
+    //  */
+    // public function getAuthIdentifierName(): string
+    // {
+    //     return 'username';
+    // }
 
     public function getAuthIdentifier()
     {
