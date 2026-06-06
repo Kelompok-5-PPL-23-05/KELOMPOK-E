@@ -73,7 +73,8 @@ class RaporController extends Controller
         Rapor::create([
             'nilai_akhir' => round($rataRata),
             'Siswaid_siswa' => $siswa->id_siswa,
-            'file_path' => $filePath
+            'file_path' => $filePath,
+            'mata_pelajaran' => 'Rapor'
         ]);
 
         return redirect()->route('rapor.arsip')
