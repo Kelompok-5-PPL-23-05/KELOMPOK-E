@@ -91,53 +91,90 @@ class AdminController extends Controller
     
     public function siswaUpdate(Request $request, $id)
     {
-        $request->validate([
-            'nama_siswa'    => 'required|string|max:255',
-            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
-        ]);
+$request->validate([
+    'nama_siswa'     => 'required|string|max:255',
+    'Kelasid_kelas'  => 'required|exists:kelas,id_kelas',
+    'nisn'           => 'nullable|string|max:20',
+    'nis'            => 'nullable|string|max:20',
+    'tempat_lahir'   => 'nullable|string|max:100',
+    'tanggal_lahir'  => 'nullable|date',
+    'jenis_kelamin'  => 'nullable|in:L,P',
+    'agama'          => 'nullable|string|max:50',
+    'anak_ke'        => 'nullable|integer|min:1',
+    'telepon'        => 'nullable|string|max:20',
+    'alamat'         => 'nullable|string',
+    'nomor_gawai'    => 'nullable|string|max:20',
+    'tanggal_masuk'  => 'nullable|date',
+    'kelas_masuk'    => 'nullable|string|max:10',
+    'sebagai'        => 'nullable|string|max:50',
+    'nama_ayah'      => 'nullable|string|max:100',
+    'nama_ibu'       => 'nullable|string|max:100',
+    'pekerjaan_ayah' => 'nullable|string|max:100',
+    'pekerjaan_ibu'  => 'nullable|string|max:100',
+    'nama_wali'      => 'nullable|string|max:100',
+    'pekerjaan_wali' => 'nullable|string|max:100',
+], [
+    'nama_siswa.required'    => 'Nama siswa wajib diisi.',
+    'Kelasid_kelas.required' => 'Kelas wajib dipilih.',
+    'Kelasid_kelas.exists'   => 'Kelas tidak valid.',
+]);
 
-        $siswa = Siswa::findOrFail($id);
-        $siswa->update([
-            'nama_siswa'    => $request->nama_siswa,
-            'Kelasid_kelas' => $request->Kelasid_kelas,
-        ]);
+$siswa = Siswa::findOrFail($id);
+
+$siswa->update([
+    'nama_siswa'     => $request->nama_siswa,
+    'Kelasid_kelas'  => $request->Kelasid_kelas,
+    'nisn'           => $request->nisn,
+    'nis'            => $request->nis,
+    'tempat_lahir'   => $request->tempat_lahir,
+    'tanggal_lahir'  => $request->tanggal_lahir,
+    'jenis_kelamin'  => $request->jenis_kelamin,
+    'agama'          => $request->agama,
+    'anak_ke'        => $request->anak_ke,
+    'telepon'        => $request->telepon,
+    'alamat'         => $request->alamat,
+    'nomor_gawai'    => $request->nomor_gawai,
+    'tanggal_masuk'  => $request->tanggal_masuk,
+    'kelas_masuk'    => $request->kelas_masuk,
+    'sebagai'        => $request->sebagai,
+    'nama_ayah'      => $request->nama_ayah,
+    'nama_ibu'       => $request->nama_ibu,
+    'pekerjaan_ayah' => $request->pekerjaan_ayah,
+    'pekerjaan_ibu'  => $request->pekerjaan_ibu,
+    'nama_wali'      => $request->nama_wali,
+    'pekerjaan_wali' => $request->pekerjaan_wali,
+]);
+
+
 
         return back()->with('success', 'Data siswa berhasil diperbarui.');
     }
 
     /**
-     * Validasi file, mapping nama kelas, dan tampilkan Preview
+     * Hapus Siswa
      */
     public function siswaImportPreview(Request $request)
     {
-        $request->validate([
-            'file_master' => 'required|mimes:csv,txt|max:2048',
-        ], [
-            'file_master.mimes' => 'Format file wajib CSV.'
-        ]);
+        if (Auth::user()->role !== 'admin') abort(403);
 
-        $file = $request->file('file_master');
-        $data = array_map('str_getcsv', file($file->getRealPath()));
-        $semuaKelas = Kelas::pluck('id_kelas', 'nama_kelas')->toArray();
-        $previewData = [];
+        Siswa::findOrFail($id)->delete();
 
-        foreach ($data as $index => $row) {
-            if ($index === 0) continue;
-            $nama_siswa = trim($row[0] ?? '');
-            $nama_kelas = trim($row[1] ?? '');
-            if (empty($nama_siswa)) continue;
-            $id_kelas = $semuaKelas[$nama_kelas] ?? null;
-            $previewData[] = [
-                'nama_siswa' => $nama_siswa,
-                'nama_kelas' => $nama_kelas,
-                'id_kelas'   => $id_kelas,
-                'status'     => $id_kelas ? 'Valid' : 'Kelas Tidak Ditemukan'
-            ];
-        }
-
-        session(['import_siswa_data' => $previewData]);
-        return view('admin.siswa.preview', compact('previewData'));
+        return redirect()->route('admin.siswa')->with('success', 'Siswa berhasil dihapus.');
     }
+
+    /**
+     * Halaman Lembaga
+     */
+    public function lembaga()
+    {
+        if (Auth::user()->role !== 'admin') abort(403);
+
+        $lembaga = Lembaga::first();
+
+        return view('admin.lembaga', compact('lembaga'));
+    }
+
+    
 
     /**
      * Simpan Data ke Sistem setelah di-preview
