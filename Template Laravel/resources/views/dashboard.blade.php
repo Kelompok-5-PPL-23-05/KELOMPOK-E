@@ -61,7 +61,12 @@
     .search-box input::placeholder { color: #333; }
     .search-box svg { width: 16px; height: 16px; color: #6c8bbf; flex-shrink: 0; }
 
-    .nav-menu { flex: 1; padding: 0; border-top: 1px solid #9fb3ce; }
+    /* Nav Menu */
+    .nav-menu {
+    flex: 1;
+    padding: 0;
+    border-top: 1px solid #9fb3ce;
+}
     .nav-section { border-bottom: 1px solid #9fb3ce; }
     .nav-section-title {
       display: flex; align-items: center;
@@ -106,36 +111,101 @@
       font-size: 15px; font-weight: 500; font-family: 'Poppins', sans-serif; color: #000;
       min-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; outline: none;
     }
+/* Student Card Structure */
+.student-row {
+    margin-bottom: 30px;
+}
 
-    /* Student Card */
-    .student-list { width: 100%; display: block; }
-    .student-row { margin-bottom: 30px; width: 100%; display: block; }
-    .student-name {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 15px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-    }
-    .student-name svg { width: 24px; height: 24px; stroke-width: 2px; }
-    .input-row { display: flex; gap: 24px; align-items: flex-start; width: 100%; }
-    .input-group { display: flex; flex-direction: column; gap: 4px; }
-    .input-group.nilai { width: 220px; }
-    .input-group.catatan { flex: 1; }
-    .input-group label { font-size: 13px; font-weight: 500; color: #000; }
-    .input-group label .required { color: #e53e3e; }
-    .form-input {
-      width: 100%; height: 44px; background-color: #fff; border: none; border-radius: 4px;
-      padding: 0 16px; font-size: 14px; font-family: 'Poppins', sans-serif;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;
-    }
-    .form-input::placeholder { color: #888; }
-    .submit-wrapper { display: flex; justify-content: flex-end; margin-top: 40px; }
-    .btn-submit {
-      background-color: #fff; color: #000; border: none; border-radius: 8px;
-      padding: 10px 32px; font-size: 14px; font-weight: 600;
-      font-family: 'Poppins', sans-serif; cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s;
-    }
-    .btn-submit:active { transform: scale(0.98); }
-  </style>
+.student-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.student-name svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+}
+
+.input-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.input-group.nilai {
+    width: 220px;
+}
+
+.input-group.catatan {
+    flex: 1;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #000;
+}
+
+.input-group label .required {
+    color: #e53e3e;
+}
+
+.form-input {
+    width: 100%;
+    height: 44px;
+    background-color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #888;
+}
+
+.submit-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+}
+
+.btn-submit {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+    .student-list {
+    width: 100%;
+    display: block;
+}
+</style>
 </head>
 <body>
 
@@ -183,162 +253,247 @@
       </div>
     </div>
 
-    <!-- Mata Pelajaran -->
-    <div class="nav-section">
-      <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-mapel').classList.toggle('open');">
-        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
-        Mata Pelajaran
-      </div>
-      <div class="nav-children open" id="c-mapel">
-        @if ($guru)
-          <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration:none;color:inherit;">⚙️ Pilih Mata Pelajaran</a>
-          <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration:none;color:inherit;">👥 Kelola Siswa</a>
-          @forelse ($mataPelajaran as $mapel)
-            <div class="nav-child-item">{{ $mapel->nama_mapel }}</div>
-          @empty
-            <div class="nav-child-item" style="color:#999;font-style:italic;">Belum memilih mata pelajaran</div>
-          @endforelse
-        @else
-          <div class="nav-child-item" style="color:#999;font-style:italic;">Data guru tidak ditemukan</div>
+            <!-- Mata Pelajaran -->
+            <div class="nav-section">
+                <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-mapel').classList.toggle('open');">
+                    <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Mata Pelajaran
+                </div>
+                <div class="nav-children open" id="c-mapel">
+                    @if ($guru)
+                        <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            ⚙️ Pilih Mata Pelajaran
+                        </a>
+                        <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            👥 Kelola Siswa
+                        </a>
+                        @forelse ($mataPelajaran as $mapel)
+                            <a href="{{ route('dashboard.manage-students') }}?mapel_id={{ $mapel->id_mapel }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
+                                {{ $mapel->nama_mapel }}
+                            </a>
+                        @empty
+                            <div class="nav-child-item" style="color: #999; font-style: italic;">
+                                Belum memilih mata pelajaran
+                            </div>
+                        @endforelse
+                    @else
+                        <div class="nav-child-item" style="color: #999; font-style: italic;">
+                            Data guru tidak ditemukan
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Masukkan Nilai -->
+            <a href="#" class="nav-item-single active">
+                Masukkan Nilai
+            </a>
+
+            <!-- Absensi -->
+            <a href="{{ route('absensi.index') }}" class="nav-item-single">
+                Absensi
+            </a>
+
+            <!-- Rapor Siswa -->
+             <a href="{{ route('nilai.akhir') }}" class="nav-item-single">Nilai Akhir</a>
+            <div class="nav-item-single" style="border-bottom:none;">
+                <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    Keluar
+                </button>
+            </form>
+        </div>
+    </aside>
+
+    <!-- ════════════ MAIN CONTENT ════════════ -->
+    <main class="main-content">
+
+        {{-- ── Flash Messages ── --}}
+        @if(session('success'))
+            <div style="
+                background-color:#d4edda; color:#155724;
+                border:1px solid #c3e6cb; border-radius:8px;
+                padding:14px 20px; margin-bottom:24px;
+                font-size:14px; font-weight:500;">
+                {{ session('success') }}
+            </div>
         @endif
-      </div>
-    </div>
-
-    <!-- Masukkan Nilai -->
-    <a href="#" class="nav-item-single active">Masukkan Nilai</a>
-
-    <!-- Absensi -->
-    <a href="{{ route('absensi.index') }}" class="nav-item-single">Absensi</a>
-
-    <!-- Rapor Siswa -->
-    <div class="nav-item-single" style="border-bottom:none;">
-      <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
-      Rapor Siswa
-    </div>
-  </div>
-
-  <div class="sidebar-footer">
-    <form method="POST" action="{{ route('logout') }}">
-      @csrf
-      <button type="submit" class="logout-btn">Keluar</button>
-    </form>
-  </div>
-</aside>
-
-<!-- ════════════ MAIN CONTENT ════════════ -->
-<main class="main-content">
-
-  {{-- ── Flash Messages ── --}}
-  @if(session('success'))
-    <div style="background-color:#d4edda;color:#155724;border:1px solid #c3e6cb;border-radius:8px;padding:14px 20px;margin-bottom:24px;font-size:14px;font-weight:500;">
-      {{ session('success') }}
-    </div>
-  @endif
-
-  @if($errors->any())
-    <div style="background-color:#f8d7da;color:#721c24;border:1px solid #f5c6cb;border-radius:8px;padding:14px 20px;margin-bottom:24px;font-size:14px;font-weight:500;">
-      @foreach($errors->all() as $error){{ $error }}<br>@endforeach
-    </div>
-  @endif
-
-  {{-- ── Filter Form (GET) ── --}}
-  <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
-    <div class="filter-row">
-      <div class="filter-group">
-        <label for="kelas_id">Pilih Kelas</label>
-        <select id="kelas_id" name="kelas_id" class="filter-select" onchange="document.getElementById('filter-form').submit()">
-          <option value="">— Pilih Kelas —</option>
-          @foreach($kelasList as $kelas)
-            <option value="{{ $kelas->id_kelas }}" {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
-              {{ $kelas->nama_kelas }}
-            </option>
-          @endforeach
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="mapel_id">Pilih Mata Pelajaran</label>
-        <select id="mapel_id" name="mapel_id" class="filter-select" onchange="document.getElementById('filter-form').submit()">
-          <option value="">— Pilih Mata Pelajaran —</option>
-          @foreach($mataPelajaran as $mapel)
-            <option value="{{ $mapel->id_mapel }}" {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
-              {{ $mapel->nama_mapel }}
-            </option>
-          @endforeach
-        </select>
-      </div>
-    </div>
-  </form>
-
-  {{-- ── Info heading kelas terpilih ── --}}
-  @if($kelasTerpilih)
-    <p style="font-size:15px;font-weight:600;margin-bottom:20px;color:#2c3e50;">
-      Kelas: {{ $kelasTerpilih->nama_kelas }}
-      <span style="font-weight:400;color:#555;">({{ $siswa->count() }} siswa)</span>
-    </p>
-  @endif
-
-  {{-- ── Prompt jika belum pilih kelas ── --}}
-  @if(!$selectedKelas)
-    <div style="background:#fff;border-radius:10px;padding:48px 24px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,0.06);color:#888;">
-      <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
-      </svg>
-      <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
-    </div>
-
-  {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
-  @else
-    {{-- FIX 3: action mengarah ke route yang benar --}}
-    <form action="{{ route('nilai.store') }}" method="POST">
-      @csrf
-      <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
-      <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
-
-      <div class="student-list">
-        @foreach($siswa as $s)
-          <div class="student-row">
-            <div class="student-name">
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-              </svg>
-              {{ strtoupper($s->nama_siswa) }}
+        @if($errors->any())
+            <div style="
+                background-color:#f8d7da; color:#721c24;
+                border:1px solid #f5c6cb; border-radius:8px;
+                padding:14px 20px; margin-bottom:24px;
+                font-size:14px; font-weight:500;">
+                @foreach($errors->all() as $error){{ $error }}<br>@endforeach
             </div>
-            <div class="input-row">
-              <div class="input-group nilai">
-                <label>Masukkan nilai <span class="required">*</span></label>
-                {{-- FIX 1: tambah name="nilai[id_siswa]" supaya data terkirim --}}
-                <input
-                  type="number"
-                  name="nilai[{{ $s->id_siswa }}]"
-                  class="form-input"
-                  placeholder="1 - 100"
-                  min="1"
-                  max="100"
-                  oninput="batasNilai(this)"
-                >
-              </div>
-              <div class="input-group catatan">
-                <label>Catatan</label>
-                {{-- FIX 1: tambah name="catatan[id_siswa]" supaya data terkirim --}}
-                <input
-                  type="text"
-                  name="catatan[{{ $s->id_siswa }}]"
-                  class="form-input"
-                  placeholder="Catatan untuk siswa"
-                >
-              </div>
-            </div>
-          </div>
-        @endforeach
-      </div>
+        @endif
 
-      <div class="submit-wrapper">
-        {{-- FIX 2: type="submit" bukan type="button" --}}
-        <button type="submit" class="btn-submit">Submit</button>
-      </div>
-    </form>
-  @endif
+
+
+        {{-- ── Filter Form (GET) ── --}}
+        <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
+
+            <div class="filter-row">
+                {{-- Dropdown Pilih Kelas --}}
+                <div class="filter-group">
+                    <label for="kelas_id">Pilih Kelas</label>
+                    <select
+                        id="kelas_id"
+                        name="kelas_id"
+                        class="filter-select"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">— Pilih Kelas —</option>
+                        @foreach($kelasList as $kelas)
+                            <option
+                                value="{{ $kelas->id_kelas }}"
+                                {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
+                                {{ $kelas->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Dropdown Pilih Mata Pelajaran --}}
+                <div class="filter-group">
+                    <label for="mapel_id">Pilih Mata Pelajaran</label>
+                    <select
+                        id="mapel_id"
+                        name="mapel_id"
+                        class="filter-select"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">— Pilih Mata Pelajaran —</option>
+                        @foreach($mataPelajaran as $mapel)
+                            <option
+                                value="{{ $mapel->id_mapel }}"
+                                {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
+                                {{ $mapel->nama_mapel }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+        </form>
+
+        {{-- ── Info heading kelas terpilih ── --}}
+        @if($kelasTerpilih)
+            <p style="font-size:15px; font-weight:600; margin-bottom:20px; color:#2c3e50;">
+                Kelas: {{ $kelasTerpilih->nama_kelas }}
+                <span style="font-weight:400; color:#555;">({{ $siswa->count() }} siswa)</span>
+            </p>
+        @endif
+
+        @if(!$selectedKelas || !$selectedMapel)
+        {{-- ── Prompt jika belum pilih kelas ── --}}
+        @if(!$selectedKelas)
+            <div style="
+                background:#fff; border-radius:10px;
+                padding:48px 24px; text-align:center;
+                box-shadow:0 2px 6px rgba(0,0,0,0.06);
+                color:#888;">
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21
+                             M6.75 6.75h.75m-.75 3h.75m-.75 3h.75
+                             m3-6h.75m-.75 3h.75m-.75 3h.75
+                             M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25
+                             c.621 0 1.125.504 1.125 1.125V21
+                             M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
+                </svg>
+                <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
+            </div>
+
+        {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
+        @else
+            <form action="{{ route('nilai.store') }}" method="POST">
+                @csrf
+                <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
+                <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
+
+                <div style="margin-bottom: 24px;">
+                    <label style="font-size:14px; font-weight:600; display:block; margin-bottom:8px;">
+                        Jenis Nilai <span style="color:#e53e3e;">*</span>
+                    </label>
+                    <select name="jenis_nilai" style="
+                        appearance: none;
+                        background: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 40px 12px 16px;
+                        font-size: 14px;
+                        font-family: 'Poppins', sans-serif;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                        min-width: 200px;
+                        cursor: pointer;
+                        outline: none;" required>
+                        <option value="">— Pilih Jenis Nilai —</option>
+                        <option value="UTS">UTS (30%)</option>
+                        <option value="UAS">UAS (30%)</option>
+                        <option value="Tugas">Tugas (40%)</option>
+                    </select>
+                </div>
+
+
+                <div class="student-list">
+
+                    {{-- ── Siswa nyata dari database (dengan nama) ── --}}
+                    @foreach($siswa as $s)
+                    <div class="student-row">
+                        <div class="student-name">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                            </svg>
+                            {{ strtoupper($s->nama_siswa) }}
+                        </div>
+                        <div class="input-row">
+                            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
+                            <div class="input-group nilai">
+                                <label>Masukkan nilai <span class="required">*</span></label>
+                                <input type="number"
+                                       name="nilai[{{ $loop->index }}][angka]"
+                                       class="form-input"
+                                       placeholder="1 - 100"
+                                       min="1"
+                                       max="100"
+                                       required>
+                            </div>
+                            <div class="input-group catatan">
+                                <label>Catatan</label>
+                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                    
+                    @if($siswa->isEmpty())
+                        <div style="
+                            background:#fff;
+                            padding:24px;
+                            border-radius:10px;
+                            text-align:center;
+                            color:#666;
+                            box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+                            Belum ada siswa pada kelas ini.
+                        </div>
+                    @endif
+                    
+
+                </div>{{-- tutup student-list --}}
+
+                <div class="submit-wrapper">
+                    <button type="submit" class="btn-submit">Submit</button>
+                </div>
+
+            </form>
+        @endif
+        @endif
 
 </main>
 
