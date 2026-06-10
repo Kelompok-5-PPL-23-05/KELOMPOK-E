@@ -255,8 +255,8 @@
                     Data Siswa
                 </div>
                 <div class="nav-children open" id="c-siswa">
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item active">Daftar Siswa</a>
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item" onclick="event.preventDefault(); document.getElementById('modal-tambah').classList.add('show')">Tambah Siswa</a>
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-child-item active">Daftar Siswa</a>
+                    <a href="{{ route('admin.siswa.create') }}" class="nav-child-item" onclick="event.preventDefault(); document.getElementById('modal-tambah').classList.add('show')">Tambah Siswa</a>
                 </div>
             </div>
 

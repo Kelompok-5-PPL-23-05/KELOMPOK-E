@@ -16,6 +16,7 @@ class Rapor extends Model
         'nilai_akhir',
         'Siswaid_siswa',
         'file_path',
+        'mata_pelajaran',
     ];
 
     public function siswa()

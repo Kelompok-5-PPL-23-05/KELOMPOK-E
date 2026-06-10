@@ -32,6 +32,9 @@ Route::middleware('auth')->group(function () {
     // Kelola siswa berdasarkan mata pelajaran
     Route::get('/dashboard/manage-students', [DashboardController::class, 'manageStudents'])->name('dashboard.manage-students');
 
+    // Detail siswa
+    Route::get('/dashboard/student/{id}', [DashboardController::class, 'studentDetail'])->name('dashboard.student-detail');
+
     // ─── Absensi ──────────────────────────────────────────────
     Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index');
     Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
@@ -43,18 +46,32 @@ Route::middleware('auth')->group(function () {
     Route::get('/nilai/{nilai}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');   // PPLE-58 & PPLE-59
     Route::put('/nilai/{nilai}', [NilaiController::class, 'update'])->name('nilai.update');    // PPLE-60 & PPLE-61
 
+    // ─── Nilai Akhir ───────────────────────────────────────────
+    Route::get('/nilai-akhir', [NilaiController::class, 'nilaiAkhir'])->name('nilai.akhir');
+
     // ─── Admin Dashboard ──────────────────────────────────────
     Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     // ─── Admin Siswa ──────────────────────────────────────────
-    Route::get('/admin/siswa', [AdminController::class, 'siswa'])->name('admin.siswa');
-    Route::post('/admin/siswa', [AdminController::class, 'storeSiswa'])->name('admin.siswa.store');
-    Route::delete('/admin/siswa/{id}', [AdminController::class, 'destroySiswa'])->name('admin.siswa.destroy');
+    Route::get('/admin/siswa', [AdminController::class, 'siswaIndex'])->name('admin.siswa.index');
+    Route::post('/admin/siswa', [AdminController::class, 'siswaStore'])->name('admin.siswa.store');
+    Route::post('/admin/siswa/import', [AdminController::class, 'siswaImport'])->name('admin.siswa.import');
+    Route::post('/admin/siswa/import-preview', [AdminController::class, 'siswaImportPreview'])->name('admin.siswa.import.preview');
+    Route::post('/admin/siswa/import-save', [AdminController::class, 'siswaImportSave'])->name('admin.siswa.import.save');
+    Route::put('/admin/siswa/{id}', [AdminController::class, 'siswaUpdate'])->name('admin.siswa.update');
+    Route::delete('/admin/siswa/{id}', [AdminController::class, 'siswaDestroy'])->name('admin.siswa.destroy');
 
     // ─── Admin Lembaga ─────────────────────────────────────────
-    Route::get('/admin/lembaga', [AdminController::class, 'lembaga'])->name('admin.lembaga');
+    Route::get('/admin/lembaga', [AdminController::class, 'lembagaIndex'])->name('admin.lembaga.index');
     Route::get('/admin/lembaga/edit', [AdminController::class, 'lembagaEdit'])->name('admin.lembaga.edit');
     Route::post('/admin/lembaga/edit', [AdminController::class, 'updateLembaga'])->name('admin.lembaga.update');
+    Route::post('/admin/lembaga/import-preview', [AdminController::class, 'lembagaImportPreview'])->name('admin.lembaga.import.preview');
+    Route::post('/admin/lembaga/import-save', [AdminController::class, 'lembagaImportSave'])->name('admin.lembaga.import.save');
+
+    // ─── Admin Kelas ───────────────────────────────────────────
+    Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.kelas.index');
+    Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
+    Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
 
     // ─── Rapor (Admin) ────────────────────────────────────────
     Route::get('/admin/rapor', [RaporController::class, 'index'])->name('rapor.index');

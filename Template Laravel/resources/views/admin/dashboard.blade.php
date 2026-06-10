@@ -108,6 +108,7 @@
             flex-shrink: 0;
         }
 
+        /* Nav Menu */
         .nav-menu {
             flex: 1;
             padding: 0;
@@ -229,7 +230,6 @@
         }
 
         /* ═══ STAT CARDS ═══ */
-
         .stat-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -282,7 +282,6 @@
         }
 
         /* ═══ TABLE ═══ */
-
         .table-wrapper {
             background: #fff;
             border-radius: 10px;
@@ -380,7 +379,6 @@
                 <span></span>
                 <span></span>
             </button>
-
             <span class="sidebar-brand">E-Rapor</span>
         </div>
 
@@ -418,30 +416,31 @@
                 </div>
             </div>
 
-            <!-- Data Siswa -->
-            <div class="nav-section">
-                <div class="nav-section-title"
-                    onclick="this.classList.toggle('open'); document.getElementById('c-siswa').classList.toggle('open');">
+               
+        <!-- Data Siswa -->
+<div class="nav-section">
+    <div class="nav-section-title"
+        onclick="this.classList.toggle('open'); document.getElementById('c-siswa').classList.toggle('open');">
 
-                    <svg class="arrow" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2.5">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19 9l-7 7-7-7"/>
-                    </svg>
+        <svg class="arrow" fill="none" viewBox="0 0 24 24"
+            stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19 9l-7 7-7-7"/>
+        </svg>
 
-                    Data Siswa
-                </div>
+        Data Siswa
+    </div>
 
-                <div class="nav-children" id="c-siswa">
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item">
-                        Daftar Siswa
-                    </a>
+    <div class="nav-children" id="c-siswa">
+        <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">
+            Daftar Siswa
+        </a>
 
-                    <a href="{{ route('admin.siswa') }}#tambah" class="nav-child-item">
-                        Tambah Siswa
-                    </a>
-                </div>
-            </div>
+        <a href="{{ route('admin.siswa.index') }}#tambah" class="nav-child-item">
+            Tambah Siswa
+        </a>
+    </div>
+</div>
 
             <!-- Data Kelas -->
             <div class="nav-section">
@@ -458,10 +457,17 @@
                 </div>
 
                 <div class="nav-children" id="c-kelas">
-                    <div class="nav-child-item">Daftar Kelas</div>
-                    <div class="nav-child-item">Tambah Kelas</div>
+                    <a href="{{ route('admin.kelas.index') }}" class="nav-child-item">
+                        Daftar Kelas
+                    </a>
+
+                    <a href="{{ route('admin.kelas.index') }}#tambah" class="nav-child-item">
+                        Tambah Kelas
+                    </a>
                 </div>
+            </div>            
             </div>
+            
 
             <!-- Data Guru -->
             <div class="nav-section">
@@ -482,6 +488,11 @@
                     <div class="nav-child-item">Tambah Guru</div>
                 </div>
             </div>
+            <div class="nav-children" id="c-guru">
+                <span class="nav-child-item">Daftar Guru</span>
+                <span class="nav-child-item">Tambah Guru</span>
+            </div>
+        </div>
 
             <!-- Mata Pelajaran -->
             <div class="nav-section">
@@ -502,6 +513,11 @@
                     <div class="nav-child-item">Tambah Mapel</div>
                 </div>
             </div>
+            <div class="nav-children" id="c-mapel">
+                <span class="nav-child-item">Daftar Mapel</span>
+                <span class="nav-child-item">Tambah Mapel</span>
+            </div>
+        </div>
 
             <!-- Lembaga -->
             <div class="nav-section">
@@ -518,15 +534,11 @@
                 </div>
 
                 <div class="nav-children open" id="c-lembaga">
-                    <a href="{{ route('admin.lembaga') }}" class="nav-child-item">
-                        Profil Lembaga
-                    </a>
-
-                    <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">
-                        Edit Lembaga
-                    </a>
+                    <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>
+                    <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item">Edit Lembaga</a>
                 </div>
             </div>
+        </div>
 
             <!-- Dashboard -->
             <a href="{{ route('admin.dashboard') }}" class="nav-item-single active">
@@ -657,7 +669,6 @@
                         <th>Jumlah Siswa</th>
                     </tr>
                 </thead>
-
                 <tbody>
 
                     @foreach($kelas as $i => $k)
@@ -708,7 +719,6 @@
                         <th>Status</th>
                     </tr>
                 </thead>
-
                 <tbody>
 
                     @foreach($guruList as $i => $g)
