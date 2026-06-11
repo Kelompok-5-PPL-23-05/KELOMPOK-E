@@ -69,7 +69,7 @@ class RaporController extends Controller
         // Simpan file PDF ke storage/app/public/arsip_rapor
         Storage::disk('public')->put($filePath, $pdf->output());
 
-        // Simpan data rapor ke database
+        // Simpan data rapor ke database sebagai riwayat/arsip
         Rapor::create([
             'nilai_akhir' => round($rataRata),
             'Siswaid_siswa' => $siswa->id_siswa,
@@ -77,8 +77,8 @@ class RaporController extends Controller
             'mata_pelajaran' => 'Rapor'
         ]);
 
-        return redirect()->route('rapor.arsip')
-            ->with('success', 'Rapor atas nama ' . $siswa->nama_siswa . ' berhasil di-generate dan diarsipkan!');
+        // Kembalikan file PDF langsung sebagai response unduhan (Download otomatis)
+        return $pdf->download($fileName);
     }
 
     /**
