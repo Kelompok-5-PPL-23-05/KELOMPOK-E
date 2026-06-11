@@ -5,6 +5,7 @@
     <title>Rapor {{ $siswa->nama_siswa }}</title>
     <style>
         body { font-family: sans-serif; font-size: 12px; color: #000; }
+        @page { margin: 2cm; size: A4 portrait; }
         .page-break { page-break-after: always; }
         .center { text-align: center; }
         .bold { font-weight: bold; }
