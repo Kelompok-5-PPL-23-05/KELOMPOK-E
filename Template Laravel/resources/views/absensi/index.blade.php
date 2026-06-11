@@ -548,6 +548,22 @@
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
 
+                @php
+                    $hasExistingData = false;
+                    foreach($siswa as $s) {
+                        if(\App\Models\Absensi::where('Siswaid_siswa', $s->id_siswa)->exists()) {
+                            $hasExistingData = true;
+                            break;
+                        }
+                    }
+                @endphp
+
+                @if($hasExistingData)
+                    <div style="background:#e8f4fd;border:1px solid #b8daff;color:#004085;border-radius:8px;padding:12px 20px;margin-bottom:20px;font-size:13px;">
+                        <strong>ℹ️ Info:</strong> Data absensi untuk kelas ini sudah ada. Anda dapat mengedit angka pada kolom di bawah lalu klik tombol "Perbarui Absensi" untuk memperbaiki kesalahan.
+                    </div>
+                @endif
+
                 {{-- Header kolom --}}
                 <div class="absensi-header">
                     <span>Nama Siswa</span>
@@ -625,7 +641,7 @@
                 @endforeach
 
                 <div class="submit-wrapper">
-                    <button type="submit" class="btn-submit">Simpan Absensi</button>
+                    <button type="submit" class="btn-submit">{{ isset($hasExistingData) && $hasExistingData ? 'Perbarui Absensi' : 'Simpan Absensi' }}</button>
                 </div>
             </form>
 
