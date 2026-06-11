@@ -57,6 +57,7 @@
         .btn-filter { padding: 10px 22px; border-radius: 8px; border: none; font-size: 14px; font-weight: 600; font-family: 'Poppins', sans-serif; cursor: pointer; transition: all 0.2s; white-space: nowrap; background: linear-gradient(135deg, #4a6fa5, #6c8bbf); color: #fff; box-shadow: 0 4px 12px rgba(74,111,165,0.3); }
         .btn-filter:hover { background: linear-gradient(135deg, #3a5a90, #5a7aaf); transform: translateY(-1px); }
         .info-box { background: #ebf8ff; border-left: 4px solid #4299e1; border-radius: 8px; padding: 12px 16px; font-size: 13.5px; color: #2b6cb0; margin: 16px 0; }
+        .info-box a { color: #2b6cb0; font-weight: 600; }
         .stats-row { display: flex; gap: 16px; margin-bottom: 20px; flex-wrap: wrap; }
         .stat-chip { display: flex; align-items: center; gap: 8px; background: #f7fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 10px 18px; font-size: 13px; font-weight: 600; color: #2d3748; }
         .stat-chip .stat-num { font-size: 18px; font-weight: 700; color: #4a6fa5; }
@@ -217,7 +218,7 @@
             @if (!$mataPelajaran->count())
                 <div class="info-box" style="margin-top: 16px;">
                     ⚠️ Anda belum memilih mata pelajaran yang diampu.
-                    <a href="{{ route('dashboard.select-mapel') }}" style="color:#2b6cb0; font-weight:600;">Pilih sekarang →</a>
+                    <a href="{{ route('dashboard.select-mapel') }}">Pilih sekarang →</a>
                 </div>
             @endif
         </div>

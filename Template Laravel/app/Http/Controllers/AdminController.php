@@ -89,51 +89,89 @@ class AdminController extends Controller
         return back()->with('success', 'Siswa berhasil ditambahkan.');
     }
     
+    /**
+     * Update Data Siswa
+     */
     public function siswaUpdate(Request $request, $id)
     {
         $request->validate([
-            'nama_siswa'    => 'required|string|max:255',
-            'Kelasid_kelas' => 'required|exists:kelas,id_kelas',
+            'nama_siswa'     => 'required|string|max:255',
+            'Kelasid_kelas'  => 'required|exists:kelas,id_kelas',
+            'nisn'           => 'nullable|string|max:20',
+            'nis'            => 'nullable|string|max:20',
+            'tempat_lahir'   => 'nullable|string|max:100',
+            'tanggal_lahir'  => 'nullable|date',
+            'jenis_kelamin'  => 'nullable|in:L,P',
+            'agama'          => 'nullable|string|max:50',
+            'anak_ke'        => 'nullable|integer|min:1',
+            'telepon'        => 'nullable|string|max:20',
+            'alamat'         => 'nullable|string',
+            'nomor_gawai'    => 'nullable|string|max:20',
+            'tanggal_masuk'  => 'nullable|date',
+            'kelas_masuk'    => 'nullable|string|max:10',
+            'sebagai'        => 'nullable|string|max:50',
+            'nama_ayah'      => 'nullable|string|max:100',
+            'nama_ibu'       => 'nullable|string|max:100',
+            'pekerjaan_ayah' => 'nullable|string|max:100',
+            'pekerjaan_ibu'  => 'nullable|string|max:100',
+            'nama_wali'      => 'nullable|string|max:100',
+            'pekerjaan_wali' => 'nullable|string|max:100',
+        ], [
+            'nama_siswa.required'    => 'Nama siswa wajib diisi.',
+            'Kelasid_kelas.required' => 'Kelas wajib dipilih.',
+            'Kelasid_kelas.exists'   => 'Kelas tidak valid.',
         ]);
 
         $siswa = Siswa::findOrFail($id);
+
         $siswa->update([
-            'nama_siswa'    => $request->nama_siswa,
-            'Kelasid_kelas' => $request->Kelasid_kelas,
+            'nama_siswa'     => $request->nama_siswa,
+            'Kelasid_kelas'  => $request->Kelasid_kelas,
+            'nisn'           => $request->nisn,
+            'nis'            => $request->nis,
+            'tempat_lahir'   => $request->tempat_lahir,
+            'tanggal_lahir'  => $request->tanggal_lahir,
+            'jenis_kelamin'  => $request->jenis_kelamin,
+            'agama'          => $request->agama,
+            'anak_ke'        => $request->anak_ke,
+            'telepon'        => $request->telepon,
+            'alamat'         => $request->alamat,
+            'nomor_gawai'    => $request->nomor_gawai,
+            'tanggal_masuk'  => $request->tanggal_masuk,
+            'kelas_masuk'    => $request->kelas_masuk,
+            'sebagai'        => $request->sebagai,
+            'nama_ayah'      => $request->nama_ayah,
+            'nama_ibu'       => $request->nama_ibu,
+            'pekerjaan_ayah' => $request->pekerjaan_ayah,
+            'pekerjaan_ibu'  => $request->pekerjaan_ibu,
+            'nama_wali'      => $request->nama_wali,
+            'pekerjaan_wali' => $request->pekerjaan_wali,
         ]);
 
         return back()->with('success', 'Data siswa berhasil diperbarui.');
     }
 
-    
-
     /**
-     * Validasi file, mapping nama kelas, dan tampilkan Preview
+     * Validasi Format dan Tampilkan Preview Data Siswa
      */
     public function siswaImportPreview(Request $request)
     {
+        if (Auth::user()->role !== 'admin') abort(403);
+
         $request->validate([
             'file_master' => 'required|mimes:csv,txt|max:2048',
-        ], [
-            'file_master.mimes' => 'Format file wajib CSV.'
         ]);
 
         $file = $request->file('file_master');
         $data = array_map('str_getcsv', file($file->getRealPath()));
-        $semuaKelas = Kelas::pluck('id_kelas', 'nama_kelas')->toArray();
         $previewData = [];
 
         foreach ($data as $index => $row) {
             if ($index === 0) continue;
-            $nama_siswa = trim($row[0] ?? '');
-            $nama_kelas = trim($row[1] ?? '');
-            if (empty($nama_siswa)) continue;
-            $id_kelas = $semuaKelas[$nama_kelas] ?? null;
             $previewData[] = [
-                'nama_siswa' => $nama_siswa,
-                'nama_kelas' => $nama_kelas,
-                'id_kelas'   => $id_kelas,
-                'status'     => $id_kelas ? 'Valid' : 'Kelas Tidak Ditemukan'
+                'nama_siswa' => trim($row[0] ?? ''),
+                'id_kelas'   => trim($row[1] ?? ''),
+                'status'     => (!empty($row[0]) && !empty($row[1])) ? 'Valid' : 'Data Tidak Lengkap'
             ];
         }
 
@@ -142,7 +180,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Simpan Data ke Sistem setelah di-preview
+     * Simpan Data Siswa ke Sistem setelah di-preview
      */
     public function siswaImportSave(Request $request)
     {
@@ -168,7 +206,7 @@ class AdminController extends Controller
     }
 
     /**
-     * Fungsi dasar untuk menghapus siswa
+     * Fungsi untuk menghapus siswa
      */
     public function siswaDestroy($id)
     {
@@ -211,6 +249,18 @@ class AdminController extends Controller
     }
 
     /**
+     * Menampilkan halaman Data Lembaga
+     */
+    public function lembaga()
+    {
+        if (Auth::user()->role !== 'admin') abort(403);
+
+        $lembaga = Lembaga::first();
+
+        return view('admin.lembaga', compact('lembaga'));
+    }
+
+    /**
      * Menampilkan halaman Data Lembaga dan Form Upload
      */
     public function lembagaIndex()
@@ -219,6 +269,9 @@ class AdminController extends Controller
         return view('admin.lembaga.index', compact('lembaga'));
     }
 
+    /**
+     * Menampilkan halaman Edit Lembaga
+     */
     public function lembagaEdit()
     {
         if (Auth::user()->role !== 'admin') abort(403);
@@ -226,6 +279,9 @@ class AdminController extends Controller
         return view('admin.lembaga-edit', compact('lembaga'));
     }
 
+    /**
+     * Update Data Lembaga
+     */
     public function updateLembaga(Request $request)
     {
         if (Auth::user()->role !== 'admin') abort(403);
@@ -287,11 +343,15 @@ class AdminController extends Controller
     }
 
     /**
-     * Simpan Data Lembaga ke Sistem
+     * Simpan Data Lembaga ke Sistem setelah di-preview
      */
     public function lembagaImportSave(Request $request)
     {
         $previewData = session('import_lembaga_data');
+
+        if (!$previewData) {
+            return redirect()->route('admin.lembaga.index')->with('error', 'Sesi upload kedaluwarsa.');
+        }
 
         foreach ($previewData as $row) {
             if ($row['status'] === 'Valid') {

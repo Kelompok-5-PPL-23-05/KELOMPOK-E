@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Guru;
@@ -18,9 +19,11 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $user = Auth::user();
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
+        $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
 
         // Ambil data guru yang login
+        $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
         // Ambil semua kelas dan mata pelajaran dari DB untuk statistik
@@ -99,7 +102,7 @@ class DashboardController extends Controller
             ? $guru->mataPelajaran
             : MataPelajaran::orderBy('nama_mapel')->get();
 
-        // Filter
+        // Filter dari query string (?kelas_id=x&mapel_id=y)
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 

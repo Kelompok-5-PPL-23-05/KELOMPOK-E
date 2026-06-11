@@ -446,6 +446,18 @@
             background-color: #eef2f6;
             color: #1a1a2e;
         }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1a1a2e;
+        }
     </style>
 </head>
 <body>
@@ -591,10 +603,8 @@
                         <p>Tidak ada mata pelajaran tersedia.</p>
                     </div>
                 @else
-                    <div class="form-group" style="margin-bottom: 24px;">
-                        <label for="mata_pelajaran_ids" style="display:block; font-size:14px; font-weight:600; margin-bottom:10px; color:#1a1a2e;">
-                            Pilih Mata Pelajaran (Dropdown)
-                        </label>
+                    <div class="form-group">
+                        <label for="mata_pelajaran_ids">Pilih Mata Pelajaran (Dropdown)</label>
                         <select 
                             name="mata_pelajaran_ids[]" 
                             id="mata_pelajaran_ids" 

@@ -11,11 +11,7 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
     
     protected $table = 'users';
-    /**
-     * Primary key sesuai ERD
-     */
     protected $primaryKey = 'id_user';
-
     /**
      * The attributes that are mass assignable.
      */
@@ -41,6 +37,20 @@ class User extends Authenticatable
     // {
     //     return 'username';
     // }
+
+    public function getAuthIdentifier()
+    {
+        return $this->id_user;
+    }
+
+    /**
+     * Gunakan 'username' sebagai field untuk Auth::attempt()
+     */
+    public function getAuthPassword(): string
+    {
+        return $this->password;
+    }
+
 
     /**
      * Get the attributes that should be cast.

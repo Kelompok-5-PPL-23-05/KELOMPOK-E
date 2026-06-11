@@ -6,6 +6,7 @@ use App\Models\Nilai;
 use App\Models\Siswa;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
+use App\Models\Rapor;
 use Illuminate\Http\Request;
 
 class NilaiController extends Controller
@@ -16,22 +17,12 @@ class NilaiController extends Controller
         return view('nilai.index', compact('data'));
     }
 
-    /**
-     * Simpan nilai seluruh siswa dalam satu kelas.
-     * Form dikirim dari dashboard guru (/dashboard?kelas_id=x&mapel_id=y).
-     *
-     * Input:
-     *   kelas_id          – id kelas terpilih
-     *   mapel_id          – id mata pelajaran terpilih
-     *   nilai[n][siswa_id]  – primary key siswa
-     *   nilai[n][angka]     – angka nilai (1-100)
-     *   nilai[n][catatan]   – catatan opsional
-     */
     public function store(Request $request)
     {
         $request->validate([
             'kelas_id'            => 'required|exists:kelas,id_kelas',
             'mapel_id'            => 'nullable|exists:mata_pelajaran,id_mapel',
+            'jenis_nilai'         => 'required|in:UTS,UAS,Tugas',
             'nilai'               => 'required|array|min:1',
             'nilai.*.siswa_id'    => 'required|exists:siswa,id_siswa',
             'nilai.*.angka'       => 'required|integer|min:1|max:100',
@@ -39,36 +30,82 @@ class NilaiController extends Controller
         ], [
             'kelas_id.required'        => 'Kelas wajib dipilih.',
             'kelas_id.exists'          => 'Kelas tidak valid.',
+            'jenis_nilai.required'     => 'Jenis nilai wajib dipilih.',
             'nilai.*.angka.required'   => 'Semua nilai siswa wajib diisi.',
             'nilai.*.angka.min'        => 'Nilai minimal adalah 1.',
             'nilai.*.angka.max'        => 'Nilai maksimal adalah 100.',
         ]);
 
-        // Resolve nama kelas & mata pelajaran untuk disimpan sebagai string
-        $kelas  = Kelas::find($request->kelas_id);
-        $mapel  = $request->mapel_id
-            ? MataPelajaran::find($request->mapel_id)
-            : null;
+        $kelas = Kelas::find($request->kelas_id);
+        $mapel = $request->mapel_id ? MataPelajaran::find($request->mapel_id) : null;
 
         foreach ($request->nilai as $entry) {
             $siswa = Siswa::find($entry['siswa_id']);
 
             Nilai::create([
-                'nama_siswa'    => $siswa->nama_siswa,
-                'kelas'         => $kelas->nama_kelas,
-                'mata_pelajaran'=> $mapel ? $mapel->nama_mapel : '-',
-                'nilai'         => $entry['angka'],
-                'catatan'       => $entry['catatan'] ?? null,
+                'nama_siswa'     => $siswa->nama_siswa,
+                'kelas'          => $kelas->nama_kelas,
+                'mata_pelajaran' => $mapel ? $mapel->nama_mapel : '-',
+                'nilai'          => $entry['angka'],
+                'catatan'        => $entry['catatan'] ?? null,
+                'jenis_nilai'    => $request->jenis_nilai,
             ]);
+
+            if ($mapel) {
+                $namaMapel  = $mapel->nama_mapel;
+                $namaSiswa  = $siswa->nama_siswa;
+
+                $nilaiUTS   = Nilai::where('nama_siswa', $namaSiswa)
+                                   ->where('mata_pelajaran', $namaMapel)
+                                   ->where('jenis_nilai', 'UTS')->latest()->first();
+                $nilaiUAS   = Nilai::where('nama_siswa', $namaSiswa)
+                                   ->where('mata_pelajaran', $namaMapel)
+                                   ->where('jenis_nilai', 'UAS')->latest()->first();
+                $nilaiTugas = Nilai::where('nama_siswa', $namaSiswa)
+                                   ->where('mata_pelajaran', $namaMapel)
+                                   ->where('jenis_nilai', 'Tugas')->latest()->first();
+
+                if ($nilaiUTS && $nilaiUAS && $nilaiTugas) {
+                    $nilaiAkhir = ($nilaiUTS->nilai * 0.30)
+                                + ($nilaiUAS->nilai * 0.30)
+                                + ($nilaiTugas->nilai * 0.40);
+
+                    Rapor::updateOrCreate(
+                        [
+                            'Siswaid_siswa'  => $siswa->id_siswa,
+                            'mata_pelajaran' => $namaMapel,
+                        ],
+                        ['nilai_akhir' => round($nilaiAkhir, 2)]
+                    );
+                }
+            }
         }
 
-        // Redirect kembali ke dashboard dengan filter kelas & mapel yang sama
         return redirect()
             ->route('dashboard', [
                 'kelas_id' => $request->kelas_id,
                 'mapel_id' => $request->mapel_id,
             ])
             ->with('success', 'Nilai berhasil disimpan!');
+    }
+
+    public function nilaiAkhir(Request $request)
+    {
+        $kelasList     = Kelas::orderBy('nama_kelas')->get();
+        $selectedKelas = $request->get('kelas_id');
+
+        $rapor = collect();
+        if ($selectedKelas) {
+            $siswaIds = Siswa::where('Kelasid_kelas', $selectedKelas)
+                             ->pluck('id_siswa');
+
+            $rapor = Rapor::whereIn('Siswaid_siswa', $siswaIds)
+                          ->with('siswa')
+                          ->get()
+                          ->groupBy('Siswaid_siswa');
+        }
+
+        return view('nilai.akhir', compact('kelasList', 'selectedKelas', 'rapor'));
     }
 
     public function create(){}

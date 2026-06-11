@@ -8,7 +8,7 @@ class Lembaga extends Model
 {
     protected $table = 'lembaga';
     protected $primaryKey = 'id';
-
+    
     protected $fillable = [
         'nama_lembaga',
         'alamat',

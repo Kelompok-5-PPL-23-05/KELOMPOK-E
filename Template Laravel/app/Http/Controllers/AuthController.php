@@ -18,6 +18,7 @@ class AuthController extends Controller
             }
             return redirect()->route('dashboard');
         }
+
         return view('auth.login');
     }
 
@@ -63,6 +64,7 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }

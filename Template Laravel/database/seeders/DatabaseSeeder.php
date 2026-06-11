@@ -62,17 +62,17 @@ class DatabaseSeeder extends Seeder
         // 7. Buat Data Siswa — masing-masing di kelas berbeda
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Agus Setiawan'],
-            ['Kelasid_kelas' => $kelasA3->id_kelas]   // Paket A Kelas 3
+            ['Kelasid_kelas' => $kelasA3->id_kelas]
         );
 
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Budi Santoso'],
-            ['Kelasid_kelas' => $kelasB1->id_kelas]   // Paket B Kelas 1
+            ['Kelasid_kelas' => $kelasB1->id_kelas]
         );
 
         Siswa::firstOrCreate(
             ['nama_siswa' => 'Citra Lestari'],
-            ['Kelasid_kelas' => $kelasC2->id_kelas]   // Paket C Kelas 2
+            ['Kelasid_kelas' => $kelasC2->id_kelas]
         );
     }
 }
