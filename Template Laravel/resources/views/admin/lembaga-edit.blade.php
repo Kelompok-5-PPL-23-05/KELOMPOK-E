@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background-color: #a8b8cc; min-height: 100vh; display: flex; color: #000; }
+        body { font-family: 'Poppins', sans-serif; background-color: #a8b8cc; height: 100vh; overflow: hidden; display: flex; color: #000; }
         .sidebar { width: 250px; min-height: 100vh; background-color: #eef2f6; display: flex; flex-direction: column; flex-shrink: 0; border-right: 1px solid #d0d8e4; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
         .sidebar-header { display: flex; align-items: center; gap: 16px; padding: 40px 24px 20px; }
         .hamburger-btn { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; padding: 0; }
@@ -90,8 +90,8 @@
                     Data Siswa
                 </div>
                 <div class="nav-children" id="c-siswa">
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item">Daftar Siswa</a>
-                    <a href="{{ route('admin.siswa') }}#tambah" class="nav-child-item">Tambah Siswa</a>
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Daftar Siswa</a>
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-child-item">Tambah Siswa</a>
                 </div>
             </div>
             <div class="nav-section">
@@ -131,7 +131,7 @@
                     Lembaga
                 </div>
                 <div class="nav-children open" id="c-lembaga">
-                    <a href="{{ route('admin.lembaga') }}" class="nav-child-item">Profil Lembaga</a>
+                    <a href="{{ route('admin.lembaga.index') }}" class="nav-child-item">Profil Lembaga</a>
                     <a href="{{ route('admin.lembaga.edit') }}" class="nav-child-item active">Edit Lembaga</a>
                 </div>
             </div>
@@ -195,7 +195,7 @@
                         value="{{ old('kepala_lembaga', $lembaga->kepala_lembaga ?? '') }}" required>
                 </div>
                 <div class="form-actions">
-                    <a href="{{ route('admin.lembaga') }}" class="btn btn-cancel">Batal</a>
+                    <a href="{{ route('admin.lembaga.index') }}" class="btn btn-cancel">Batal</a>
                     <button type="submit" class="btn btn-primary">
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>

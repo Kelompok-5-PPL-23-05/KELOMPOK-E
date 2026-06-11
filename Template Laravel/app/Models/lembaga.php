@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Lembaga extends Model
 {
     protected $table = 'lembaga';
-
-    protected $fillable = [
+    protected $primaryKey = 'id';
+        protected $fillable = [
         'nama_lembaga',
-        'alamat',
+        'alamat', 
         'no_telepon',
         'email',
         'kepala_lembaga',

@@ -21,7 +21,15 @@ class DatabaseSeeder extends Seeder
         User::firstOrCreate(
             ['username' => 'admin1'],
             [
+<<<<<<< HEAD
+<<<<<<< HEAD
                 'password' => Hash::make('admin123'),
+=======
+                'password' => 'admin123',
+>>>>>>> 6e3607fcc2cb29df7a40d006dc6b79cc9a0e21a1
+=======
+                'password' => Hash::make('admin123'),
+>>>>>>> origin/main
                 'role' => 'admin'
             ]
         );
@@ -30,43 +38,69 @@ class DatabaseSeeder extends Seeder
         $userGuru = User::firstOrCreate(
             ['username' => 'guru1'],
             [
+<<<<<<< HEAD
+<<<<<<< HEAD
                 'password' => Hash::make('guru123'),
+=======
+                'password' => 'guru123',
+>>>>>>> 6e3607fcc2cb29df7a40d006dc6b79cc9a0e21a1
+=======
+                'password' => Hash::make('guru123'),
+>>>>>>> origin/main
                 'role' => 'guru'
             ]
         );
 
-        // 2. Buat Data Guru terkait 
+        // 3. Buat Data Guru terkait
+<<<<<<< HEAD
+        $guru = Guru::firstOrCreate(
+=======
         Guru::firstOrCreate(
+>>>>>>> origin/main
             ['Userid_user' => $userGuru->id_user],
             [
                 'nama_guru' => 'Bapak Guru Satu'
             ]
         );
 
-        // 3. Buat Data Kelas
+        // 4. Buat Data Kelas
         $kelasA3 = Kelas::firstOrCreate(['nama_kelas' => 'Paket A Kelas 3']);
         $kelasB1 = Kelas::firstOrCreate(['nama_kelas' => 'Paket B Kelas 1']);
         $kelasC2 = Kelas::firstOrCreate(['nama_kelas' => 'Paket C Kelas 2']);
 
-        // 4. Buat Data Mata Pelajaran
+        // 5. Buat Data Mata Pelajaran
+<<<<<<< HEAD
+        $bahasaIndonesia = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
+        $bahasaInggris   = MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
+        $matematika      = MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
+
+        // 6. Attach mata pelajaran ke guru (relasi many-to-many)
+        $guru->mataPelajaran()->syncWithoutDetaching([
+            $bahasaIndonesia->id_mapel,
+            $matematika->id_mapel
+        ]);
+
+        // 7. Buat Data Siswa — masing-masing di kelas berbeda
+=======
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Indonesia']);
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Bahasa Inggris']);
         MataPelajaran::firstOrCreate(['nama_mapel' => 'Matematika']);
 
-        // 5. Buat Data Siswa untuk Kelas 'Paket A Kelas 3'
-        $siswaData = [
-            'Agus Setiawan',
-            'Budi Santoso',
-            'Citra Lestari',
-        ];
+        // 6. Buat Data Siswa
+>>>>>>> origin/main
+        Siswa::firstOrCreate(
+            ['nama_siswa' => 'Agus Setiawan'],
+            ['Kelasid_kelas' => $kelasA3->id_kelas]
+        );
 
-        foreach ($siswaData as $nama) {
-            Siswa::firstOrCreate(
-                ['nama_siswa' => $nama],
-                [
-                    'Kelasid_kelas' => $kelasA3->id_kelas
-                ]
-            );
-        }
+        Siswa::firstOrCreate(
+            ['nama_siswa' => 'Budi Santoso'],
+            ['Kelasid_kelas' => $kelasB1->id_kelas]
+        );
+
+        Siswa::firstOrCreate(
+            ['nama_siswa' => 'Citra Lestari'],
+            ['Kelasid_kelas' => $kelasC2->id_kelas]
+        );
     }
 }

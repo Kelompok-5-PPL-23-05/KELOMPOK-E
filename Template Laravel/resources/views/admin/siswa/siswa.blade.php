@@ -13,7 +13,8 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #a8b8cc;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
             display: flex;
             color: #000;
         }
@@ -177,7 +178,8 @@
         .modal-overlay.show { display: flex; }
         .modal {
             background: #fff; border-radius: 12px; padding: 32px;
-            width: 100%; max-width: 440px;
+            width: 100%; max-width: 620px;
+            max-height: 90vh; overflow-y: auto;
             box-shadow: 0 16px 40px rgba(0,0,0,0.12);
         }
         .modal-title {
@@ -253,8 +255,8 @@
                     Data Siswa
                 </div>
                 <div class="nav-children open" id="c-siswa">
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item active">Daftar Siswa</a>
-                    <a href="{{ route('admin.siswa') }}" class="nav-child-item" onclick="event.preventDefault(); document.getElementById('modal-tambah').classList.add('show')">Tambah Siswa</a>
+                    <a href="{{ route('admin.siswa.index') }}" class="nav-child-item active">Daftar Siswa</a>
+                    <a href="{{ route('admin.siswa.create') }}" class="nav-child-item" onclick="event.preventDefault(); document.getElementById('modal-tambah').classList.add('show')">Tambah Siswa</a>
                 </div>
             </div>
 
@@ -402,6 +404,8 @@
             <div class="modal-title">Tambah Siswa Baru</div>
             <form method="POST" action="{{ route('admin.siswa.store') }}">
                 @csrf
+
+                <!-- Data Utama -->
                 <div class="form-group">
                     <label>Nama Siswa <span class="required">*</span></label>
                     <input type="text" name="nama_siswa" class="form-control"
@@ -420,6 +424,114 @@
                         @endforeach
                     </select>
                 </div>
+
+                <!-- Identitas -->
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>NISN</label>
+                        <input type="text" name="nisn" class="form-control" placeholder="Nomor Induk Siswa Nasional" value="{{ old('nisn') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>NIS</label>
+                        <input type="text" name="nis" class="form-control" placeholder="Nomor Induk Sekolah" value="{{ old('nis') }}">
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Tempat Lahir</label>
+                        <input type="text" name="tempat_lahir" class="form-control" placeholder="Kota" value="{{ old('tempat_lahir') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Tanggal Lahir</label>
+                        <input type="date" name="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}">
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Jenis Kelamin</label>
+                        <select name="jenis_kelamin" class="form-select">
+                            <option value="">— Pilih —</option>
+                            <option value="L" {{ old('jenis_kelamin') === 'L' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="P" {{ old('jenis_kelamin') === 'P' ? 'selected' : '' }}>Perempuan</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Agama</label>
+                        <input type="text" name="agama" class="form-control" placeholder="Contoh: Islam" value="{{ old('agama') }}">
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Anak ke</label>
+                        <input type="number" name="anak_ke" class="form-control" min="1" placeholder="1" value="{{ old('anak_ke') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Telepon</label>
+                        <input type="text" name="telepon" class="form-control" placeholder="08xxxxxxxxxx" value="{{ old('telepon') }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Alamat</label>
+                    <input type="text" name="alamat" class="form-control" placeholder="Alamat lengkap" value="{{ old('alamat') }}">
+                </div>
+                <div class="form-group">
+                    <label>Nomor Gawai</label>
+                    <input type="text" name="nomor_gawai" class="form-control" placeholder="Nomor HP/WA" value="{{ old('nomor_gawai') }}">
+                </div>
+
+                <!-- Penerimaan -->
+                <div style="margin: 4px 0 10px; font-size:13px; font-weight:600; color:#4a6fa5;">Diterima di Sekolah</div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Kelas Masuk</label>
+                        <input type="text" name="kelas_masuk" class="form-control" placeholder="Contoh: 7" value="{{ old('kelas_masuk') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Tanggal Masuk</label>
+                        <input type="date" name="tanggal_masuk" class="form-control" value="{{ old('tanggal_masuk') }}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Sebagai</label>
+                    <input type="text" name="sebagai" class="form-control" placeholder="Contoh: Siswa Baru / Pindahan" value="{{ old('sebagai') }}">
+                </div>
+
+                <!-- Orang Tua -->
+                <div style="margin: 4px 0 10px; font-size:13px; font-weight:600; color:#4a6fa5;">Orang Tua</div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Nama Ayah</label>
+                        <input type="text" name="nama_ayah" class="form-control" placeholder="Nama ayah" value="{{ old('nama_ayah') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Pekerjaan Ayah</label>
+                        <input type="text" name="pekerjaan_ayah" class="form-control" placeholder="Pekerjaan" value="{{ old('pekerjaan_ayah') }}">
+                    </div>
+                </div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Nama Ibu</label>
+                        <input type="text" name="nama_ibu" class="form-control" placeholder="Nama ibu" value="{{ old('nama_ibu') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Pekerjaan Ibu</label>
+                        <input type="text" name="pekerjaan_ibu" class="form-control" placeholder="Pekerjaan" value="{{ old('pekerjaan_ibu') }}">
+                    </div>
+                </div>
+
+                <!-- Wali -->
+                <div style="margin: 4px 0 10px; font-size:13px; font-weight:600; color:#4a6fa5;">Wali Peserta Didik</div>
+                <div style="display:flex; gap:12px;">
+                    <div class="form-group" style="flex:1;">
+                        <label>Nama Wali</label>
+                        <input type="text" name="nama_wali" class="form-control" placeholder="Nama wali" value="{{ old('nama_wali') }}">
+                    </div>
+                    <div class="form-group" style="flex:1;">
+                        <label>Pekerjaan Wali</label>
+                        <input type="text" name="pekerjaan_wali" class="form-control" placeholder="Pekerjaan" value="{{ old('pekerjaan_wali') }}">
+                    </div>
+                </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn btn-cancel"
                         onclick="document.getElementById('modal-tambah').classList.remove('show')">
