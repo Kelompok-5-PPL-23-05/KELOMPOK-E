@@ -37,15 +37,15 @@ class RaporController extends Controller
      */
     public function generatePdf($id_siswa)
     {
-        $siswa = Siswa::with('kelas')->findOrFail($id_siswa);
+        // Menarik data siswa menggunakan Eager Loading untuk Kelas, Nilai, dan Absensi
+        $siswa = Siswa::with(['kelas', 'nilai.mataPelajaran', 'absensi'])
+                      ->findOrFail($id_siswa);
         
-        // Ambil nilai beserta mata pelajaran
-        $nilaiList = Nilai::with('mataPelajaran')
-            ->where('Siswaid_siswa', $id_siswa)
-            ->get();
+        // Ambil nilai beserta mata pelajaran dari relasi
+        $nilaiList = $siswa->nilai;
 
-        // Ambil absensi
-        $absensi = Absensi::where('Siswaid_siswa', $id_siswa)->first();
+        // Ambil absensi terbaru dari relasi
+        $absensi = $siswa->absensi->first();
 
         // Hitung nilai akhir (rata-rata)
         $rataRata = $nilaiList->avg('nilai_angka') ?? 0;
