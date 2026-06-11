@@ -10,6 +10,7 @@ use App\Models\Kelas;
 use App\Models\Nilai;
 use App\Models\Absensi;
 use App\Models\Rapor;
+use App\Models\Lembaga;
 
 class RaporController extends Controller
 {
@@ -38,7 +39,10 @@ class RaporController extends Controller
     public function generatePdf($id_siswa)
     {
         $siswa = Siswa::with('kelas')->findOrFail($id_siswa);
-        
+
+        // Ambil data lembaga dari database (ambil baris pertama)
+        $lembaga = Lembaga::first();
+
         // Ambil nilai beserta mata pelajaran
         $nilaiList = Nilai::with('mataPelajaran')
             ->where('Siswaid_siswa', $id_siswa)
@@ -51,11 +55,12 @@ class RaporController extends Controller
         $rataRata = $nilaiList->avg('nilai_angka') ?? 0;
 
         $data = [
-            'siswa' => $siswa,
-            'nilaiList' => $nilaiList,
-            'absensi' => $absensi,
-            'tahun_pelajaran' => '2025/2026',
-            'semester' => 1
+            'siswa'          => $siswa,
+            'lembaga'        => $lembaga,
+            'nilaiList'      => $nilaiList,
+            'absensi'        => $absensi,
+            'tahun_pelajaran'=> '2025/2026',
+            'semester'       => 1,
         ];
 
         // Load view PDF
@@ -71,10 +76,10 @@ class RaporController extends Controller
 
         // Simpan data rapor ke database
         Rapor::create([
-            'nilai_akhir' => round($rataRata),
-            'Siswaid_siswa' => $siswa->id_siswa,
-            'file_path' => $filePath,
-            'mata_pelajaran' => 'Rapor'
+            'nilai_akhir'  => round($rataRata),
+            'Siswaid_siswa'=> $siswa->id_siswa,
+            'file_path'    => $filePath,
+            'mata_pelajaran'=> 'Rapor',
         ]);
 
         return redirect()->route('rapor.arsip')

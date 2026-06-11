@@ -5,8 +5,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AdminController;
 use App\Http\Controllers\NilaiController;
+use App\Http\Controllers\RaporController;
 
 // Redirect root ke login
 Route::get('/', function () {
@@ -61,6 +61,12 @@ Route::delete('/admin/siswa/{id}', [AdminController::class, 'siswaDestroy'])->na
 Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.kelas.index');
 Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
 Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
+
+// ─── Rapor ────────────────────────────────────────────────
+Route::get('/rapor',                       [RaporController::class, 'index'])   ->name('rapor.index');
+Route::post('/rapor/generate/{id_siswa}',  [RaporController::class, 'generatePdf'])->name('rapor.generate');
+Route::get('/rapor/arsip',                 [RaporController::class, 'arsip'])   ->name('rapor.arsip');
+Route::get('/rapor/download/{id_rapor}',   [RaporController::class, 'download'])->name('rapor.download');
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

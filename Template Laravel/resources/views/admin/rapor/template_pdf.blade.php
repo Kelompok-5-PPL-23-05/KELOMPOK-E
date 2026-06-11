@@ -49,7 +49,7 @@
             <div style="border:1px dashed #000; width:150px; height:150px; line-height:150px; margin: 0 auto 20px;">[Logo Tut Wuri]</div>
         @endif
 
-        <h1 class="cover-title">LAPORAN HASIL BELAJAR PESERTA DIDIK<br>PROGRAM {{ strtoupper($siswa->kelas->nama_kelas) }} SETARA SMP</h1>
+        <h1 class="cover-title">LAPORAN HASIL BELAJAR PESERTA DIDIK<br>PROGRAM {{ strtoupper($siswa->kelas->nama_kelas ?? '') }} SETARA SMP</h1>
 
         <br><br>
 
@@ -67,9 +67,9 @@
 
         <br><br><br><br><br><br>
 
-        <h2>PKBM ALMEERA</h2>
-        <p style="color:#000;">Alamat: Jalan H.Kimah Rangkapan Jaya Baru<br>
-        Email : pkbmalmeera@gmail.com, Kode Pos 16434</p>
+        <h2>{{ strtoupper($lembaga->nama_lembaga ?? 'PKBM ALMEERA') }}</h2>
+        <p style="color:#000;">Alamat: {{ $lembaga->alamat ?? 'Jalan H.Kimah Rangkapan Jaya Baru' }}<br>
+        Email : {{ $lembaga->email ?? 'pkbmalmeera@gmail.com' }}, Telp: {{ $lembaga->no_telepon ?? '-' }}</p>
     </div>
 
     <div class="page-break"></div>
@@ -80,13 +80,11 @@
     </div>
     <br><br>
     <table class="no-border" style="width: 80%; margin: 0 auto;">
-        <tr><td class="w-30">Nama Satuan Pendidikan</td><td>: PKBM ALMEERA</td></tr>
-        <tr><td>NPSN</td><td>: P2970672</td></tr>
-        <tr><td>Alamat</td><td>: Jl. H.Kimah Rangkapan Jaya Baru</td></tr>
-        <tr><td>Kode Pos</td><td>: 16434</td></tr>
+        <tr><td class="w-30">Nama Satuan Pendidikan</td><td>: {{ strtoupper($lembaga->nama_lembaga ?? 'PKBM ALMEERA') }}</td></tr>
+        <tr><td>Alamat</td><td>: {{ $lembaga->alamat ?? '-' }}</td></tr>
         <tr><td>Website</td><td>: -</td></tr>
-        <tr><td>Email</td><td>: pkbmalmeera@gmail.com</td></tr>
-        <tr><td>Telepon</td><td>: 085385252606</td></tr>
+        <tr><td>Email</td><td>: {{ $lembaga->email ?? '-' }}</td></tr>
+        <tr><td>Telepon</td><td>: {{ $lembaga->no_telepon ?? '-' }}</td></tr>
     </table>
 
     <div class="page-break"></div>
@@ -240,9 +238,9 @@
             </td>
             <td style="border: none; vertical-align: top; padding-top: 0;">
                 Depok, {{ date('d F Y') }}<br>
-                Kepala PKBM ALMEERA
+                Kepala {{ strtoupper($lembaga->nama_lembaga ?? 'PKBM ALMEERA') }}
                 <br><br><br><br><br>
-                <b>SUHYANA, M.Pd.</b><br>
+                <b>{{ strtoupper($lembaga->kepala_lembaga ?? 'SUHYANA, M.Pd.') }}</b><br>
                 NIP.
             </td>
         </tr>
@@ -253,11 +251,11 @@
     <!-- PAGE 4: NILAI -->
     <table class="no-border header-info">
         <tr>
-            <td class="w-30">Nama Satuan Pendidikan</td><td>: PKBM ALMEERA</td>
+            <td class="w-30">Nama Satuan Pendidikan</td><td>: {{ strtoupper($lembaga->nama_lembaga ?? 'PKBM ALMEERA') }}</td>
             <td class="w-10">Fase</td><td>: B</td>
         </tr>
         <tr>
-            <td>Alamat</td><td>: Jl. H.Kimah Rangkapan Jaya Baru</td>
+            <td>Alamat</td><td>: {{ $lembaga->alamat ?? '-' }}</td>
             <td>Kelas</td><td>: {{ explode(' ', $siswa->kelas->nama_kelas)[2] ?? '7' }}</td>
         </tr>
         <tr>
@@ -340,7 +338,7 @@
             <tr><th colspan="3" class="center">Ketidakhadiran</th></tr>
             <tr><td class="w-30">Izin</td><td class="w-10 center">:</td><td>{{ $absensi->izin ?? 0 }} hari</td></tr>
             <tr><td>Sakit</td><td class="center">:</td><td>{{ $absensi->sakit ?? 0 }} hari</td></tr>
-            <tr><td>Alpa</td><td class="center">:</td><td>{{ $absensi->alpa ?? 0 }} hari</td></tr>
+            <tr><td>Alpa</td><td class="center">:</td><td>{{ $absensi->alfa ?? 0 }} hari</td></tr>
         </table>
     </div>
 
@@ -362,9 +360,9 @@
         <tr>
             <td colspan="2" style="padding-top: 30px;">
                 Mengetahui<br>
-                Kepala PKBM ALMEERA
+                Kepala {{ strtoupper($lembaga->nama_lembaga ?? 'PKBM ALMEERA') }}
                 <br><br><br><br><br>
-                <b><u>SUHYANA, M.Pd</u></b><br>
+                <b><u>{{ strtoupper($lembaga->kepala_lembaga ?? 'SUHYANA, M.Pd') }}</u></b><br>
                 NIP.
             </td>
         </tr>
