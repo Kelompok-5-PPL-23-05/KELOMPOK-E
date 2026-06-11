@@ -8,16 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('nilais', function (Blueprint $table) {
+        Schema::table('nilai', function (Blueprint $table) {
             $table->enum('jenis_nilai', ['UTS', 'UAS', 'Tugas'])
                   ->default('Tugas')
-                  ->after('nilai');
+                  ->after('nilai_angka');
         });
     }
 
     public function down(): void
     {
-        Schema::table('nilais', function (Blueprint $table) {
+        Schema::table('nilai', function (Blueprint $table) {
             $table->dropColumn('jenis_nilai');
         });
     }
