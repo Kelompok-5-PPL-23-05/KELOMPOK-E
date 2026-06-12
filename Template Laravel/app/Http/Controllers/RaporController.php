@@ -125,7 +125,7 @@ class RaporController extends Controller
         $pdf = Pdf::loadView('admin.rapor.template_pdf', $data)
             ->setPaper('A4', 'portrait');
             
-        // (Akan direturn sebagai response download pada Subtask 4)
-        return $pdf->stream('Rapor_' . str_replace(' ', '_', $siswa->nama_siswa) . '.pdf');
+        // Mengembalikan respon download agar file PDF langsung terunduh (Subtask 4)
+        return $pdf->download('Rapor_' . str_replace(' ', '_', $siswa->nama_siswa) . '.pdf');
     }
 }

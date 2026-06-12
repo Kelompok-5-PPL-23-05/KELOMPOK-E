@@ -69,5 +69,10 @@ Route::get('/nilai-akhir', [NilaiController::class, 'nilaiAkhir'])->name('nilai.
 Route::get('/admin/rapor', [RaporController::class, 'index'])->name('rapor.index');
 Route::get('/admin/rapor/arsip', [RaporController::class, 'arsip'])->name('rapor.arsip');
 Route::post('/admin/rapor/generate/{id_siswa}', [RaporController::class, 'generatePdf'])->name('rapor.generate');
-Route::get('/admin/rapor/download/{id_rapor}', [RaporController::class, 'download'])->name('rapor.download');    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/admin/rapor/download/{id_rapor}', [RaporController::class, 'download'])->name('rapor.download');
+
+// ─── Rapor Cetak Langsung (Subtask 4) ──────────────────────
+Route::get('/admin/rapor/cetak/{id_siswa}', [RaporController::class, 'cetakPdf'])->name('rapor.cetakPdf');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
