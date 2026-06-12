@@ -13,6 +13,8 @@
                 <th>No</th>
                 <th>Nama Siswa (Dari File)</th>
                 <th>Nama Kelas (Terdeteksi)</th>
+                <th>NISN</th>
+                <th>Alamat</th>
                 <th>Status Validasi Sistem</th>
             </tr>
         </thead>
@@ -22,6 +24,8 @@
                 <td>{{ $i + 1 }}</td>
                 <td>{{ $row['nama_siswa'] }}</td>
                 <td>{{ $row['nama_kelas'] }}</td>
+                <td>{{ $row['nisn'] }}</td>
+                <td>{{ $row['alamat'] }}</td>
                 <td>
                     @if($row['status'] == 'Valid')
                         <span style="color: green; font-weight: bold;">✔ Valid (Siap Simpan)</span>

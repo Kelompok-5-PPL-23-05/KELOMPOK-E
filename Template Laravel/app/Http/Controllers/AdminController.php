@@ -60,7 +60,17 @@ class AdminController extends Controller
 
         $file = $request->file('file_master');
         $path = $file->getRealPath();
-        $data = array_map('str_getcsv', file($path));
+        
+        $lines = file($path);
+        $delimiter = ',';
+        if (count($lines) > 0 && strpos($lines[0], ';') !== false) {
+            $delimiter = ';';
+        }
+        
+        $data = [];
+        foreach ($lines as $line) {
+            $data[] = str_getcsv($line, $delimiter);
+        }
 
         foreach ($data as $index => $row) {
             if ($index === 0) continue;
@@ -68,6 +78,8 @@ class AdminController extends Controller
                 Siswa::create([
                     'nama_siswa'    => trim($row[0]),
                     'Kelasid_kelas' => (int) trim($row[1]),
+                    'nisn'          => trim($row[2] ?? null),
+                    'alamat'        => trim($row[3] ?? null),
                 ]);
             }
         }
@@ -163,14 +175,25 @@ class AdminController extends Controller
         ]);
 
         $file = $request->file('file_master');
-        $data = array_map('str_getcsv', file($file->getRealPath()));
+        $lines = file($file->getRealPath());
+        $delimiter = ',';
+        if (count($lines) > 0 && strpos($lines[0], ';') !== false) {
+            $delimiter = ';';
+        }
+        
+        $data = [];
+        foreach ($lines as $line) {
+            $data[] = str_getcsv($line, $delimiter);
+        }
         $previewData = [];
 
         // Ambil data kelas dari database untuk pencocokan (case-insensitive)
         $kelasDB = \App\Models\Kelas::all();
         $kelasMap = [];
+        $kelasIdMap = [];
         foreach ($kelasDB as $k) {
             $kelasMap[strtolower(trim($k->nama_kelas))] = $k->id_kelas;
+            $kelasIdMap[$k->id_kelas] = $k->nama_kelas;
         }
 
         foreach ($data as $index => $row) {
@@ -178,24 +201,39 @@ class AdminController extends Controller
 
             $namaSiswa = trim($row[0] ?? '');
             
-            // Cari kolom mana yang berisi nama kelas yang valid
+            // Kolom ke-2 adalah kelas (bisa ID atau Nama)
+            $kelasInput = trim($row[1] ?? '');
+            $kelasInputLower = strtolower($kelasInput);
+            
             $idKelasDitemukan = null;
             $namaKelasDitemukan = '-';
 
-            // Cek kolom ke-2 (indeks 1) sampai terakhir
-            for ($i = 1; $i < count($row); $i++) {
-                $nilaiKolom = strtolower(trim($row[$i] ?? ''));
-                if (isset($kelasMap[$nilaiKolom])) {
-                    $idKelasDitemukan = $kelasMap[$nilaiKolom];
-                    $namaKelasDitemukan = trim($row[$i]);
-                    break;
+            if (is_numeric($kelasInput) && isset($kelasIdMap[$kelasInput])) {
+                $idKelasDitemukan = (int)$kelasInput;
+                $namaKelasDitemukan = $kelasIdMap[$idKelasDitemukan];
+            } else if (isset($kelasMap[$kelasInputLower])) {
+                $idKelasDitemukan = $kelasMap[$kelasInputLower];
+                $namaKelasDitemukan = $kelasInput;
+            } else {
+                // Fuzzy logic fallback: cari kata yang mirip atau sebagian teks (misal: user ketik "Kelas 1", padahal di DB "Paket B Kelas 1")
+                foreach ($kelasMap as $namaDb => $idDb) {
+                    if ($kelasInputLower !== '' && (strpos($namaDb, $kelasInputLower) !== false || strpos($kelasInputLower, $namaDb) !== false)) {
+                        $idKelasDitemukan = $idDb;
+                        $namaKelasDitemukan = $kelasIdMap[$idDb] . ' (Pencocokan: ' . $kelasInput . ')';
+                        break;
+                    }
                 }
             }
+
+            $nisn = trim($row[2] ?? '');
+            $alamat = trim($row[3] ?? '');
 
             $previewData[] = [
                 'nama_siswa' => $namaSiswa,
                 'id_kelas'   => $idKelasDitemukan,
                 'nama_kelas' => $namaKelasDitemukan,
+                'nisn'       => $nisn,
+                'alamat'     => $alamat,
                 'status'     => (!empty($namaSiswa) && $idKelasDitemukan) ? 'Valid' : 'Data Kelas Tidak Ditemukan/Lengkap'
             ];
         }
@@ -221,6 +259,8 @@ class AdminController extends Controller
                 Siswa::create([
                     'nama_siswa'    => $row['nama_siswa'],
                     'Kelasid_kelas' => $row['id_kelas'],
+                    'nisn'          => $row['nisn'] ?? null,
+                    'alamat'        => $row['alamat'] ?? null,
                 ]);
                 $berhasil++;
             }

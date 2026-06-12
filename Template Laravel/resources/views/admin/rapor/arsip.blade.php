@@ -20,9 +20,10 @@
 <body>
     <div class="sidebar">
         <h2>E-Rapor Admin</h2>
+        <a href="{{ route('admin.dashboard') }}" style="display:inline-block; margin-bottom: 20px; color: #000; font-size: 24px; text-decoration: none; font-weight: bold;" title="Kembali ke Dashboard">&larr;</a>
         <br>
-        <a href="{{ route('rapor.index') }}" style="display:block; margin-bottom: 10px; color: #333;">Cetak Rapor</a>
-        <a href="{{ route('rapor.arsip') }}" style="display:block; color: #333; font-weight: bold;">Arsip Rapor</a>
+        <a href="{{ route('rapor.index') }}" style="display:block; margin-bottom: 10px; color: #333; text-decoration: none;">Cetak Rapor</a>
+        <a href="{{ route('rapor.arsip') }}" style="display:block; color: #333; font-weight: bold; text-decoration: none;">Arsip Rapor</a>
     </div>
     
     <div class="main-content">
