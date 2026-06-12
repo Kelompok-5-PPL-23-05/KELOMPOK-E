@@ -104,4 +104,28 @@ class RaporController extends Controller
 
         return back()->with('error', 'File PDF tidak ditemukan di server.');
     }
+
+    /**
+     * Cetak Rapor Siswa PDF secara langsung (Subtask 2)
+     */
+    public function cetakPdf($id_siswa)
+    {
+        // Mengambil data siswa, dengan nilai (dan mapelnya), absen, dan kelas
+        $siswa = Siswa::with(['kelas', 'nilai.mataPelajaran', 'absensi'])->findOrFail($id_siswa);
+
+        $data = [
+            'siswa' => $siswa,
+            'nilaiList' => $siswa->nilai,
+            'absensi' => $siswa->absensi->first(), // Asumsi 1 siswa punya 1 record absensi semester ini
+            'tahun_pelajaran' => '2025/2026',
+            'semester' => 1
+        ];
+
+        // Passing data ke template PDF
+        $pdf = Pdf::loadView('admin.rapor.template_pdf', $data)
+            ->setPaper('A4', 'portrait');
+            
+        // (Akan direturn sebagai response download pada Subtask 4)
+        return $pdf->stream('Rapor_' . str_replace(' ', '_', $siswa->nama_siswa) . '.pdf');
+    }
 }
