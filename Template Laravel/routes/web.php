@@ -38,6 +38,7 @@ Route::get('/absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi
     // ─── Nilai ────────────────────────────────────────────────
     Route::get('/nilai',         [NilaiController::class, 'index'])->name('nilai.index');
     Route::post('/nilai/store',  [NilaiController::class, 'store'])->name('nilai.store');
+    Route::get('/nilai/akhir',   [NilaiController::class, 'nilaiAkhir'])->name('nilai.akhir');
 
 // ─── Admin Dashboard ──────────────────────────────────────
 Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');

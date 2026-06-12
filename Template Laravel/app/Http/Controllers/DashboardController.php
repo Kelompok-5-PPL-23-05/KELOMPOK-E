@@ -78,6 +78,18 @@ class DashboardController extends Controller
             ];
         });
 
+        // Filter dari query string
+        $selectedKelas = $request->get('kelas_id');
+        $selectedMapel = $request->get('mapel_id');
+
+        $kelasTerpilih = $selectedKelas
+            ? Kelas::find($selectedKelas)
+            : null;
+
+        $siswa = $selectedKelas
+            ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
+            : collect();
+
         return view('dashboard', compact(
             'guru',
             'kelasList',
@@ -85,7 +97,11 @@ class DashboardController extends Controller
             'totalSiswa',
             'totalSiswaDinilai',
             'progressNilai',
-            'kelasStats'
+            'kelasStats',
+            'selectedKelas',
+            'selectedMapel',
+            'kelasTerpilih',
+            'siswa'
         ));
     }
 
