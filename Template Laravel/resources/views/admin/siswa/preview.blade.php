@@ -12,7 +12,7 @@
             <tr>
                 <th>No</th>
                 <th>Nama Siswa (Dari File)</th>
-                <th>Nama Kelas (Dari File)</th>
+                <th>Nama Kelas (Terdeteksi)</th>
                 <th>Status Validasi Sistem</th>
             </tr>
         </thead>

@@ -166,12 +166,37 @@ class AdminController extends Controller
         $data = array_map('str_getcsv', file($file->getRealPath()));
         $previewData = [];
 
+        // Ambil data kelas dari database untuk pencocokan (case-insensitive)
+        $kelasDB = \App\Models\Kelas::all();
+        $kelasMap = [];
+        foreach ($kelasDB as $k) {
+            $kelasMap[strtolower(trim($k->nama_kelas))] = $k->id_kelas;
+        }
+
         foreach ($data as $index => $row) {
-            if ($index === 0) continue;
+            if ($index === 0) continue; // Skip header
+
+            $namaSiswa = trim($row[0] ?? '');
+            
+            // Cari kolom mana yang berisi nama kelas yang valid
+            $idKelasDitemukan = null;
+            $namaKelasDitemukan = '-';
+
+            // Cek kolom ke-2 (indeks 1) sampai terakhir
+            for ($i = 1; $i < count($row); $i++) {
+                $nilaiKolom = strtolower(trim($row[$i] ?? ''));
+                if (isset($kelasMap[$nilaiKolom])) {
+                    $idKelasDitemukan = $kelasMap[$nilaiKolom];
+                    $namaKelasDitemukan = trim($row[$i]);
+                    break;
+                }
+            }
+
             $previewData[] = [
-                'nama_siswa' => trim($row[0] ?? ''),
-                'id_kelas'   => trim($row[1] ?? ''),
-                'status'     => (!empty($row[0]) && !empty($row[1])) ? 'Valid' : 'Data Tidak Lengkap'
+                'nama_siswa' => $namaSiswa,
+                'id_kelas'   => $idKelasDitemukan,
+                'nama_kelas' => $namaKelasDitemukan,
+                'status'     => (!empty($namaSiswa) && $idKelasDitemukan) ? 'Valid' : 'Data Kelas Tidak Ditemukan/Lengkap'
             ];
         }
 
