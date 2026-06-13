@@ -16,7 +16,6 @@ class Nilai extends Model
         'nilai_angka',
         'deskripsi',
         'jenis_nilai',
-        'Column',
         'Siswaid_siswa',
         'Guruid_guru',
         'Mata_Pelajaranid_mapel',

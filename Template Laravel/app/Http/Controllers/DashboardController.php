@@ -49,7 +49,7 @@ class DashboardController extends Controller
         // Ambil data guru yang terhubung ke user yang sedang login
         $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
 
-        // Muat SEMUA nilai tersimpan per siswa per jenis_nilai untuk dikirim ke JS
+        // [PPLE-11] Muat SEMUA nilai tersimpan per siswa per jenis_nilai untuk badge JS dinamis
         // Format: [ siswa_id => [ 'UTS' => nilai_obj, 'UAS' => nilai_obj, 'Tugas' => nilai_obj ] ]
         $nilaiTersimpanAll = [];
         if ($selectedKelas && $selectedMapel && $siswa->isNotEmpty()) {
@@ -61,8 +61,6 @@ class DashboardController extends Controller
                 $nilaiTersimpanAll[$n->Siswaid_siswa][$n->jenis_nilai] = $n;
             }
         }
-
-
 
         return view('dashboard', compact(
             'kelasList',

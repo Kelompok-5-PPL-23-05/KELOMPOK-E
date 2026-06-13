@@ -116,34 +116,95 @@
     margin-bottom: 30px;
 }
 
-    /* Student Card */
-    .student-list { width: 100%; display: block; }
-    .student-row { margin-bottom: 30px; width: 100%; display: block; }
-    .student-name {
-      display: flex; align-items: center; gap: 12px;
-      font-size: 15px; font-weight: 600; margin-bottom: 8px; text-transform: uppercase;
-    }
-    .student-name svg { width: 24px; height: 24px; stroke-width: 2px; }
-    .input-row { display: flex; gap: 24px; align-items: flex-start; width: 100%; }
-    .input-group { display: flex; flex-direction: column; gap: 4px; }
-    .input-group.nilai { width: 220px; }
-    .input-group.catatan { flex: 1; }
-    .input-group label { font-size: 13px; font-weight: 500; color: #000; }
-    .input-group label .required { color: #e53e3e; }
-    .form-input {
-      width: 100%; height: 44px; background-color: #fff; border: none; border-radius: 4px;
-      padding: 0 16px; font-size: 14px; font-family: 'Poppins', sans-serif;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05); outline: none;
-    }
-    .form-input::placeholder { color: #888; }
-    .submit-wrapper { display: flex; justify-content: flex-end; margin-top: 40px; }
-    .btn-submit {
-      background-color: #fff; color: #000; border: none; border-radius: 8px;
-      padding: 10px 32px; font-size: 14px; font-weight: 600;
-      font-family: 'Poppins', sans-serif; cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s;
-    }
-    .btn-submit:active { transform: scale(0.98); }
+.student-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.student-name svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+}
+
+.input-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.input-group.nilai {
+    width: 220px;
+}
+
+.input-group.catatan {
+    flex: 1;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #000;
+}
+
+.input-group label .required {
+    color: #e53e3e;
+}
+
+.form-input {
+    width: 100%;
+    height: 44px;
+    background-color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    outline: none;
+}
+
+.form-input::placeholder {
+    color: #888;
+}
+
+.submit-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+}
+
+.btn-submit {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.btn-submit:active {
+    transform: scale(0.98);
+}
+    .student-list {
+    width: 100%;
+    display: block;
+}
 
     /* ── Tombol Edit Nilai (PPLE-11) ── */
     .btn-edit-nilai {
@@ -160,7 +221,7 @@
       background-color: #d4edda; color: #1a6b32;
       font-size: 12px; font-weight: 600;
     }
-  </style>
+</style>
 </head>
 <body>
 
@@ -343,8 +404,9 @@
             </p>
         @endif
 
+        @if(!$selectedKelas || !$selectedMapel)
+        {{-- ── Prompt jika belum pilih kelas ── --}}
         @if(!$selectedKelas)
-            {{-- ── Prompt jika belum pilih kelas ── --}}
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
@@ -362,21 +424,8 @@
                 </svg>
                 <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
             </div>
-        @elseif(!$selectedMapel)
-            {{-- ── Prompt jika kelas sudah dipilih tapi mata pelajaran belum ── --}}
-            <div style="
-                background:#fff; border-radius:10px;
-                padding:48px 24px; text-align:center;
-                box-shadow:0 2px 6px rgba(0,0,0,0.06);
-                color:#888;">
-                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
-                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
-                </svg>
-                <p style="font-size:14px;">Silakan pilih mata pelajaran terlebih dahulu untuk mengisi nilai siswa.</p>
-            </div>
-        {{-- ── Form input nilai (tampil setelah kelas dan mata pelajaran terpilih) ── --}}
+
+        {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
         @else
             <form action="{{ route('nilai.store') }}" method="POST">
                 @csrf
@@ -406,9 +455,10 @@
                     </select>
                 </div>
 
+
                 <div class="student-list">
 
-                {{-- ── Siswa nyata dari database (dengan nama) ── --}}
+                    {{-- ── Siswa nyata dari database (dengan nama) ── --}}
                     @foreach($siswa as $s)
                     <div class="student-row" data-siswa-id="{{ $s->id_siswa }}">
                         <div class="student-name">
@@ -464,11 +514,12 @@
 
             </form>
         @endif
+        @endif
 
 </main>
 
 <script>
-  // Data semua nilai tersimpan (per siswa per jenis_nilai), diinject dari PHP
+  // [PPLE-11] Data semua nilai tersimpan (per siswa per jenis_nilai), diinject dari PHP
   const nilaiTersimpanAll = @json($nilaiTersimpanAll ?? []);
 
   function updateNilaiBadges() {

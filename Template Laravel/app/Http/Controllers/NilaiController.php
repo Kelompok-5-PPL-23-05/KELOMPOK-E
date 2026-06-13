@@ -58,7 +58,7 @@ class NilaiController extends Controller
         foreach ($request->nilai as $entry) {
             $siswa = Siswa::find($entry['siswa_id']);
 
-            // Simpan / update nilai ke tabel `nilai`
+            // Simpan / update nilai ke tabel `nilai` (upsert per siswa+mapel+jenis)
             $existing = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
                 ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
                 ->where('jenis_nilai', $request->jenis_nilai)
@@ -66,31 +66,30 @@ class NilaiController extends Controller
 
             if ($existing) {
                 $existing->update([
-                    'nilai_angka'           => $entry['angka'],
-                    'deskripsi'             => $entry['catatan'] ?? null,
+                    'nilai_angka' => $entry['angka'],
+                    'deskripsi'   => $entry['catatan'] ?? null,
                 ]);
             } else {
                 Nilai::create([
-                    'nilai_angka'           => $entry['angka'],
-                    'deskripsi'             => $entry['catatan'] ?? null,
-                    'jenis_nilai'           => $request->jenis_nilai,
-                    'Siswaid_siswa'         => $siswa->id_siswa,
-                    'Guruid_guru'           => $guru ? $guru->id_guru : null,
-                    'Mata_Pelajaranid_mapel'=> $request->mapel_id,
+                    'nilai_angka'            => $entry['angka'],
+                    'deskripsi'              => $entry['catatan'] ?? null,
+                    'jenis_nilai'            => $request->jenis_nilai,
+                    'Siswaid_siswa'          => $siswa->id_siswa,
+                    'Guruid_guru'            => $guru ? $guru->id_guru : null,
+                    'Mata_Pelajaranid_mapel' => $request->mapel_id,
                 ]);
             }
 
             // Hitung dan update nilai akhir di rapor jika semua jenis nilai sudah ada
-            $namaSiswaId = $siswa->id_siswa;
-            $namaMapel   = $mapel ? $mapel->nama_mapel : null;
+            $namaMapel = $mapel ? $mapel->nama_mapel : null;
 
-            $nilaiUTS   = Nilai::where('Siswaid_siswa', $namaSiswaId)
+            $nilaiUTS   = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
                                ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
                                ->where('jenis_nilai', 'UTS')->latest()->first();
-            $nilaiUAS   = Nilai::where('Siswaid_siswa', $namaSiswaId)
+            $nilaiUAS   = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
                                ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
                                ->where('jenis_nilai', 'UAS')->latest()->first();
-            $nilaiTugas = Nilai::where('Siswaid_siswa', $namaSiswaId)
+            $nilaiTugas = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
                                ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
                                ->where('jenis_nilai', 'Tugas')->latest()->first();
 
@@ -117,9 +116,6 @@ class NilaiController extends Controller
             ->with('success', 'Nilai berhasil disimpan!');
     }
 
-    /**
-     * Tampilkan rekap nilai akhir per kelas (dari tabel rapor)
-     */
     public function nilaiAkhir(Request $request)
     {
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
@@ -143,7 +139,7 @@ class NilaiController extends Controller
     public function show(Nilai $nilai){}
 
     /**
-     * [PPLE-58] Tampilkan form edit dengan data nilai yang sudah ada (pre-filled).
+     * [PPLE-58 & PPLE-59] Tampilkan form edit dengan data nilai yang sudah ada (pre-filled).
      */
     public function edit(Nilai $nilai)
     {

@@ -9,6 +9,9 @@ class Siswa extends Model
     protected $table = 'siswa';
     protected $primaryKey = 'id_siswa';
 
+    // Eager loading relasi secara otomatis (Subtask 1)
+    protected $with = ['nilai', 'absensi'];
+
     protected $fillable = [
         'nama_siswa', 'Kelasid_kelas',
         'nisn', 'nis',
