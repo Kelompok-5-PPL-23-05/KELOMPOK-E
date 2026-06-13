@@ -11,12 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('lembaga', function (Blueprint $table) {
-            $table->id('id_lembaga');
-            $table->string('nama_lembaga', 255);
-            $table->string('alamat', 255)->nullable();
-            $table->string('kontak', 50)->nullable();
-            $table->timestamps();
+        Schema::table('nilai', function (Blueprint $table) {
+            $table->enum('jenis_nilai', ['UTS', 'UAS', 'Tugas'])
+                  ->default('Tugas')
+                  ->after('deskripsi');
         });
     }
 
@@ -25,6 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('lembagas');
+        Schema::table('nilai', function (Blueprint $table) {
+            $table->dropColumn('jenis_nilai');
+        });
     }
 };

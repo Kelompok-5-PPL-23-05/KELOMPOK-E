@@ -49,15 +49,17 @@ class DashboardController extends Controller
         // Ambil data guru yang terhubung ke user yang sedang login
         $guru = Guru::where('Userid_user', Auth::user()->id_user)->first();
 
-        // [PPLE-58] Ambil nilai tersimpan per siswa menggunakan foreign key
-        $nilaiTersimpan = collect();
-        if ($selectedKelas && $siswa->isNotEmpty()) {
+        // Muat SEMUA nilai tersimpan per siswa per jenis_nilai untuk dikirim ke JS
+        // Format: [ siswa_id => [ 'UTS' => nilai_obj, 'UAS' => nilai_obj, 'Tugas' => nilai_obj ] ]
+        $nilaiTersimpanAll = [];
+        if ($selectedKelas && $selectedMapel && $siswa->isNotEmpty()) {
             $siswaIds = $siswa->pluck('id_siswa');
-            $query = Nilai::whereIn('Siswaid_siswa', $siswaIds);
-            if ($selectedMapel) {
-                $query = $query->where('Mata_Pelajaranid_mapel', $selectedMapel);
+            $semuaNilai = Nilai::whereIn('Siswaid_siswa', $siswaIds)
+                ->where('Mata_Pelajaranid_mapel', $selectedMapel)
+                ->get();
+            foreach ($semuaNilai as $n) {
+                $nilaiTersimpanAll[$n->Siswaid_siswa][$n->jenis_nilai] = $n;
             }
-            $nilaiTersimpan = $query->get()->keyBy('Siswaid_siswa');
         }
 
 
@@ -70,7 +72,7 @@ class DashboardController extends Controller
             'selectedMapel',
             'kelasTerpilih',
             'guru',
-            'nilaiTersimpan'
+            'nilaiTersimpanAll'
         ));
     }
 

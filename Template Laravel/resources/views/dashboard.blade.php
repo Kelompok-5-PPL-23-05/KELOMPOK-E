@@ -343,9 +343,8 @@
             </p>
         @endif
 
-        @if(!$selectedKelas || !$selectedMapel)
-        {{-- ── Prompt jika belum pilih kelas ── --}}
         @if(!$selectedKelas)
+            {{-- ── Prompt jika belum pilih kelas ── --}}
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
@@ -363,8 +362,21 @@
                 </svg>
                 <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
             </div>
-
-        {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
+        @elseif(!$selectedMapel)
+            {{-- ── Prompt jika kelas sudah dipilih tapi mata pelajaran belum ── --}}
+            <div style="
+                background:#fff; border-radius:10px;
+                padding:48px 24px; text-align:center;
+                box-shadow:0 2px 6px rgba(0,0,0,0.06);
+                color:#888;">
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                </svg>
+                <p style="font-size:14px;">Silakan pilih mata pelajaran terlebih dahulu untuk mengisi nilai siswa.</p>
+            </div>
+        {{-- ── Form input nilai (tampil setelah kelas dan mata pelajaran terpilih) ── --}}
         @else
             <form action="{{ route('nilai.store') }}" method="POST">
                 @csrf
@@ -375,7 +387,7 @@
                     <label style="font-size:14px; font-weight:600; display:block; margin-bottom:8px;">
                         Jenis Nilai <span style="color:#e53e3e;">*</span>
                     </label>
-                    <select name="jenis_nilai" style="
+                    <select name="jenis_nilai" id="jenis_nilai_select" style="
                         appearance: none;
                         background: #fff;
                         border: none;
@@ -386,7 +398,7 @@
                         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                         min-width: 200px;
                         cursor: pointer;
-                        outline: none;" required>
+                        outline: none;" required onchange="updateNilaiBadges()">
                         <option value="">— Pilih Jenis Nilai —</option>
                         <option value="UTS">UTS (30%)</option>
                         <option value="UAS">UAS (30%)</option>
@@ -394,18 +406,19 @@
                     </select>
                 </div>
 
-
                 <div class="student-list">
 
-                    {{-- ── Siswa nyata dari database (dengan nama) ── --}}
+                {{-- ── Siswa nyata dari database (dengan nama) ── --}}
                     @foreach($siswa as $s)
-                    <div class="student-row">
+                    <div class="student-row" data-siswa-id="{{ $s->id_siswa }}">
                         <div class="student-name">
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                             </svg>
                             {{ strtoupper($s->nama_siswa) }}
+                            {{-- [PPLE-11] Badge + tombol Edit (diupdate oleh JS saat jenis nilai dipilih) --}}
+                            <span class="badge-wrap"></span>
                         </div>
                         <div class="input-row">
                             <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
@@ -414,14 +427,17 @@
                                 <input type="number"
                                        name="nilai[{{ $loop->index }}][angka]"
                                        class="form-input"
+                                       data-nilai
                                        placeholder="1 - 100"
                                        min="1"
                                        max="100"
-                                       required>
+                                       oninput="batasNilai(this)">
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
-                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
+                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input"
+                                       data-catatan
+                                       placeholder="Catatan untuk siswa">
                             </div>
                         </div>
                     </div>
@@ -448,11 +464,41 @@
 
             </form>
         @endif
-        @endif
 
 </main>
 
 <script>
+  // Data semua nilai tersimpan (per siswa per jenis_nilai), diinject dari PHP
+  const nilaiTersimpanAll = @json($nilaiTersimpanAll ?? []);
+
+  function updateNilaiBadges() {
+    const jenis = document.getElementById('jenis_nilai_select').value;
+    document.querySelectorAll('.student-row[data-siswa-id]').forEach(function(row) {
+      const siswaId = row.getAttribute('data-siswa-id');
+      const badgeWrap = row.querySelector('.badge-wrap');
+      const inputNilai = row.querySelector('input[data-nilai]');
+      const inputCatatan = row.querySelector('input[data-catatan]');
+
+      if (!badgeWrap) return;
+
+      const nilaiData = (nilaiTersimpanAll[siswaId] && nilaiTersimpanAll[siswaId][jenis])
+        ? nilaiTersimpanAll[siswaId][jenis]
+        : null;
+
+      if (nilaiData) {
+        badgeWrap.innerHTML =
+          '<span class="badge-nilai-ada">✓ Nilai: ' + nilaiData.nilai_angka + '</span>' +
+          '<a href="/nilai/' + nilaiData.id_nilai + '/edit" class="btn-edit-nilai">✏ Edit</a>';
+        if (inputNilai) inputNilai.value = nilaiData.nilai_angka;
+        if (inputCatatan) inputCatatan.value = nilaiData.deskripsi || '';
+      } else {
+        badgeWrap.innerHTML = '';
+        if (inputNilai) inputNilai.value = '';
+        if (inputCatatan) inputCatatan.value = '';
+      }
+    });
+  }
+
   function batasNilai(input) {
     if (input.value > 100) input.value = 100;
     if (input.value < 1 && input.value !== '') input.value = 1;

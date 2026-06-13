@@ -35,7 +35,7 @@ class NilaiController extends Controller
     {
         $request->validate([
             'kelas_id'            => 'required|exists:kelas,id_kelas',
-            'mapel_id'            => 'nullable|exists:mata_pelajaran,id_mapel',
+            'mapel_id'            => 'required|exists:mata_pelajaran,id_mapel',
             'jenis_nilai'         => 'required|in:UTS,UAS,Tugas',
             'nilai'               => 'required|array|min:1',
             'nilai.*.siswa_id'    => 'required|exists:siswa,id_siswa',
@@ -44,54 +44,68 @@ class NilaiController extends Controller
         ], [
             'kelas_id.required'        => 'Kelas wajib dipilih.',
             'kelas_id.exists'          => 'Kelas tidak valid.',
+            'mapel_id.required'        => 'Mata pelajaran wajib dipilih.',
             'jenis_nilai.required'     => 'Jenis nilai wajib dipilih.',
             'nilai.*.angka.required'   => 'Semua nilai siswa wajib diisi.',
             'nilai.*.angka.min'        => 'Nilai minimal adalah 1.',
             'nilai.*.angka.max'        => 'Nilai maksimal adalah 100.',
         ]);
 
-        $kelas = Kelas::find($request->kelas_id);
-        $mapel = $request->mapel_id ? MataPelajaran::find($request->mapel_id) : null;
+        $user  = Auth::user();
+        $guru  = Guru::where('Userid_user', $user->id_user)->first();
+        $mapel = MataPelajaran::find($request->mapel_id);
 
         foreach ($request->nilai as $entry) {
             $siswa = Siswa::find($entry['siswa_id']);
 
-            Nilai::create([
-                'nama_siswa'     => $siswa->nama_siswa,
-                'kelas'          => $kelas->nama_kelas,
-                'mata_pelajaran' => $mapel ? $mapel->nama_mapel : '-',
-                'nilai'          => $entry['angka'],
-                'catatan'        => $entry['catatan'] ?? null,
-                'jenis_nilai'    => $request->jenis_nilai,
-            ]);
+            // Simpan / update nilai ke tabel `nilai`
+            $existing = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
+                ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
+                ->where('jenis_nilai', $request->jenis_nilai)
+                ->first();
 
-            if ($mapel) {
-                $namaMapel  = $mapel->nama_mapel;
-                $namaSiswa  = $siswa->nama_siswa;
+            if ($existing) {
+                $existing->update([
+                    'nilai_angka'           => $entry['angka'],
+                    'deskripsi'             => $entry['catatan'] ?? null,
+                ]);
+            } else {
+                Nilai::create([
+                    'nilai_angka'           => $entry['angka'],
+                    'deskripsi'             => $entry['catatan'] ?? null,
+                    'jenis_nilai'           => $request->jenis_nilai,
+                    'Siswaid_siswa'         => $siswa->id_siswa,
+                    'Guruid_guru'           => $guru ? $guru->id_guru : null,
+                    'Mata_Pelajaranid_mapel'=> $request->mapel_id,
+                ]);
+            }
 
-                $nilaiUTS   = Nilai::where('nama_siswa', $namaSiswa)
-                                   ->where('mata_pelajaran', $namaMapel)
-                                   ->where('jenis_nilai', 'UTS')->latest()->first();
-                $nilaiUAS   = Nilai::where('nama_siswa', $namaSiswa)
-                                   ->where('mata_pelajaran', $namaMapel)
-                                   ->where('jenis_nilai', 'UAS')->latest()->first();
-                $nilaiTugas = Nilai::where('nama_siswa', $namaSiswa)
-                                   ->where('mata_pelajaran', $namaMapel)
-                                   ->where('jenis_nilai', 'Tugas')->latest()->first();
+            // Hitung dan update nilai akhir di rapor jika semua jenis nilai sudah ada
+            $namaSiswaId = $siswa->id_siswa;
+            $namaMapel   = $mapel ? $mapel->nama_mapel : null;
 
-                if ($nilaiUTS && $nilaiUAS && $nilaiTugas) {
-                    $nilaiAkhir = ($nilaiUTS->nilai * 0.30)
-                                + ($nilaiUAS->nilai * 0.30)
-                                + ($nilaiTugas->nilai * 0.40);
+            $nilaiUTS   = Nilai::where('Siswaid_siswa', $namaSiswaId)
+                               ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
+                               ->where('jenis_nilai', 'UTS')->latest()->first();
+            $nilaiUAS   = Nilai::where('Siswaid_siswa', $namaSiswaId)
+                               ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
+                               ->where('jenis_nilai', 'UAS')->latest()->first();
+            $nilaiTugas = Nilai::where('Siswaid_siswa', $namaSiswaId)
+                               ->where('Mata_Pelajaranid_mapel', $request->mapel_id)
+                               ->where('jenis_nilai', 'Tugas')->latest()->first();
 
-                    Rapor::updateOrCreate(
-                        [
-                            'Siswaid_siswa'  => $siswa->id_siswa,
-                            'mata_pelajaran' => $namaMapel,
-                        ],
-                        ['nilai_akhir' => round($nilaiAkhir, 2)]
-                    );
-                }
+            if ($nilaiUTS && $nilaiUAS && $nilaiTugas) {
+                $nilaiAkhir = ($nilaiUTS->nilai_angka * 0.30)
+                            + ($nilaiUAS->nilai_angka * 0.30)
+                            + ($nilaiTugas->nilai_angka * 0.40);
+
+                Rapor::updateOrCreate(
+                    [
+                        'Siswaid_siswa'  => $siswa->id_siswa,
+                        'mata_pelajaran' => $namaMapel,
+                    ],
+                    ['nilai_akhir' => round($nilaiAkhir, 2)]
+                );
             }
         }
 
