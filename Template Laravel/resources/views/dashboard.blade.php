@@ -221,6 +221,25 @@
       background-color: #d4edda; color: #1a6b32;
       font-size: 12px; font-weight: 600;
     }
+
+    /* ── Warning banner & disabled state ── */
+    .warning-jenis-nilai {
+      display: flex; align-items: center; gap: 12px;
+      background: #fff8e1; border: 1.5px solid #f9c74f;
+      border-radius: 10px; padding: 14px 20px;
+      margin-bottom: 20px; color: #7a5c00;
+      font-size: 13.5px; font-weight: 500;
+      animation: fadeIn 0.2s ease;
+    }
+    .warning-jenis-nilai svg { width: 22px; height: 22px; flex-shrink: 0; color: #f4a400; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+    .form-input:disabled {
+      background-color: #f0f0f0;
+      color: #aaa;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
 </style>
 </head>
 <body>
@@ -469,6 +488,14 @@
                     </select>
                 </div>
 
+                {{-- ── Banner peringatan jenis nilai belum dipilih ── --}}
+                <div class="warning-jenis-nilai" id="warning-jenis-nilai">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                    </svg>
+                    <span>Pilih <strong>Jenis Nilai</strong> terlebih dahulu sebelum mengisi nilai siswa.</span>
+                </div>
 
                 <div class="student-list">
 
@@ -492,16 +519,18 @@
                                        name="nilai[{{ $loop->index }}][angka]"
                                        class="form-input"
                                        data-nilai
-                                       placeholder="1 - 100"
+                                       placeholder="Pilih jenis nilai dulu"
                                        min="1"
                                        max="100"
-                                       oninput="batasNilai(this)">
+                                       oninput="batasNilai(this)"
+                                       disabled>
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
                                 <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input"
                                        data-catatan
-                                       placeholder="Catatan untuk siswa">
+                                       placeholder="Pilih jenis nilai dulu"
+                                       disabled>
                             </div>
                         </div>
                     </div>
@@ -538,6 +567,40 @@
 
   function updateNilaiBadges() {
     const jenis = document.getElementById('jenis_nilai_select').value;
+    const warning = document.getElementById('warning-jenis-nilai');
+    const allNilaiInputs = document.querySelectorAll('input[data-nilai]');
+    const allCatatanInputs = document.querySelectorAll('input[data-catatan]');
+
+    if (!jenis) {
+      // Jenis nilai belum dipilih: tampilkan warning, disable semua input
+      if (warning) warning.style.display = 'flex';
+      allNilaiInputs.forEach(function(inp) {
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = 'Pilih jenis nilai dulu';
+      });
+      allCatatanInputs.forEach(function(inp) {
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = 'Pilih jenis nilai dulu';
+      });
+      // Kosongkan semua badge
+      document.querySelectorAll('.badge-wrap').forEach(function(b) { b.innerHTML = ''; });
+      return;
+    }
+
+    // Jenis nilai sudah dipilih: sembunyikan warning, enable semua input
+    if (warning) warning.style.display = 'none';
+    allNilaiInputs.forEach(function(inp) {
+      inp.disabled = false;
+      inp.placeholder = '1 - 100';
+    });
+    allCatatanInputs.forEach(function(inp) {
+      inp.disabled = false;
+      inp.placeholder = 'Catatan untuk siswa';
+    });
+
+    // Update badge dan isi nilai tersimpan per siswa
     document.querySelectorAll('.student-row[data-siswa-id]').forEach(function(row) {
       const siswaId = row.getAttribute('data-siswa-id');
       const badgeWrap = row.querySelector('.badge-wrap');
