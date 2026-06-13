@@ -404,9 +404,8 @@
             </p>
         @endif
 
-        @if(!$selectedKelas || !$selectedMapel)
-        {{-- ── Prompt jika belum pilih kelas ── --}}
         @if(!$selectedKelas)
+        {{-- ── Prompt: belum pilih kelas ── --}}
             <div style="
                 background:#fff; border-radius:10px;
                 padding:48px 24px; text-align:center;
@@ -425,8 +424,23 @@
                 <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
             </div>
 
-        {{-- ── Form input nilai (tampil setelah kelas dipilih) ── --}}
+        @elseif(!$selectedMapel)
+        {{-- ── Prompt: kelas dipilih tapi mapel belum ── --}}
+            <div style="
+                background:#fff; border-radius:10px;
+                padding:48px 24px; text-align:center;
+                box-shadow:0 2px 6px rgba(0,0,0,0.06);
+                color:#888;">
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                </svg>
+                <p style="font-size:14px;">Silakan pilih mata pelajaran terlebih dahulu untuk mengisi nilai siswa.</p>
+            </div>
+
         @else
+        {{-- ── Form input nilai (tampil setelah kelas DAN mapel dipilih) ── --}}
             <form action="{{ route('nilai.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
@@ -492,7 +506,7 @@
                         </div>
                     </div>
                     @endforeach
-                    
+
                     @if($siswa->isEmpty())
                         <div style="
                             background:#fff;
@@ -504,7 +518,7 @@
                             Belum ada siswa pada kelas ini.
                         </div>
                     @endif
-                    
+
 
                 </div>{{-- tutup student-list --}}
 
@@ -514,7 +528,7 @@
 
             </form>
         @endif
-        @endif
+
 
 </main>
 
