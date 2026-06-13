@@ -9,10 +9,9 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
-
+    
     protected $table = 'users';
     protected $primaryKey = 'id_user';
-
     /**
      * The attributes that are mass assignable.
      */
