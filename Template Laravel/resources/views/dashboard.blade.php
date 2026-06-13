@@ -205,6 +205,22 @@
     width: 100%;
     display: block;
 }
+
+    /* ── Tombol Edit Nilai (PPLE-11) ── */
+    .btn-edit-nilai {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      font-family: 'Poppins', sans-serif; color: #4a6fa5;
+      background-color: #e8eef6; border: 1.5px solid #c0d0e8;
+      text-decoration: none; cursor: pointer; transition: background-color 0.15s;
+    }
+    .btn-edit-nilai:hover { background-color: #d0dff0; }
+    .badge-nilai-ada {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 20px;
+      background-color: #d4edda; color: #1a6b32;
+      font-size: 12px; font-weight: 600;
+    }
 </style>
 </head>
 <body>
@@ -420,7 +436,7 @@
                     <label style="font-size:14px; font-weight:600; display:block; margin-bottom:8px;">
                         Jenis Nilai <span style="color:#e53e3e;">*</span>
                     </label>
-                    <select name="jenis_nilai" style="
+                    <select name="jenis_nilai" id="jenis_nilai_select" style="
                         appearance: none;
                         background: #fff;
                         border: none;
@@ -431,7 +447,7 @@
                         box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                         min-width: 200px;
                         cursor: pointer;
-                        outline: none;" required>
+                        outline: none;" required onchange="updateNilaiBadges()">
                         <option value="">— Pilih Jenis Nilai —</option>
                         <option value="UTS">UTS (30%)</option>
                         <option value="UAS">UAS (30%)</option>
@@ -444,13 +460,15 @@
 
                     {{-- ── Siswa nyata dari database (dengan nama) ── --}}
                     @foreach($siswa as $s)
-                    <div class="student-row">
+                    <div class="student-row" data-siswa-id="{{ $s->id_siswa }}">
                         <div class="student-name">
                             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
                             </svg>
                             {{ strtoupper($s->nama_siswa) }}
+                            {{-- [PPLE-11] Badge + tombol Edit (diupdate oleh JS saat jenis nilai dipilih) --}}
+                            <span class="badge-wrap"></span>
                         </div>
                         <div class="input-row">
                             <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
@@ -459,14 +477,17 @@
                                 <input type="number"
                                        name="nilai[{{ $loop->index }}][angka]"
                                        class="form-input"
+                                       data-nilai
                                        placeholder="1 - 100"
                                        min="1"
                                        max="100"
-                                       required>
+                                       oninput="batasNilai(this)">
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
-                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
+                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input"
+                                       data-catatan
+                                       placeholder="Catatan untuk siswa">
                             </div>
                         </div>
                     </div>
@@ -498,6 +519,37 @@
 </main>
 
 <script>
+  // [PPLE-11] Data semua nilai tersimpan (per siswa per jenis_nilai), diinject dari PHP
+  const nilaiTersimpanAll = @json($nilaiTersimpanAll ?? []);
+
+  function updateNilaiBadges() {
+    const jenis = document.getElementById('jenis_nilai_select').value;
+    document.querySelectorAll('.student-row[data-siswa-id]').forEach(function(row) {
+      const siswaId = row.getAttribute('data-siswa-id');
+      const badgeWrap = row.querySelector('.badge-wrap');
+      const inputNilai = row.querySelector('input[data-nilai]');
+      const inputCatatan = row.querySelector('input[data-catatan]');
+
+      if (!badgeWrap) return;
+
+      const nilaiData = (nilaiTersimpanAll[siswaId] && nilaiTersimpanAll[siswaId][jenis])
+        ? nilaiTersimpanAll[siswaId][jenis]
+        : null;
+
+      if (nilaiData) {
+        badgeWrap.innerHTML =
+          '<span class="badge-nilai-ada">✓ Nilai: ' + nilaiData.nilai_angka + '</span>' +
+          '<a href="/nilai/' + nilaiData.id_nilai + '/edit" class="btn-edit-nilai">✏ Edit</a>';
+        if (inputNilai) inputNilai.value = nilaiData.nilai_angka;
+        if (inputCatatan) inputCatatan.value = nilaiData.deskripsi || '';
+      } else {
+        badgeWrap.innerHTML = '';
+        if (inputNilai) inputNilai.value = '';
+        if (inputCatatan) inputCatatan.value = '';
+      }
+    });
+  }
+
   function batasNilai(input) {
     if (input.value > 100) input.value = 100;
     if (input.value < 1 && input.value !== '') input.value = 1;
