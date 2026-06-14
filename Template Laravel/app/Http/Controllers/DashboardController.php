@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use App\Models\Guru;
 use App\Models\Kelas;
 use App\Models\MataPelajaran;
@@ -19,62 +19,55 @@ class DashboardController extends Controller
      */
     public function index(Request $request)
     {
-        $kelasList     = Kelas::orderBy('nama_kelas')->get();
-        $mataPelajaran = MataPelajaran::orderBy('nama_mapel')->get();
-
-        // Ambil data guru yang login
+        // 1. Ambil data guru yang login
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Ambil semua kelas dan mata pelajaran dari DB untuk statistik
+        // 2. Ambil data master untuk filter/statistik
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
-        $mataPelajaran = $guru
-            ? $guru->mataPelajaran
-            : collect();
+        $mataPelajaran = $guru ? $guru->mataPelajaran : collect();
 
         // ---- Statistik Dashboard ----
         $totalSiswa = Siswa::count();
         $totalSiswaDinilai = 0;
         
+        // Optimasi pencarian jumlah siswa dinilai (sesuaikan dengan skema database Anda)
         try {
-            // Jika menggunakan tabel 'nilai' (dengan relasi FK id_siswa)
-            $totalSiswaDinilai = Nilai::distinct('Siswaid_siswa')->count('Siswaid_siswa');
-        } catch (\Exception $e) {
-            // Jika menggunakan tabel 'nilais' (dengan kolom nama_siswa string)
-            try {
+            if (DB::getSchemaBuilder()->hasColumn('nilai', 'Siswaid_siswa')) {
+                $totalSiswaDinilai = Nilai::distinct('Siswaid_siswa')->count('Siswaid_siswa');
+            } else {
                 $totalSiswaDinilai = Nilai::distinct('nama_siswa')->count('nama_siswa');
-            } catch (\Exception $e2) {
-                $totalSiswaDinilai = 0;
             }
+        } catch (\Exception $e) {
+            $totalSiswaDinilai = 0;
         }
         
         $progressNilai = $totalSiswa > 0 ? round(($totalSiswaDinilai / $totalSiswa) * 100) : 0;
 
-        $kelasStats = Kelas::all()->map(function($k) {
+        // Hitung rata-rata per kelas
+        $kelasStats = $kelasList->map(function($k) {
             $rataRata = 0;
-            
             try {
-                // Mengambil nilai rata-rata dari tabel nilais (yang menggunakan kolom string 'kelas')
-                $avg = Nilai::where('kelas', $k->nama_kelas)->avg('nilai');
+                // Gunakan skema kolom yang sesuai (nilai_angka atau nilai)
+                $column = DB::getSchemaBuilder()->hasColumn('nilai', 'nilai_angka') ? 'nilai_angka' : 'nilai';
+                
+                if (DB::getSchemaBuilder()->hasColumn('nilai', 'kelas')) {
+                    $avg = Nilai::where('kelas', $k->nama_kelas)->avg($column);
+                } else {
+                    $siswaIds = Siswa::where('Kelasid_kelas', $k->id_kelas)->pluck('id_siswa');
+                    $avg = Nilai::whereIn('Siswaid_siswa', $siswaIds)->avg($column);
+                }
+
                 if ($avg) {
                     $rataRata = round($avg, 2);
                 }
             } catch (\Exception $e) {
-                // Jika tabelnya berbeda (misal menggunakan FK id_siswa di tabel nilai)
-                try {
-                    $siswaIds = Siswa::where('Kelasid_kelas', $k->id_kelas)->pluck('id_siswa');
-                    $avg = \Illuminate\Support\Facades\DB::table('nilai')->whereIn('Siswaid_siswa', $siswaIds)->avg('nilai_angka');
-                    if ($avg) {
-                        $rataRata = round($avg, 2);
-                    }
-                } catch (\Exception $e2) {
-                    // Abaikan jika error
-                }
+                // Abaikan jika error skema
             }
             
             return (object) [
                 'nama_kelas' => $k->nama_kelas,
-                'rata_rata' => $rataRata,
+                'rata_rata'  => $rataRata,
             ];
         });
 
@@ -82,10 +75,7 @@ class DashboardController extends Controller
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        $kelasTerpilih = $selectedKelas
-            ? Kelas::find($selectedKelas)
-            : null;
-
+        $kelasTerpilih = $selectedKelas ? Kelas::find($selectedKelas) : null;
         $siswa = $selectedKelas
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
@@ -114,30 +104,23 @@ class DashboardController extends Controller
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
-        $mataPelajaran = $guru
-            ? $guru->mataPelajaran
-            : MataPelajaran::orderBy('nama_mapel')->get();
+        $mataPelajaran = $guru ? $guru->mataPelajaran : MataPelajaran::orderBy('nama_mapel')->get();
 
-        // Filter dari query string (?kelas_id=x&mapel_id=y)
         $selectedKelas = $request->get('kelas_id');
         $selectedMapel = $request->get('mapel_id');
 
-        $kelasTerpilih = $selectedKelas
-            ? Kelas::find($selectedKelas)
-            : null;
-
+        $kelasTerpilih = $selectedKelas ? Kelas::find($selectedKelas) : null;
         $siswa = $selectedKelas
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
 
-        // [PPLE-11] Muat SEMUA nilai tersimpan per siswa per jenis_nilai untuk badge JS dinamis
-        // Format: [ siswa_id => [ 'UTS' => nilai_obj, 'UAS' => nilai_obj, 'Tugas' => nilai_obj ] ]
         $nilaiTersimpanAll = [];
         if ($selectedKelas && $selectedMapel && $siswa->isNotEmpty()) {
             $siswaIds = $siswa->pluck('id_siswa');
             $semuaNilai = Nilai::whereIn('Siswaid_siswa', $siswaIds)
                 ->where('Mata_Pelajaranid_mapel', $selectedMapel)
                 ->get();
+                
             foreach ($semuaNilai as $n) {
                 $nilaiTersimpanAll[$n->Siswaid_siswa][$n->jenis_nilai] = $n;
             }
@@ -157,19 +140,15 @@ class DashboardController extends Controller
 
     /**
      * Form pilih mata pelajaran
-     * Subtask: Buat dropdown mapel
-     * Subtask: Ambil data mapel dari database
      */
     public function selectMapel()
     {
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
-        // Dropdown mulai kosong, guru harus pilih sendiri
         $mataPelajaranDiampu = [];
-        $semuaMataPelajaran  = MataPelajaran::all();
+        $semuaMataPelajaran  = MataPelajaran::orderBy('nama_mapel')->get();
 
-        // View yang menampilkan dropdown mapel
         return view('dashboard-select-mapel', compact(
             'guru',
             'mataPelajaranDiampu',
@@ -179,19 +158,21 @@ class DashboardController extends Controller
 
     /**
      * Simpan mapel yang diampu
-     * Subtask: Simpan pilihan mapel
      */
     public function storeMapel(Request $request)
     {
         $user = Auth::user();
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
+        if (!$guru) {
+            return back()->with('error', 'Data guru tidak ditemukan.');
+        }
+
         $validated = $request->validate([
             'mata_pelajaran_ids'   => 'required|array|min:1',
-            'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel',
+            'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel', // Pastikan nama tabel di DB tepat 'mata_pelajaran'
         ]);
 
-        // Simpan pilihan mapel ke database (sync relasi)
         $guru->mataPelajaran()->sync($validated['mata_pelajaran_ids']);
 
         return redirect()->route('dashboard')
@@ -209,8 +190,8 @@ class DashboardController extends Controller
         $selectedMapel = $request->get('mapel_id');
         $selectedKelas = $request->get('kelas_id');
 
-        // Validasi mapel
-        if ($selectedMapel) {
+        // Proteksi jika data guru atau relasi mapel tidak ditemukan
+        if ($selectedMapel && $guru) {
             $isAllowed = $guru->mataPelajaran()
                 ->where('id_mapel', $selectedMapel)
                 ->exists();
@@ -220,10 +201,9 @@ class DashboardController extends Controller
             }
         }
 
-        $mataPelajaran = $guru->mataPelajaran;
+        $mataPelajaran = $guru ? $guru->mataPelajaran : collect();
         $kelas = Kelas::orderBy('nama_kelas')->get();
 
-        // Ambil siswa
         $siswa = collect();
         if ($selectedKelas) {
             $siswa = Siswa::with('kelas')
@@ -260,8 +240,7 @@ class DashboardController extends Controller
         $selectedMapel = $request->get('mapel_id');
         $selectedKelas = $siswa->Kelasid_kelas;
 
-        // Validasi akses mapel
-        if ($selectedMapel) {
+        if ($selectedMapel && $guru) {
             $isAllowed = $guru->mataPelajaran()
                 ->where('id_mapel', $selectedMapel)
                 ->exists();
@@ -271,7 +250,7 @@ class DashboardController extends Controller
             }
         }
 
-        $mapelIds = $guru->mataPelajaran->pluck('id_mapel');
+        $mapelIds = $guru ? $guru->mataPelajaran->pluck('id_mapel') : collect();
 
         $nilaiList = Nilai::where('Siswaid_siswa', $siswa->id_siswa)
             ->whereIn('Mata_Pelajaranid_mapel', $mapelIds)
@@ -286,8 +265,7 @@ class DashboardController extends Controller
         }
 
         $absensi = Absensi::where('Siswaid_siswa', $siswa->id_siswa)->first();
-
-        $mataPelajaran = $guru->mataPelajaran;
+        $mataPelajaran = $guru ? $guru->mataPelajaran : collect();
         $kelas = Kelas::all();
 
         return view('dashboard-student-detail', compact(
