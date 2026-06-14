@@ -33,22 +33,34 @@ class NilaiController extends Controller
      */
     public function store(Request $request)
     {
+        // [PPLE-46] Validasi input agar nilai tidak kosong
+        // [PPLE-44] Validasi range angka yang bisa dimasukkan dalam rapor (0–100)
+        // [PPLE-50] Jika validasi gagal, Laravel otomatis memblokir penyimpanan dan redirect back dengan $errors
         $request->validate([
             'kelas_id'            => 'required|exists:kelas,id_kelas',
             'mapel_id'            => 'required|exists:mata_pelajaran,id_mapel',
             'jenis_nilai'         => 'required|in:UTS,UAS,Tugas',
             'nilai'               => 'required|array|min:1',
             'nilai.*.siswa_id'    => 'required|exists:siswa,id_siswa',
-            'nilai.*.angka'       => 'required|integer|min:1|max:100',
+            // [PPLE-44] Range 0–100 (nilai 0 valid dalam sistem rapor)
+            // [PPLE-46] required: field tidak boleh kosong
+            'nilai.*.angka'       => 'required|integer|min:0|max:100',
             'nilai.*.catatan'     => 'nullable|string|max:500',
         ], [
+            // [PPLE-48] Pesan error yang informatif
             'kelas_id.required'        => 'Kelas wajib dipilih.',
             'kelas_id.exists'          => 'Kelas tidak valid.',
             'mapel_id.required'        => 'Mata pelajaran wajib dipilih.',
-            'jenis_nilai.required'     => 'Jenis nilai wajib dipilih.',
-            'nilai.*.angka.required'   => 'Semua nilai siswa wajib diisi.',
-            'nilai.*.angka.min'        => 'Nilai minimal adalah 1.',
-            'nilai.*.angka.max'        => 'Nilai maksimal adalah 100.',
+            'mapel_id.exists'          => 'Mata pelajaran tidak valid.',
+            'jenis_nilai.required'     => 'Jenis nilai wajib dipilih (UTS, UAS, atau Tugas).',
+            'jenis_nilai.in'           => 'Jenis nilai hanya boleh UTS, UAS, atau Tugas.',
+            'nilai.required'           => 'Data nilai siswa wajib diisi.',
+            // [PPLE-46] Pesan error untuk field kosong
+            'nilai.*.angka.required'   => 'Nilai siswa wajib diisi, tidak boleh dikosongkan.',
+            // [PPLE-44] Pesan error untuk range tidak valid
+            'nilai.*.angka.integer'    => 'Nilai harus berupa angka bulat (tidak boleh desimal).',
+            'nilai.*.angka.min'        => 'Nilai minimal yang dapat dimasukkan adalah 0.',
+            'nilai.*.angka.max'        => 'Nilai maksimal yang dapat dimasukkan adalah 100.',
         ]);
 
         $user  = Auth::user();
