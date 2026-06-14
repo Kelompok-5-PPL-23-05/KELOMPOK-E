@@ -63,6 +63,14 @@ Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.
 Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
 Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
 
+// ─── Admin Mata Pelajaran ──────────────────────────────────
+Route::get('/admin/mapel', [AdminController::class, 'mapelIndex'])->name('admin.mapel.index');
+Route::post('/admin/mapel', [AdminController::class, 'mapelStore'])->name('admin.mapel.store');
+Route::put('/admin/mapel/{id}', [AdminController::class, 'mapelUpdate'])->name('admin.mapel.update');
+Route::delete('/admin/mapel/{id}', [AdminController::class, 'mapelDestroy'])->name('admin.mapel.destroy');
+Route::post('/admin/mapel/import-preview', [AdminController::class, 'mapelImportPreview'])->name('admin.mapel.import.preview');
+Route::post('/admin/mapel/import-save', [AdminController::class, 'mapelImportSave'])->name('admin.mapel.import.save');
+
 // ─── Rapor ────────────────────────────────────────────────
 Route::get('/admin/rapor', [RaporController::class, 'index'])->name('rapor.index');
 Route::get('/admin/rapor/arsip', [RaporController::class, 'arsip'])->name('rapor.arsip');

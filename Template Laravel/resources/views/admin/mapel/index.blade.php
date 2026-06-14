@@ -9,6 +9,9 @@
 <div class="table-wrapper">
     <div class="table-header">
         <div class="table-title">
+            <button class="btn btn-success" onclick="document.getElementById('modal-upload').classList.add('show')">
+                Upload Data Master (CSV)
+            </button>
             <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
             Daftar Mata Pelajaran
         </div>
@@ -88,6 +91,25 @@
             <div class="modal-actions">
                 <button type="button" class="btn btn-cancel" onclick="document.getElementById('modal-edit').classList.remove('show')">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan Perubahan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{{-- Modal Upload Data Master --}}
+<div class="modal-overlay" id="modal-upload">
+    <div class="modal">
+        <div class="modal-title">Upload Data Master Mapel</div>
+        <form method="POST" action="{{ route('admin.mapel.import.preview') }}" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group">
+                <label>File Data Master (Format: CSV) <span class="required">*</span></label>
+                <input type="file" name="file_master" class="form-control" accept=".csv" required>
+                <small>Pastikan file CSV memiliki urutan kolom: Nama Mata Pelajaran</small>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn btn-cancel" onclick="document.getElementById('modal-upload').classList.remove('show')">Batal</button>
+                <button type="submit" class="btn btn-primary">Upload & Simpan</button>
             </div>
         </form>
     </div>
