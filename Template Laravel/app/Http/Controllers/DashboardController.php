@@ -130,6 +130,19 @@ class DashboardController extends Controller
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
 
+        // [PPLE-11] Muat SEMUA nilai tersimpan per siswa per jenis_nilai untuk badge JS dinamis
+        // Format: [ siswa_id => [ 'UTS' => nilai_obj, 'UAS' => nilai_obj, 'Tugas' => nilai_obj ] ]
+        $nilaiTersimpanAll = [];
+        if ($selectedKelas && $selectedMapel && $siswa->isNotEmpty()) {
+            $siswaIds = $siswa->pluck('id_siswa');
+            $semuaNilai = Nilai::whereIn('Siswaid_siswa', $siswaIds)
+                ->where('Mata_Pelajaranid_mapel', $selectedMapel)
+                ->get();
+            foreach ($semuaNilai as $n) {
+                $nilaiTersimpanAll[$n->Siswaid_siswa][$n->jenis_nilai] = $n;
+            }
+        }
+
         return view('input-nilai', compact(
             'kelasList',
             'mataPelajaran',
@@ -137,7 +150,8 @@ class DashboardController extends Controller
             'selectedKelas',
             'selectedMapel',
             'kelasTerpilih',
-            'guru'
+            'guru',
+            'nilaiTersimpanAll'
         ));
     }
 

@@ -35,10 +35,12 @@ Route::get('/absensi', [AbsensiController::class, 'index'])->name('absensi.index
 Route::post('/absensi', [AbsensiController::class, 'store'])->name('absensi.store');
 Route::get('/absensi/rekap', [AbsensiController::class, 'rekap'])->name('absensi.rekap');
 
-    // ─── Nilai ────────────────────────────────────────────────
-    Route::get('/nilai',         [NilaiController::class, 'index'])->name('nilai.index');
-    Route::post('/nilai/store',  [NilaiController::class, 'store'])->name('nilai.store');
-    Route::get('/nilai/akhir',   [NilaiController::class, 'nilaiAkhir'])->name('nilai.akhir');
+// ─── Nilai ────────────────────────────────────────────────
+Route::get('/nilai', [NilaiController::class, 'index'])->name('nilai.index');
+Route::post('/nilai/store', [NilaiController::class, 'store'])->name('nilai.store');
+Route::get('/nilai/akhir', [NilaiController::class, 'nilaiAkhir'])->name('nilai.akhir');
+Route::get('/nilai/{nilai}/edit', [NilaiController::class, 'edit'])->name('nilai.edit');   // PPLE-58 & PPLE-59
+Route::put('/nilai/{nilai}', [NilaiController::class, 'update'])->name('nilai.update');    // PPLE-60 & PPLE-61
 
 // ─── Admin Dashboard ──────────────────────────────────────
 Route::get('/admin', [AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -69,5 +71,8 @@ Route::post('/rapor/generate/{id_siswa}',  [RaporController::class, 'generatePdf
 Route::get('/rapor/arsip',                 [RaporController::class, 'arsip'])   ->name('rapor.arsip');
 Route::get('/rapor/download/{id_rapor}',   [RaporController::class, 'download'])->name('rapor.download');
 
-    // Logout
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+// ─── Rapor Cetak Langsung (Subtask 4) ──────────────────────
+Route::get('/rapor/cetak/{id_siswa}', [RaporController::class, 'cetakPdf'])->name('rapor.cetakPdf');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

@@ -15,7 +15,7 @@ class Nilai extends Model
     protected $fillable = [
         'nilai_angka',
         'deskripsi',
-        'Column',
+        'jenis_nilai',
         'Siswaid_siswa',
         'Guruid_guru',
         'Mata_Pelajaranid_mapel',
