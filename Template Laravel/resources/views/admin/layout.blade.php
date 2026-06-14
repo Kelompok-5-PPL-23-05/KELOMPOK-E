@@ -343,6 +343,12 @@
         .btn-primary { background-color: #4a6fa5; color: #fff; }
         .btn-primary:hover { background-color: #3b5d8a; }
 
+        .btn-success { background-color: #27ae60; color: #fff; }
+        .btn-success:hover { background-color: #1e8449; }
+
+        .btn-secondary { background-color: #6c757d; color: #fff; }
+        .btn-secondary:hover { background-color: #5a6268; }
+
         .btn-warning { background-color: #e67e22; color: #fff; }
         .btn-warning:hover { background-color: #ca6f1e; }
 
@@ -399,9 +405,11 @@
             font-size: 12px;
             font-weight: 600;
         }
-        .badge-blue   { background: #d1ecf1; color: #0c5460; }
-        .badge-green  { background: #d4edda; color: #155724; }
-        .badge-count  { background: #e2e3e5; color: #383d41; }
+        .badge-blue    { background: #d1ecf1; color: #0c5460; }
+        .badge-green   { background: #d4edda; color: #155724; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger  { background: #f8d7da; color: #721c24; }
+        .badge-count   { background: #e2e3e5; color: #383d41; }
 
         /* ════════ MODAL ════════ */
         .modal-overlay {
@@ -583,6 +591,10 @@
                         <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z"/></svg>
                         Data Lembaga
                     </a>
+                    <a href="{{ route('admin.mapel.index') }}" class="nav-child-item {{ request()->routeIs('admin.mapel*') ? 'active' : '' }}">
+                        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                        Mata Pelajaran
+                    </a>
                 </div>
             </div>
 
@@ -606,11 +618,14 @@
     <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success">✅ {{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">❌ {{ session('error') }}</div>
         @endif
         @if($errors->any())
             <div class="alert alert-danger">
-                @foreach($errors->all() as $error) {{ $error }}<br> @endforeach
+                ❌ @foreach($errors->all() as $error) {{ $error }}<br> @endforeach
             </div>
         @endif
 
