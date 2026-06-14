@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
         if (!$adminSudahAda) {
             User::create([
                 'username' => 'admin',
-                'password' => 'admin123',
+                'password' => \Illuminate\Support\Facades\Hash::make('admin123'),
                 'role'     => 'admin',
             ]);
 

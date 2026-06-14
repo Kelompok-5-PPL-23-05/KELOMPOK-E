@@ -173,12 +173,12 @@ class DashboardController extends Controller
         $guru = Guru::where('Userid_user', $user->id_user)->first();
 
         $validated = $request->validate([
-            'mata_pelajaran_ids'   => 'required|array|min:1',
+            'mata_pelajaran_ids'   => 'nullable|array',
             'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel',
         ]);
 
         // Simpan pilihan mapel ke database (sync relasi)
-        $guru->mataPelajaran()->sync($validated['mata_pelajaran_ids']);
+        $guru->mataPelajaran()->sync($validated['mata_pelajaran_ids'] ?? []);
 
         return redirect()->route('dashboard')
             ->with('success', 'Mata pelajaran berhasil diperbarui!');
@@ -211,7 +211,7 @@ class DashboardController extends Controller
 
         // Ambil siswa
         $siswa = collect();
-        if ($selectedKelas) {
+        if ($selectedKelas && $selectedMapel) {
             $siswa = Siswa::with('kelas')
                 ->where('Kelasid_kelas', $selectedKelas)
                 ->orderBy('nama_siswa')
