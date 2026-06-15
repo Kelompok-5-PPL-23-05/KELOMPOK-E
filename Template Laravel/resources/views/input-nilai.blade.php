@@ -383,7 +383,7 @@
                 </div>
                 <div class="nav-children open" id="c-mapel">
                     @if ($guru)
-                        <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item">⚙️ Pilih Mata Pelajaran</a>
+                        <a id="link-pilih-mapel" href="{{ route('dashboard.select-mapel') }}" class="nav-child-item">⚙️ Pilih Mata Pelajaran</a>
                         <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item">👥 Kelola Siswa</a>
                     @endif
                 </div>

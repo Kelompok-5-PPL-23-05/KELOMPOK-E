@@ -302,7 +302,7 @@
       </div>
       <div class="nav-children open" id="c-mapel">
         @if ($guru)
-          <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+          <a id="link-pilih-mapel" href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
             ⚙️ Pilih Mata Pelajaran
           </a>
           <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">

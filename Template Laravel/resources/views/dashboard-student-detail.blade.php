@@ -281,7 +281,7 @@
                     <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Mata Pelajaran
                 </div>
                 <div class="nav-children open" id="c-mapel">
-                    <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
+                    <a id="link-pilih-mapel" href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
                         ⚙️ Pilih Mata Pelajaran
                     </a>
                     <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item active" style="text-decoration:none; color:inherit;">
