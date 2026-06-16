@@ -36,14 +36,17 @@
         <div class="card">
             <form action="{{ route('rapor.index') }}" method="GET" id="filterForm">
                 <label>Pilih Kelas:</label><br><br>
-                <select name="kelas_id" onchange="document.getElementById('filterForm').submit()">
-                    <option value="">-- Pilih Kelas --</option>
-                    @foreach($kelasList as $kelas)
-                        <option value="{{ $kelas->id_kelas }}" {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
-                            {{ $kelas->nama_kelas }}
-                        </option>
-                    @endforeach
-                </select>
+                <div style="display: flex; gap: 10px;">
+                    <select name="kelas_id">
+                        <option value="">-- Pilih Kelas --</option>
+                        @foreach($kelasList as $kelas)
+                            <option value="{{ $kelas->id_kelas }}" {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
+                                {{ $kelas->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="btn">Tampilkan</button>
+                </div>
             </form>
         </div>
 

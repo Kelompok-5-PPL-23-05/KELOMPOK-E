@@ -508,13 +508,9 @@
                 </div>
 
                 <div class="nav-children" id="c-mapel">
-                    <div class="nav-child-item">Daftar Mapel</div>
-                    <div class="nav-child-item">Tambah Mapel</div>
+                    <a href="{{ route('admin.mapel.index') }}" class="nav-child-item">Daftar Mapel</a>
+                    <a href="{{ route('admin.mapel.index') }}#tambah" class="nav-child-item">Tambah Mapel</a>
                 </div>
-            </div>
-            <div class="nav-children" id="c-mapel">
-                <span class="nav-child-item">Daftar Mapel</span>
-                <span class="nav-child-item">Tambah Mapel</span>
             </div>
         </div>
 

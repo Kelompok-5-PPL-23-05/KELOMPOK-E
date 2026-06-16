@@ -431,4 +431,106 @@ class AdminController extends Controller
         session()->forget('import_lembaga_data');
         return redirect()->route('admin.lembaga.index')->with('success', 'Data lembaga berhasil disimpan secara terpusat.');
     }
+
+    /**
+     * Menampilkan halaman Data Mapel
+     */
+    public function mapelIndex()
+    {
+        $mapel = MataPelajaran::all();
+        return view('admin.mapel.index', compact('mapel'));
+    }
+
+    /**
+     * Menyimpan Data Mapel Baru
+     */
+    public function mapelStore(Request $request)
+    {
+        $request->validate([
+            'nama_mapel' => 'required|string|max:255|unique:mata_pelajaran,nama_mapel',
+        ], [
+            'nama_mapel.required' => 'Nama mapel wajib diisi.',
+            'nama_mapel.unique' => 'Nama mapel ini sudah ada.'
+        ]);
+
+        MataPelajaran::create(['nama_mapel' => $request->nama_mapel]);
+        return back()->with('success', 'Mata Pelajaran berhasil ditambahkan.');
+    }
+
+    /**
+     * Update Data Mapel
+     */
+    public function mapelUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'nama_mapel' => 'required|string|max:255|unique:mata_pelajaran,nama_mapel,' . $id . ',id_mapel',
+        ], [
+            'nama_mapel.required' => 'Nama mapel wajib diisi.',
+            'nama_mapel.unique' => 'Nama mapel ini sudah ada.'
+        ]);
+
+        $mapel = MataPelajaran::findOrFail($id);
+        $mapel->update(['nama_mapel' => $request->nama_mapel]);
+
+        return back()->with('success', 'Mata Pelajaran berhasil diperbarui.');
+    }
+
+    /**
+     * Menghapus Data Mapel
+     */
+    public function mapelDestroy($id)
+    {
+        MataPelajaran::findOrFail($id)->delete();
+        return back()->with('success', 'Mata Pelajaran berhasil dihapus.');
+    }
+
+    /**
+     * Menghapus Semua Data Mapel
+     */
+    public function mapelDestroyAll()
+    {
+        MataPelajaran::query()->delete();
+        return back()->with('success', 'Semua Data Mata Pelajaran berhasil dihapus.');
+    }
+
+    /**
+     * Mengimpor Data Mapel dari CSV
+     */
+    public function mapelImport(Request $request)
+    {
+        $request->validate([
+            'file_master' => 'required|mimes:csv,txt|max:2048',
+        ], [
+            'file_master.required' => 'Pilih file terlebih dahulu.',
+            'file_master.mimes' => 'Format file harus CSV.'
+        ]);
+
+        $file = $request->file('file_master');
+        $lines = file($file->getRealPath());
+        $delimiter = ',';
+        if (count($lines) > 0 && strpos($lines[0], ';') !== false) {
+            $delimiter = ';';
+        }
+        
+        $data = [];
+        foreach ($lines as $line) {
+            $data[] = str_getcsv($line, $delimiter);
+        }
+
+        $berhasil = 0;
+        foreach ($data as $index => $row) {
+            if ($index === 0) continue; // Skip header
+            $namaMapel = trim($row[0] ?? '');
+            
+            if (!empty($namaMapel)) {
+                $exists = MataPelajaran::where('nama_mapel', $namaMapel)->first();
+                if (!$exists) {
+                    MataPelajaran::create(['nama_mapel' => $namaMapel]);
+                    $berhasil++;
+                }
+            }
+        }
+
+        return back()->with('success', "$berhasil data mata pelajaran berhasil diimpor.");
+    }
 }

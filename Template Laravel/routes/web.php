@@ -65,6 +65,14 @@ Route::get('/admin/kelas', [AdminController::class, 'kelasIndex'])->name('admin.
 Route::post('/admin/kelas', [AdminController::class, 'kelasStore'])->name('admin.kelas.store');
 Route::delete('/admin/kelas/{id}', [AdminController::class, 'kelasDestroy'])->name('admin.kelas.destroy');
 
+// ─── Admin Mapel ───────────────────────────────────────────
+Route::get('/admin/mapel', [AdminController::class, 'mapelIndex'])->name('admin.mapel.index');
+Route::post('/admin/mapel', [AdminController::class, 'mapelStore'])->name('admin.mapel.store');
+Route::post('/admin/mapel/import', [AdminController::class, 'mapelImport'])->name('admin.mapel.import');
+Route::put('/admin/mapel/{id}', [AdminController::class, 'mapelUpdate'])->name('admin.mapel.update');
+Route::delete('/admin/mapel/destroy-all', [AdminController::class, 'mapelDestroyAll'])->name('admin.mapel.destroyAll');
+Route::delete('/admin/mapel/{id}', [AdminController::class, 'mapelDestroy'])->name('admin.mapel.destroy');
+
 // ─── Rapor ────────────────────────────────────────────────
 Route::get('/rapor',                       [RaporController::class, 'index'])   ->name('rapor.index');
 Route::post('/rapor/generate/{id_siswa}',  [RaporController::class, 'generatePdf'])->name('rapor.generate');
