@@ -205,10 +205,98 @@
     }
 
     .student-list {
-      width: 100%;
-      display: block;
+    width: 100%;
+    display: block;
+}
+
+    /* ── Tombol Edit Nilai (PPLE-11) ── */
+    .btn-edit-nilai {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 12px; border-radius: 6px; font-size: 12px; font-weight: 600;
+      font-family: 'Poppins', sans-serif; color: #4a6fa5;
+      background-color: #e8eef6; border: 1.5px solid #c0d0e8;
+      text-decoration: none; cursor: pointer; transition: background-color 0.15s;
     }
-  </style>
+    .btn-edit-nilai:hover { background-color: #d0dff0; }
+    .badge-nilai-ada {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 10px; border-radius: 20px;
+      background-color: #d4edda; color: #1a6b32;
+      font-size: 12px; font-weight: 600;
+    }
+
+    /* ── Warning banner & disabled state ── */
+    .warning-jenis-nilai {
+      display: flex; align-items: center; gap: 12px;
+      background: #fff8e1; border: 1.5px solid #f9c74f;
+      border-radius: 10px; padding: 14px 20px;
+      margin-bottom: 20px; color: #7a5c00;
+      font-size: 13.5px; font-weight: 500;
+      animation: fadeIn 0.2s ease;
+    }
+    .warning-jenis-nilai svg { width: 22px; height: 22px; flex-shrink: 0; color: #f4a400; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+    .form-input:disabled {
+      background-color: #f0f0f0;
+      color: #aaa;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Input disabled karena nilai sudah tersimpan (harus pakai tombol Edit) */
+    .form-input.nilai-locked {
+      background-color: #f7f9fc;
+      color: #555;
+      cursor: not-allowed;
+      border: 1.5px dashed #b0c4de;
+      box-shadow: none;
+    }
+    .hint-edit-msg {
+      font-size: 11.5px;
+      color: #4a6fa5;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    /* [PPLE-48] Error state untuk input nilai */
+    .form-input.input-error {
+      border: 2px solid #e53e3e;
+      background-color: #fff5f5;
+      box-shadow: 0 0 0 3px rgba(229,62,62,0.12);
+    }
+    .field-error-msg {
+      color: #e53e3e;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      animation: fadeIn 0.15s ease;
+    }
+    .field-error-msg::before { content: '✕'; font-size: 11px; }
+
+    /* [PPLE-48] Error banner global */
+    .error-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff5f5;
+      border: 1.5px solid #fc8181;
+      border-left: 4px solid #e53e3e;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      color: #742a2a;
+      font-size: 13.5px;
+      font-weight: 500;
+      animation: fadeIn 0.2s ease;
+    }
+    .error-banner svg { width: 22px; height: 22px; flex-shrink: 0; color: #e53e3e; }
+    .error-banner ul { margin: 4px 0 0 4px; padding-left: 16px; }
+    .error-banner ul li { margin-bottom: 2px; }
+</style>
 </head>
 <body>
 
@@ -320,161 +408,435 @@
 </aside>
 
 <!-- ════════════ MAIN CONTENT ════════════ -->
-<main class="main-content">
+    <main class="main-content">
 
-  {{-- ── Flash Messages ── --}}
-  @if(session('success'))
-    <div style="
-      background-color:#d4edda; color:#155724;
-      border:1px solid #c3e6cb; border-radius:8px;
-      padding:14px 20px; margin-bottom:24px;
-      font-size:14px; font-weight:500;">
-      {{ session('success') }}
-    </div>
-  @endif
-  @if($errors->any())
-    <div style="
-      background-color:#f8d7da; color:#721c24;
-      border:1px solid #f5c6cb; border-radius:8px;
-      padding:14px 20px; margin-bottom:24px;
-      font-size:14px; font-weight:500;">
-      @foreach($errors->all() as $error){{ $error }}<br>@endforeach
-    </div>
-  @endif
-
-  {{-- ── Filter Form (GET) ── --}}
-  <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
-
-    <div class="filter-row">
-      {{-- Dropdown Pilih Kelas --}}
-      <div class="filter-group">
-        <label for="kelas_id">Pilih Kelas</label>
-        <select
-          id="kelas_id"
-          name="kelas_id"
-          class="filter-select"
-          onchange="document.getElementById('filter-form').submit()">
-          <option value="">— Pilih Kelas —</option>
-          @foreach($kelasList as $kelas)
-            <option
-              value="{{ $kelas->id_kelas }}"
-              {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
-              {{ $kelas->nama_kelas }}
-            </option>
-          @endforeach
-        </select>
-      </div>
-
-      {{-- Dropdown Pilih Mata Pelajaran --}}
-      <div class="filter-group">
-        <label for="mapel_id">Pilih Mata Pelajaran</label>
-        <select
-          id="mapel_id"
-          name="mapel_id"
-          class="filter-select"
-          onchange="document.getElementById('filter-form').submit()">
-          <option value="">— Pilih Mata Pelajaran —</option>
-          @foreach($mataPelajaran as $mapel)
-            <option
-              value="{{ $mapel->id_mapel }}"
-              {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
-              {{ $mapel->nama_mapel }}
-            </option>
-          @endforeach
-        </select>
-      </div>
-    </div>
-
-  </form>
-
-  {{-- ── Info heading kelas terpilih ── --}}
-  @if($kelasTerpilih)
-    <p style="font-size:15px; font-weight:600; margin-bottom:20px; color:#2c3e50;">
-      Kelas: {{ $kelasTerpilih->nama_kelas }}
-      <span style="font-weight:400; color:#555;">({{ $siswa->count() }} siswa)</span>
-    </p>
-  @endif
-
-  {{-- ── Prompt jika belum pilih kelas atau mapel ── --}}
-  @if(!$selectedKelas || !$selectedMapel)
-    <div style="
-      background:#fff; border-radius:10px;
-      padding:48px 24px; text-align:center;
-      box-shadow:0 2px 6px rgba(0,0,0,0.06);
-      color:#888;">
-      <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
-           fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-              d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21
-               M6.75 6.75h.75m-.75 3h.75m-.75 3h.75
-               m3-6h.75m-.75 3h.75m-.75 3h.75
-               M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25
-               c.621 0 1.125.504 1.125 1.125V21
-               M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
-      </svg>
-      <p style="font-size:14px;">Silakan pilih kelas dan mata pelajaran terlebih dahulu untuk melihat daftar siswa.</p>
-    </div>
-
-  {{-- ── Form input nilai (tampil setelah kelas dan mapel dipilih) ── --}}
-  @else
-    <form action="{{ route('nilai.store') }}" method="POST">
-      @csrf
-      <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
-      <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
-
-      <div class="student-list">
-
-        {{-- ── Siswa nyata dari database (dengan nama) ── --}}
-        @foreach($siswa as $s)
-        <div class="student-row">
-          <div class="student-name">
-            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
-            </svg>
-            {{ strtoupper($s->nama_siswa) }}
-          </div>
-          <div class="input-row">
-            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
-            <div class="input-group nilai">
-              <label>Masukkan nilai <span class="required">*</span></label>
-              <input type="number"
-                     name="nilai[{{ $loop->index }}][angka]"
-                     class="form-input"
-                     placeholder="1 - 100"
-                     min="1"
-                     max="100"
-                     required>
+        {{-- ── Flash Messages ── --}}
+        {{-- [PPLE-48] Flash success message --}}
+        @if(session('success'))
+            <div style="
+                background-color:#c6f6d5; color:#22543d;
+                border:1px solid #9ae6b4; border-radius:8px;
+                padding:14px 20px; margin-bottom:24px;
+                font-size:14px; font-weight:500;
+                display:flex; align-items:center; gap:10px;">
+                ✓ {{ session('success') }}
             </div>
-            <div class="input-group catatan">
-              <label>Catatan</label>
-              <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input" placeholder="Catatan untuk siswa">
-            </div>
-          </div>
-        </div>
-        @endforeach
-        
-        @if($siswa->isEmpty())
-          <div style="
-            background:#fff;
-            padding:24px;
-            border-radius:10px;
-            text-align:center;
-            color:#666;
-            box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-            Belum ada siswa pada kelas ini.
-          </div>
         @endif
-        
-      </div>
+        {{-- [PPLE-48] Error banner global dari server-side validation (PPLE-50) --}}
+        @if($errors->any())
+            <div class="error-banner" id="global-error-banner">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                </svg>
+                <div>
+                    <strong>Terdapat kesalahan pada data yang diinput:</strong>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+        @endif
 
-      <div class="submit-wrapper">
-        <button type="submit" class="btn-submit">Submit</button>
-      </div>
-    </form>
-  @endif
+
+
+        {{-- ── Filter Form (GET) ── --}}
+        <form id="filter-form" method="GET" action="{{ route('dashboard') }}">
+
+            <div class="filter-row">
+                {{-- Dropdown Pilih Kelas --}}
+                <div class="filter-group">
+                    <label for="kelas_id">Pilih Kelas</label>
+                    <select
+                        id="kelas_id"
+                        name="kelas_id"
+                        class="filter-select"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">— Pilih Kelas —</option>
+                        @foreach($kelasList as $kelas)
+                            <option
+                                value="{{ $kelas->id_kelas }}"
+                                {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
+                                {{ $kelas->nama_kelas }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Dropdown Pilih Mata Pelajaran --}}
+                <div class="filter-group">
+                    <label for="mapel_id">Pilih Mata Pelajaran</label>
+                    <select
+                        id="mapel_id"
+                        name="mapel_id"
+                        class="filter-select"
+                        onchange="document.getElementById('filter-form').submit()">
+                        <option value="">— Pilih Mata Pelajaran —</option>
+                        @foreach($mataPelajaran as $mapel)
+                            <option
+                                value="{{ $mapel->id_mapel }}"
+                                {{ $selectedMapel == $mapel->id_mapel ? 'selected' : '' }}>
+                                {{ $mapel->nama_mapel }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+        </form>
+
+        {{-- ── Info heading kelas terpilih ── --}}
+        @if($kelasTerpilih)
+            <p style="font-size:15px; font-weight:600; margin-bottom:20px; color:#2c3e50;">
+                Kelas: {{ $kelasTerpilih->nama_kelas }}
+                <span style="font-weight:400; color:#555;">({{ $siswa->count() }} siswa)</span>
+            </p>
+        @endif
+
+        @if(!$selectedKelas)
+        {{-- ── Prompt: belum pilih kelas ── --}}
+            <div style="
+                background:#fff; border-radius:10px;
+                padding:48px 24px; text-align:center;
+                box-shadow:0 2px 6px rgba(0,0,0,0.06);
+                color:#888;">
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21
+                             M6.75 6.75h.75m-.75 3h.75m-.75 3h.75
+                             m3-6h.75m-.75 3h.75m-.75 3h.75
+                             M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25
+                             c.621 0 1.125.504 1.125 1.125V21
+                             M3 3h12m-.75 4.5H21m-3.75 0h.008v.008h-.008v-.008z"/>
+                </svg>
+                <p style="font-size:14px;">Silakan pilih kelas terlebih dahulu untuk melihat daftar siswa.</p>
+            </div>
+
+        @elseif(!$selectedMapel)
+        {{-- ── Prompt: kelas dipilih tapi mapel belum ── --}}
+            <div style="
+                background:#fff; border-radius:10px;
+                padding:48px 24px; text-align:center;
+                box-shadow:0 2px 6px rgba(0,0,0,0.06);
+                color:#888;">
+                <svg style="width:48px;height:48px;margin-bottom:12px;opacity:.35;"
+                     fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                          d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                </svg>
+                <p style="font-size:14px;">Silakan pilih mata pelajaran terlebih dahulu untuk mengisi nilai siswa.</p>
+            </div>
+
+        @else
+        {{-- ── Form input nilai (tampil setelah kelas DAN mapel dipilih) ── --}}
+            {{-- [PPLE-50] onsubmit: blokir penyimpanan jika ada nilai tidak valid (client-side) --}}
+            <form action="{{ route('nilai.store') }}" method="POST" id="form-nilai" onsubmit="return validateFormNilai(event)">
+                @csrf
+                <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
+                <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
+
+                <div style="margin-bottom: 24px;">
+                    <label style="font-size:14px; font-weight:600; display:block; margin-bottom:8px;">
+                        Jenis Nilai <span style="color:#e53e3e;">*</span>
+                    </label>
+                    <select name="jenis_nilai" id="jenis_nilai_select" style="
+                        appearance: none;
+                        background: #fff;
+                        border: none;
+                        border-radius: 8px;
+                        padding: 12px 40px 12px 16px;
+                        font-size: 14px;
+                        font-family: 'Poppins', sans-serif;
+                        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                        min-width: 200px;
+                        cursor: pointer;
+                        outline: none;" required onchange="updateNilaiBadges()">
+                        <option value="">— Pilih Jenis Nilai —</option>
+                        <option value="UTS" {{ old('jenis_nilai') == 'UTS' ? 'selected' : '' }}>UTS (30%)</option>
+                        <option value="UAS" {{ old('jenis_nilai') == 'UAS' ? 'selected' : '' }}>UAS (30%)</option>
+                        <option value="Tugas" {{ old('jenis_nilai') == 'Tugas' ? 'selected' : '' }}>Tugas (40%)</option>
+                    </select>
+                </div>
+
+                {{-- ── Banner peringatan jenis nilai belum dipilih ── --}}
+                <div class="warning-jenis-nilai" id="warning-jenis-nilai">
+                    <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                    </svg>
+                    <span>Pilih <strong>Jenis Nilai</strong> terlebih dahulu sebelum mengisi nilai siswa.</span>
+                </div>
+
+                <div class="student-list">
+
+                    {{-- ── Siswa nyata dari database (dengan nama) ── --}}
+                    @foreach($siswa as $s)
+                    <div class="student-row" data-siswa-id="{{ $s->id_siswa }}">
+                        <div class="student-name">
+                            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                            </svg>
+                            {{ strtoupper($s->nama_siswa) }}
+                            {{-- [PPLE-11] Badge + tombol Edit (diupdate oleh JS saat jenis nilai dipilih) --}}
+                            <span class="badge-wrap"></span>
+                        </div>
+                        <div class="input-row">
+                            <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
+                            <div class="input-group nilai">
+                                <label>Masukkan nilai <span class="required">*</span></label>
+                                {{-- [PPLE-44] Range 0-100, [PPLE-46] required, [PPLE-48] error highlight --}}
+                                <input type="number"
+                                       name="nilai[{{ $loop->index }}][angka]"
+                                       id="nilai-input-{{ $loop->index }}"
+                                       class="form-input {{ $errors->has('nilai.'.$loop->index.'.angka') ? 'input-error' : '' }}"
+                                       data-nilai
+                                       data-index="{{ $loop->index }}"
+                                       placeholder="Pilih jenis nilai dulu"
+                                       min="0"
+                                       max="100"
+                                       oninput="batasNilaiRealtime(this)"
+                                       value="{{ old('nilai.'.$loop->index.'.angka') }}"
+                                       disabled>
+                                {{-- [PPLE-48] Tampilkan pesan error per field dari server --}}
+                                @error('nilai.'.$loop->index.'.angka')
+                                    <div class="field-error-msg" id="err-nilai-{{ $loop->index }}">{{ $message }}</div>
+                                @enderror
+                                {{-- [PPLE-48] Pesan error client-side (diisi oleh JS) --}}
+                                <div class="field-error-msg" id="err-js-{{ $loop->index }}" style="display:none;"></div>
+                            </div>
+                            <div class="input-group catatan">
+                                <label>Catatan</label>
+                                <input type="text" name="nilai[{{ $loop->index }}][catatan]" class="form-input"
+                                       data-catatan
+                                       placeholder="Pilih jenis nilai dulu"
+                                       disabled>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+
+                    @if($siswa->isEmpty())
+                        <div style="
+                            background:#fff;
+                            padding:24px;
+                            border-radius:10px;
+                            text-align:center;
+                            color:#666;
+                            box-shadow:0 2px 6px rgba(0,0,0,0.06);">
+                            Belum ada siswa pada kelas ini.
+                        </div>
+                    @endif
+
+
+                </div>{{-- tutup student-list --}}
+
+                <div class="submit-wrapper">
+                    <button type="submit" class="btn-submit">Submit</button>
+                </div>
+
+            </form>
+        @endif
+
 
 </main>
 
+<script>
+  // [PPLE-11] Data semua nilai tersimpan (per siswa per jenis_nilai), diinject dari PHP
+  const nilaiTersimpanAll = @json($nilaiTersimpanAll ?? []);
+
+  function updateNilaiBadges() {
+    const jenis = document.getElementById('jenis_nilai_select').value;
+    const warning = document.getElementById('warning-jenis-nilai');
+    const allNilaiInputs = document.querySelectorAll('input[data-nilai]');
+    const allCatatanInputs = document.querySelectorAll('input[data-catatan]');
+
+    if (!jenis) {
+      // Jenis nilai belum dipilih: tampilkan warning, disable semua input
+      if (warning) warning.style.display = 'flex';
+      allNilaiInputs.forEach(function(inp) {
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = 'Pilih jenis nilai dulu';
+      });
+      allCatatanInputs.forEach(function(inp) {
+        inp.disabled = true;
+        inp.value = '';
+        inp.placeholder = 'Pilih jenis nilai dulu';
+      });
+      // Kosongkan semua badge
+      document.querySelectorAll('.badge-wrap').forEach(function(b) { b.innerHTML = ''; });
+      return;
+    }
+
+    // Jenis nilai sudah dipilih: sembunyikan warning, enable semua input
+    if (warning) warning.style.display = 'none';
+    allNilaiInputs.forEach(function(inp) {
+      inp.disabled = false;
+      inp.placeholder = '0 - 100';
+    });
+    allCatatanInputs.forEach(function(inp) {
+      inp.disabled = false;
+      inp.placeholder = 'Catatan untuk siswa';
+    });
+
+    // Update badge dan isi nilai tersimpan per siswa
+    document.querySelectorAll('.student-row[data-siswa-id]').forEach(function(row) {
+      const siswaId = row.getAttribute('data-siswa-id');
+      const badgeWrap = row.querySelector('.badge-wrap');
+      const inputNilai = row.querySelector('input[data-nilai]');
+      const inputCatatan = row.querySelector('input[data-catatan]');
+
+      if (!badgeWrap) return;
+
+      const nilaiData = (nilaiTersimpanAll[siswaId] && nilaiTersimpanAll[siswaId][jenis])
+        ? nilaiTersimpanAll[siswaId][jenis]
+        : null;
+
+      if (nilaiData) {
+        // Nilai sudah tersimpan → tampilkan badge + tombol Edit
+        badgeWrap.innerHTML =
+          '<span class="badge-nilai-ada">✓ Nilai: ' + nilaiData.nilai_angka + '</span>' +
+          '<a href="/nilai/' + nilaiData.id_nilai + '/edit" class="btn-edit-nilai">✏ Edit</a>';
+
+        // Isi nilai ke input tapi LOCK input (tidak bisa diedit langsung)
+        if (inputNilai) {
+          inputNilai.value = nilaiData.nilai_angka;
+          inputNilai.readOnly = true;
+          inputNilai.classList.add('nilai-locked');
+          // Hapus hint lama jika ada, lalu tambah hint baru
+          const oldHint = inputNilai.parentElement.querySelector('.hint-edit-msg');
+          if (!oldHint) {
+            const hint = document.createElement('div');
+            hint.className = 'hint-edit-msg';
+            hint.textContent = 'Klik tombol Edit untuk mengubah nilai ini.';
+            inputNilai.parentElement.appendChild(hint);
+          }
+        }
+        if (inputCatatan) {
+          inputCatatan.value = nilaiData.deskripsi || '';
+          inputCatatan.readOnly = true;
+          inputCatatan.classList.add('nilai-locked');
+        }
+      } else {
+        // Belum ada nilai → input aktif untuk diisi
+        badgeWrap.innerHTML = '';
+        if (inputNilai) {
+          inputNilai.value = '';
+          inputNilai.readOnly = false;
+          inputNilai.classList.remove('nilai-locked');
+          const oldHint = inputNilai.parentElement.querySelector('.hint-edit-msg');
+          if (oldHint) oldHint.remove();
+        }
+        if (inputCatatan) {
+          inputCatatan.value = '';
+          inputCatatan.readOnly = false;
+          inputCatatan.classList.remove('nilai-locked');
+        }
+      }
+    });
+  }
+
+  // [PPLE-44] Batasi nilai saat user mengetik (realtime) - range 0-100
+  function batasNilaiRealtime(input) {
+    const val = parseFloat(input.value);
+    if (!isNaN(val)) {
+      if (val > 100) input.value = 100;
+      if (val < 0)   input.value = 0;
+    }
+    // Hapus error state jika user sudah mengetik nilai valid
+    clearFieldError(input);
+  }
+
+  // [PPLE-48] Tampilkan error per field (client-side)
+  function showFieldError(input, message) {
+    input.classList.add('input-error');
+    const idx = input.getAttribute('data-index');
+    const errEl = document.getElementById('err-js-' + idx);
+    if (errEl) {
+      errEl.textContent = message;
+      errEl.style.display = 'flex';
+    }
+  }
+
+  // [PPLE-48] Bersihkan error per field
+  function clearFieldError(input) {
+    input.classList.remove('input-error');
+    const idx = input.getAttribute('data-index');
+    const errEl = document.getElementById('err-js-' + idx);
+    if (errEl) {
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+    }
+  }
+
+  // [PPLE-50] Validasi form sebelum submit - blokir jika ada nilai tidak valid
+  function validateFormNilai(event) {
+    const jenis = document.getElementById('jenis_nilai_select') ? document.getElementById('jenis_nilai_select').value : '';
+
+    // Cek jenis nilai dipilih
+    if (!jenis) {
+      event.preventDefault();
+      const warning = document.getElementById('warning-jenis-nilai');
+      if (warning) { warning.style.display = 'flex'; warning.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      return false;
+    }
+
+    const allNilaiInputs = document.querySelectorAll('input[data-nilai]:not([disabled])');
+    let hasError = false;
+
+    allNilaiInputs.forEach(function(input) {
+      // Skip input yang sudah dikunci (nilai sudah tersimpan, harus pakai tombol Edit)
+      if (input.readOnly) return;
+
+      const val = input.value.trim();
+      const numVal = Number(val);
+
+      // [PPLE-46] Cek kosong
+      if (val === '' || val === null) {
+        showFieldError(input, 'Nilai wajib diisi, tidak boleh dikosongkan.');
+        hasError = true;
+        return;
+      }
+
+      // [PPLE-44] Cek range 0-100
+      if (!Number.isInteger(numVal) || numVal < 0 || numVal > 100) {
+        showFieldError(input, 'Nilai harus berupa angka bulat antara 0 sampai 100.');
+        hasError = true;
+        return;
+      }
+
+      clearFieldError(input);
+    });
+
+    if (hasError) {
+      event.preventDefault();
+      // Scroll ke error pertama
+      const firstError = document.querySelector('.input-error');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+
+    return true;
+  }
+
+  // [PPLE-50] Auto-restore state saat halaman di-load dengan $errors (redirect back dari server)
+  // Jika jenis_nilai sudah dipilih (old value tersimpan), aktifkan input dan restore nilai
+  document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('jenis_nilai_select');
+    if (select && select.value) {
+      // Trigger updateNilaiBadges untuk enable input dan isi badge
+      updateNilaiBadges();
+      // Setelah enable, restore nilai lama dari old() yang sudah di-embed di value attribute
+      document.querySelectorAll('input[data-nilai]').forEach(function(inp) {
+        if (inp.value) inp.placeholder = '0 - 100';
+      });
+    }
+  });
+</script>
+</script>
 </body>
 </html>
