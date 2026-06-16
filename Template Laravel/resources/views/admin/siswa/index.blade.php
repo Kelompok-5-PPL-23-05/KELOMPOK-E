@@ -81,6 +81,14 @@
                     @endforeach
                 </select>
             </div>
+            <div class="form-group">
+                <label>NISN</label>
+                <input type="text" name="nisn" class="form-control" placeholder="Masukkan NISN siswa">
+            </div>
+            <div class="form-group">
+                <label>Alamat</label>
+                <input type="text" name="alamat" class="form-control" placeholder="Masukkan alamat siswa">
+            </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-cancel" onclick="document.getElementById('modal-tambah').classList.remove('show')">Batal</button>
                 <button type="submit" class="btn btn-primary">Simpan</button>

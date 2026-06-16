@@ -151,38 +151,77 @@
         </form>
 
         @if($selectedKelas)
-            @if($rapor->isEmpty())
+            @if($hasilNilai->isEmpty())
                 <div class="empty-state">
-                    Belum ada nilai akhir untuk kelas ini. Pastikan semua jenis nilai (UTS, UAS, Tugas) sudah diinput.
+                    Belum ada nilai yang diinput untuk kelas ini.
                 </div>
             @else
-                @foreach($rapor as $siswaId => $raporSiswa)
+                @foreach($hasilNilai as $siswaId => $dataSiswa)
                 <div class="table-wrapper" style="margin-bottom: 24px;">
                     <div class="table-header">
-                        <div class="table-title">{{ $raporSiswa->first()->siswa->nama_siswa ?? 'Siswa' }}</div>
+                        <div class="table-title">{{ strtoupper($dataSiswa['nama_siswa']) }}</div>
                     </div>
                     <table class="data-table">
                         <thead>
                             <tr>
                                 <th>No</th>
                                 <th>Mata Pelajaran</th>
+                                <th>UTS (30%)</th>
+                                <th>UAS (30%)</th>
+                                <th>Tugas (40%)</th>
                                 <th>Nilai Akhir</th>
                                 <th>Predikat</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach($raporSiswa as $i => $r)
+                            @foreach($dataSiswa['mapels'] as $i => $mapel)
                             <tr>
                                 <td>{{ $i + 1 }}</td>
-                                <td>{{ $r->mata_pelajaran }}</td>
-                                <td><strong>{{ $r->nilai_akhir }}</strong></td>
+                                <td>{{ $mapel['nama_mapel'] }}</td>
                                 <td>
-                                    @if($r->nilai_akhir >= 85)
-                                        <span class="badge badge-green">A — Sangat Baik</span>
-                                    @elseif($r->nilai_akhir >= 70)
-                                        <span class="badge badge-yellow">B — Baik</span>
+                                    @if($mapel['uts'] !== null)
+                                        <strong>{{ $mapel['uts'] }}</strong>
                                     @else
-                                        <span class="badge badge-red">C — Perlu Perbaikan</span>
+                                        <span style="color:#aaa;">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($mapel['uas'] !== null)
+                                        <strong>{{ $mapel['uas'] }}</strong>
+                                    @else
+                                        <span style="color:#aaa;">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($mapel['tugas'] !== null)
+                                        <strong>{{ $mapel['tugas'] }}</strong>
+                                    @else
+                                        <span style="color:#aaa;">—</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($mapel['nilai_akhir'] !== null)
+                                        <strong>{{ $mapel['nilai_akhir'] }}</strong>
+                                    @else
+                                        <span class="badge badge-yellow">Belum Lengkap</span>
+                                    @endif
+                                </td>
+                                <td>
+                                    @if($mapel['nilai_akhir'] !== null)
+                                        @if($mapel['nilai_akhir'] >= 85)
+                                            <span class="badge badge-green">A — Sangat Baik</span>
+                                        @elseif($mapel['nilai_akhir'] >= 70)
+                                            <span class="badge badge-yellow">B — Baik</span>
+                                        @else
+                                            <span class="badge badge-red">C — Perlu Perbaikan</span>
+                                        @endif
+                                    @else
+                                        <span style="color:#aaa; font-size:12px;">
+                                            Kurang:
+                                            @if($mapel['uts'] === null) UTS @endif
+                                            @if($mapel['uas'] === null) UAS @endif
+                                            @if($mapel['tugas'] === null) Tugas @endif
+                                        </span>
                                     @endif
                                 </td>
                             </tr>
@@ -195,6 +234,7 @@
         @else
             <div class="empty-state">Pilih kelas untuk melihat nilai akhir siswa.</div>
         @endif
+
     </main>
 
 </body>

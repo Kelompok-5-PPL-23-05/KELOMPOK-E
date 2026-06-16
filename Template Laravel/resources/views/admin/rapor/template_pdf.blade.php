@@ -291,11 +291,17 @@
             @foreach($nilaiList as $index => $nilai)
             <tr>
                 <td class="center">{{ $index + 1 }}</td>
-                <td>{{ $nilai->mataPelajaran->nama_mapel ?? 'Mata Pelajaran' }}</td>
-                <td class="center">{{ $nilai->nilai_angka }}</td>
-                <td>Murid menunjukkan pemahaman dalam materi ini. {{ $nilai->deskripsi }}</td>
+                <td>{{ $nilai->nama_mapel }}</td>
+                <td class="center">
+                    {{ $nilai->nilai_akhir ?? '-' }}
+                </td>
+                <td>
+                    Murid menunjukkan pemahaman dalam materi ini.
+                    @if($nilai->deskripsi) {{ $nilai->deskripsi }} @endif
+                </td>
             </tr>
             @endforeach
+
         </tbody>
     </table>
 
