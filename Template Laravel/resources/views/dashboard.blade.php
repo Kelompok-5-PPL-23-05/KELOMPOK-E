@@ -63,10 +63,10 @@
 
     /* Nav Menu */
     .nav-menu {
-      flex: 1;
-      padding: 0;
-      border-top: 1px solid #9fb3ce;
-    }
+    flex: 1;
+    padding: 0;
+    border-top: 1px solid #9fb3ce;
+}
     .nav-section { border-bottom: 1px solid #9fb3ce; }
     .nav-section-title {
       display: flex; align-items: center;
@@ -82,7 +82,6 @@
     .nav-child-item {
       display: flex; align-items: center; justify-content: space-between;
       padding: 8px 20px 8px 40px; font-size: 13.5px; font-weight: 400; cursor: pointer;
-      text-decoration: none; color: #000;
     }
     .nav-child-item .chevron { width: 14px; height: 14px; }
     .nav-item-single {
@@ -112,98 +111,96 @@
       font-size: 15px; font-weight: 500; font-family: 'Poppins', sans-serif; color: #000;
       min-width: 260px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; outline: none;
     }
+/* Student Card Structure */
+.student-row {
+    margin-bottom: 30px;
+}
 
-    /* Student Card Structure */
-    .student-row {
-      margin-bottom: 30px;
-    }
+.student-name {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
 
-    .student-name {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      font-size: 15px;
-      font-weight: 600;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-    }
+.student-name svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2px;
+}
 
-    .student-name svg {
-      width: 24px;
-      height: 24px;
-      stroke-width: 2px;
-    }
+.input-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+}
 
-    .input-row {
-      display: flex;
-      gap: 24px;
-      align-items: flex-start;
-    }
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+.input-group.nilai {
+    width: 220px;
+}
 
-    .input-group.nilai {
-      width: 220px;
-    }
+.input-group.catatan {
+    flex: 1;
+}
 
-    .input-group.catatan {
-      flex: 1;
-    }
+.input-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #000;
+}
 
-    .input-group label {
-      font-size: 13px;
-      font-weight: 500;
-      color: #000;
-    }
+.input-group label .required {
+    color: #e53e3e;
+}
 
-    .input-group label .required {
-      color: #e53e3e;
-    }
+.form-input {
+    width: 100%;
+    height: 44px;
+    background-color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 0 16px;
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    outline: none;
+}
 
-    .form-input {
-      width: 100%;
-      height: 44px;
-      background-color: #fff;
-      border: none;
-      border-radius: 4px;
-      padding: 0 16px;
-      font-size: 14px;
-      font-family: 'Poppins', sans-serif;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      outline: none;
-    }
+.form-input::placeholder {
+    color: #888;
+}
 
-    .form-input::placeholder {
-      color: #888;
-    }
+.submit-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 40px;
+}
 
-    .submit-wrapper {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 40px;
-    }
+.btn-submit {
+    background-color: #fff;
+    color: #000;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
 
-    .btn-submit {
-      background-color: #fff;
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 32px;
-      font-size: 14px;
-      font-weight: 600;
-      font-family: 'Poppins', sans-serif;
-      cursor: pointer;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-
-    .btn-submit:active {
-      transform: scale(0.98);
-    }
-
+.btn-submit:active {
+    transform: scale(0.98);
+}
     .student-list {
     width: 100%;
     display: block;
@@ -322,7 +319,8 @@
     <!-- Akun Pengguna -->
     <div class="nav-section">
       <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-akun').classList.toggle('open');">
-        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Akun Pengguna
+        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        Akun Pengguna
       </div>
       <div class="nav-children open" id="c-akun">
         <div class="nav-child-item">Informasi Pengguna</div>
@@ -333,81 +331,74 @@
     <!-- Kelas -->
     <div class="nav-section">
       <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-kelas').classList.toggle('open');">
-        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Kelas
+        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+        Kelas
       </div>
       <div class="nav-children open" id="c-kelas">
-        <div class="nav-child-item">
-          Paket A <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        </div>
-        <div class="nav-child-item">
-          Paket B <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        </div>
-        <div class="nav-child-item">
-          Paket C <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
-        </div>
+        <div class="nav-child-item">Paket A <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></div>
+        <div class="nav-child-item">Paket B <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></div>
+        <div class="nav-child-item">Paket C <svg class="chevron" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg></div>
       </div>
     </div>
 
-    <!-- Mata Pelajaran -->
-    <div class="nav-section">
-      <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-mapel').classList.toggle('open');">
-        <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Mata Pelajaran
-      </div>
-      <div class="nav-children open" id="c-mapel">
-        @if ($guru)
-          <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
-            ⚙️ Pilih Mata Pelajaran
-          </a>
-          <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
-            👥 Kelola Siswa
-          </a>
-          @forelse ($mataPelajaran as $mapel)
-            <a href="{{ route('dashboard.manage-students') }}?mapel_id={{ $mapel->id_mapel }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
-              {{ $mapel->nama_mapel }}
-            </a>
-          @empty
-            <div class="nav-child-item" style="color: #999; font-style: italic;">
-              Belum memilih mata pelajaran
+            <!-- Mata Pelajaran -->
+            <div class="nav-section">
+                <div class="nav-section-title open" onclick="this.classList.toggle('open'); document.getElementById('c-mapel').classList.toggle('open');">
+                    <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg> Mata Pelajaran
+                </div>
+                <div class="nav-children open" id="c-mapel">
+                    @if ($guru)
+                        <a href="{{ route('dashboard.select-mapel') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            ⚙️ Pilih Mata Pelajaran
+                        </a>
+                        <a href="{{ route('dashboard.manage-students') }}" class="nav-child-item" style="text-decoration: none; color: inherit;">
+                            👥 Kelola Siswa
+                        </a>
+                        @forelse ($mataPelajaran as $mapel)
+                            <a href="{{ route('dashboard.manage-students') }}?mapel_id={{ $mapel->id_mapel }}" class="nav-child-item" style="text-decoration:none; color:inherit;">
+                                {{ $mapel->nama_mapel }}
+                            </a>
+                        @empty
+                            <div class="nav-child-item" style="color: #999; font-style: italic;">
+                                Belum memilih mata pelajaran
+                            </div>
+                        @endforelse
+                    @else
+                        <div class="nav-child-item" style="color: #999; font-style: italic;">
+                            Data guru tidak ditemukan
+                        </div>
+                    @endif
+                </div>
             </div>
-          @endforelse
-        @else
-          <div class="nav-child-item" style="color: #999; font-style: italic;">
-            Data guru tidak ditemukan
-          </div>
-        @endif
-      </div>
-    </div>
 
-    <!-- Masukkan Nilai -->
-    <a href="{{ route('input-nilai') }}" class="nav-item-single">
-      Masukkan Nilai
-    </a>
+            <!-- Masukkan Nilai -->
+            <a href="#" class="nav-item-single active">
+                Masukkan Nilai
+            </a>
 
-    <!-- Absensi -->
-    <a href="{{ route('absensi.index') }}" class="nav-item-single">
-      Absensi
-    </a>
+            <!-- Absensi -->
+            <a href="{{ route('absensi.index') }}" class="nav-item-single">
+                Absensi
+            </a>
 
-    <!-- Nilai Akhir -->
-    <a href="{{ route('nilai.akhir') }}" class="nav-item-single">Nilai Akhir</a>
+            <!-- Rapor Siswa -->
+             <a href="{{ route('nilai.akhir') }}" class="nav-item-single">Nilai Akhir</a>
+            <div class="nav-item-single" style="border-bottom:none;">
+                <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
+            </div>
+        </div>
 
-    <!-- Rapor Siswa -->
-    <div class="nav-item-single" style="border-bottom:none;">
-      <svg class="arrow" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg> Rapor Siswa
-    </div>
-  </div>
+        <div class="sidebar-footer">
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="logout-btn">
+                    Keluar
+                </button>
+            </form>
+        </div>
+    </aside>
 
-  <div class="sidebar-footer">
-    <form method="POST" action="{{ route('logout') }}">
-      @csrf
-      <button type="submit" class="logout-btn">
-        Keluar
-      </button>
-    </form>
-  </div>
-</aside>
-
-<!-- ════════════ MAIN CONTENT ════════════ -->
+    <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
 
         {{-- ── Flash Messages ── --}}
@@ -836,7 +827,6 @@
       });
     }
   });
-</script>
 </script>
 </body>
 </html>
