@@ -44,6 +44,8 @@
                         </option>
                     @endforeach
                 </select>
+                <br><br>
+                <button type="submit" class="btn">Tampilkan Siswa</button>
             </form>
         </div>
 
@@ -75,6 +77,10 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        @else
+        <div style="background: #fed7d7; color: #742a2a; padding: 14px 18px; border-radius: 10px; margin-bottom: 20px;">
+            Silakan pilih kelas terlebih dahulu
         </div>
         @endif
     </div>

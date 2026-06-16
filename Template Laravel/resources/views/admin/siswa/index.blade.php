@@ -118,18 +118,30 @@
 
 {{-- Modal Upload Data Master --}}
 <div class="modal-overlay" id="modal-upload">
-    <div class="modal">
-        <div class="modal-title">Upload Data Master Siswa</div>
+    <div class="modal" style="max-width: 560px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; padding-bottom:16px; border-bottom:1px solid #eee;">
+            <span style="font-size:16px; font-weight:700;">Upload Data Master Siswa</span>
+            <button type="button" onclick="document.getElementById('modal-upload').classList.remove('show')" style="background:none;border:none;cursor:pointer;font-size:20px;color:#888;line-height:1;">&#x2715;</button>
+        </div>
         <form method="POST" action="{{ route('admin.siswa.import.preview') }}" enctype="multipart/form-data">
             @csrf
             <div class="form-group">
-                <label>File Data Master (Format: CSV) <span class="required">*</span></label>
-                <input type="file" name="file_master" class="form-control" accept=".csv" required>
-                <small>Pastikan file CSV memiliki urutan kolom: Nama Siswa, Nama Kelas, NISN, Alamat</small>
+                <label style="font-size:13px; font-weight:600; margin-bottom:8px; display:block;">File CSV Siswa <span style="color:#c0392b;">*</span></label>
+                <div style="border:1px solid #ccd6e4; border-radius:8px; padding:10px 14px; background:#fafbfc;">
+                    <input type="file" name="file_master" accept=".csv" required
+                        style="width:100%; font-size:13px; font-family:'Poppins',sans-serif; border:none; background:transparent; outline:none; cursor:pointer;">
+                </div>
+                <div style="margin-top:12px; font-size:13px; color:#444; line-height:1.7;">
+                    Pastikan urutan kolom CSV: <strong>Nama Siswa, Nama Kelas, NISN, Alamat</strong><br>
+                    <span style="color:#888; font-style:italic;">Contoh baris: Ahmad Fauzi, Paket A Kelas 1, 1234567890, Jl. Merdeka No 5</span>
+                </div>
             </div>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-cancel" onclick="document.getElementById('modal-upload').classList.remove('show')">Batal</button>
-                <button type="submit" class="btn btn-primary">Upload & Simpan</button>
+            <div style="margin-top:20px;">
+                <button type="submit"
+                    style="width:100%; background:#3d5a8a; color:#fff; border:none; border-radius:8px; padding:13px 20px; font-size:14px; font-weight:600; font-family:'Poppins',sans-serif; cursor:pointer; transition:background 0.15s;"
+                    onmouseover="this.style.background='#2e4570'" onmouseout="this.style.background='#3d5a8a'">
+                    Lanjut ke Preview
+                </button>
             </div>
         </form>
     </div>

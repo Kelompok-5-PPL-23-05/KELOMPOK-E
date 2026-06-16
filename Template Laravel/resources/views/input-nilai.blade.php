@@ -505,7 +505,7 @@
                     
                     @if($siswa->isEmpty())
                         <div style="background:#fff; padding:24px; border-radius:10px; text-align:center; color:#666; box-shadow:0 2px 6px rgba(0,0,0,0.06);">
-                            Belum ada siswa pada kelas ini.
+                            Data siswa tidak ditemukan atau belum ada siswa di kelas ini untuk mata pelajaran tersebut.
                         </div>
                     @endif
                 </div>
