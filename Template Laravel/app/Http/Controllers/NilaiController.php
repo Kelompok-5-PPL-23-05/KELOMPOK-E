@@ -133,19 +133,62 @@ class NilaiController extends Controller
         $kelasList     = Kelas::orderBy('nama_kelas')->get();
         $selectedKelas = $request->get('kelas_id');
 
-        $rapor = collect();
-        if ($selectedKelas) {
-            $siswaIds = Siswa::where('Kelasid_kelas', $selectedKelas)
-                             ->pluck('id_siswa');
+        $hasilNilai = collect();
 
-            $rapor = Rapor::whereIn('Siswaid_siswa', $siswaIds)
-                          ->with('siswa')
-                          ->get()
-                          ->groupBy('Siswaid_siswa');
+        if ($selectedKelas) {
+            $siswaList = Siswa::where('Kelasid_kelas', $selectedKelas)
+                              ->orderBy('nama_siswa')->get();
+            $siswaIds  = $siswaList->pluck('id_siswa');
+
+            // Ambil semua nilai untuk siswa di kelas ini beserta relasi
+            $semuaNilai = Nilai::whereIn('Siswaid_siswa', $siswaIds)
+                               ->with(['siswa', 'mataPelajaran'])
+                               ->get();
+
+            // Kelompokkan: siswa → mapel → {UTS, UAS, Tugas, nilai_akhir}
+            $hasilNilai = $semuaNilai
+                ->groupBy('Siswaid_siswa')
+                ->map(function ($nilaiSiswa) {
+                    $byMapel = $nilaiSiswa
+                        ->groupBy('Mata_Pelajaranid_mapel')
+                        ->map(function ($nilaiMapel) {
+                            $uts   = $nilaiMapel->firstWhere('jenis_nilai', 'UTS');
+                            $uas   = $nilaiMapel->firstWhere('jenis_nilai', 'UAS');
+                            $tugas = $nilaiMapel->firstWhere('jenis_nilai', 'Tugas');
+
+                            $nilaiAkhir = null;
+                            if ($uts && $uas && $tugas) {
+                                $nilaiAkhir = round(
+                                    ($uts->nilai_angka   * 0.30) +
+                                    ($uas->nilai_angka   * 0.30) +
+                                    ($tugas->nilai_angka * 0.40),
+                                    2
+                                );
+                            }
+
+                            return [
+                                'nama_mapel'  => optional($nilaiMapel->first()->mataPelajaran)->nama_mapel ?? '-',
+                                'uts'         => $uts   ? $uts->nilai_angka   : null,
+                                'uas'         => $uas   ? $uas->nilai_angka   : null,
+                                'tugas'       => $tugas ? $tugas->nilai_angka : null,
+                                'nilai_akhir' => $nilaiAkhir,
+                                'lengkap'     => ($uts && $uas && $tugas),
+                            ];
+                        })->values();
+
+                    return [
+                        'nama_siswa' => optional($nilaiSiswa->first()->siswa)->nama_siswa ?? '-',
+                        'mapels'     => $byMapel,
+                    ];
+                });
         }
 
-        return view('nilai.akhir', compact('kelasList', 'selectedKelas', 'rapor'));
+        // Tetap kirim $rapor untuk kompatibilitas (bisa kosong)
+        $rapor = collect();
+
+        return view('nilai.akhir', compact('kelasList', 'selectedKelas', 'rapor', 'hasilNilai'));
     }
+
 
     public function create(){}
     public function show(Nilai $nilai){}
