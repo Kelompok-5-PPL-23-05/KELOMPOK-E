@@ -509,7 +509,7 @@
 
                 <div class="nav-children" id="c-mapel">
                     <a href="{{ route('admin.mapel.index') }}" class="nav-child-item">Daftar Mapel</a>
-                    <a href="{{ route('admin.mapel.index') }}#tambah" class="nav-child-item">Tambah Mapel</a>
+                    <a href="{{ route('admin.mapel.index') }}" class="nav-child-item" onclick="event.preventDefault(); document.getElementById('modal-tambah-mapel') && document.getElementById('modal-tambah-mapel').classList.add('show') || window.location.href='{{ route('admin.mapel.index') }}'" >Tambah Mapel</a>
                 </div>
             </div>
         </div>

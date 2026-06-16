@@ -243,6 +243,59 @@
       cursor: not-allowed;
       box-shadow: none;
     }
+
+    /* Input disabled karena nilai sudah tersimpan (harus pakai tombol Edit) */
+    .form-input.nilai-locked {
+      background-color: #f7f9fc;
+      color: #555;
+      cursor: not-allowed;
+      border: 1.5px dashed #b0c4de;
+      box-shadow: none;
+    }
+    .hint-edit-msg {
+      font-size: 11.5px;
+      color: #4a6fa5;
+      margin-top: 3px;
+      font-style: italic;
+    }
+
+    /* [PPLE-48] Error state untuk input nilai */
+    .form-input.input-error {
+      border: 2px solid #e53e3e;
+      background-color: #fff5f5;
+      box-shadow: 0 0 0 3px rgba(229,62,62,0.12);
+    }
+    .field-error-msg {
+      color: #e53e3e;
+      font-size: 12px;
+      font-weight: 500;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      animation: fadeIn 0.15s ease;
+    }
+    .field-error-msg::before { content: '✕'; font-size: 11px; }
+
+    /* [PPLE-48] Error banner global */
+    .error-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      background: #fff5f5;
+      border: 1.5px solid #fc8181;
+      border-left: 4px solid #e53e3e;
+      border-radius: 10px;
+      padding: 16px 20px;
+      margin-bottom: 20px;
+      color: #742a2a;
+      font-size: 13.5px;
+      font-weight: 500;
+      animation: fadeIn 0.2s ease;
+    }
+    .error-banner svg { width: 22px; height: 22px; flex-shrink: 0; color: #e53e3e; }
+    .error-banner ul { margin: 4px 0 0 4px; padding-left: 16px; }
+    .error-banner ul li { margin-bottom: 2px; }
 </style>
 </head>
 <body>
@@ -358,22 +411,32 @@
     <main class="main-content">
 
         {{-- ── Flash Messages ── --}}
+        {{-- [PPLE-48] Flash success message --}}
         @if(session('success'))
             <div style="
-                background-color:#d4edda; color:#155724;
-                border:1px solid #c3e6cb; border-radius:8px;
+                background-color:#c6f6d5; color:#22543d;
+                border:1px solid #9ae6b4; border-radius:8px;
                 padding:14px 20px; margin-bottom:24px;
-                font-size:14px; font-weight:500;">
-                {{ session('success') }}
+                font-size:14px; font-weight:500;
+                display:flex; align-items:center; gap:10px;">
+                ✓ {{ session('success') }}
             </div>
         @endif
+        {{-- [PPLE-48] Error banner global dari server-side validation (PPLE-50) --}}
         @if($errors->any())
-            <div style="
-                background-color:#f8d7da; color:#721c24;
-                border:1px solid #f5c6cb; border-radius:8px;
-                padding:14px 20px; margin-bottom:24px;
-                font-size:14px; font-weight:500;">
-                @foreach($errors->all() as $error){{ $error }}<br>@endforeach
+            <div class="error-banner" id="global-error-banner">
+                <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                </svg>
+                <div>
+                    <strong>Terdapat kesalahan pada data yang diinput:</strong>
+                    <ul>
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
             </div>
         @endif
 
@@ -469,7 +532,8 @@
 
         @else
         {{-- ── Form input nilai (tampil setelah kelas DAN mapel dipilih) ── --}}
-            <form action="{{ route('nilai.store') }}" method="POST">
+            {{-- [PPLE-50] onsubmit: blokir penyimpanan jika ada nilai tidak valid (client-side) --}}
+            <form action="{{ route('nilai.store') }}" method="POST" id="form-nilai" onsubmit="return validateFormNilai(event)">
                 @csrf
                 <input type="hidden" name="kelas_id" value="{{ $selectedKelas }}">
                 <input type="hidden" name="mapel_id" value="{{ $selectedMapel }}">
@@ -491,9 +555,9 @@
                         cursor: pointer;
                         outline: none;" required onchange="updateNilaiBadges()">
                         <option value="">— Pilih Jenis Nilai —</option>
-                        <option value="UTS">UTS (30%)</option>
-                        <option value="UAS">UAS (30%)</option>
-                        <option value="Tugas">Tugas (40%)</option>
+                        <option value="UTS" {{ old('jenis_nilai') == 'UTS' ? 'selected' : '' }}>UTS (30%)</option>
+                        <option value="UAS" {{ old('jenis_nilai') == 'UAS' ? 'selected' : '' }}>UAS (30%)</option>
+                        <option value="Tugas" {{ old('jenis_nilai') == 'Tugas' ? 'selected' : '' }}>Tugas (40%)</option>
                     </select>
                 </div>
 
@@ -524,15 +588,25 @@
                             <input type="hidden" name="nilai[{{ $loop->index }}][siswa_id]" value="{{ $s->id_siswa }}">
                             <div class="input-group nilai">
                                 <label>Masukkan nilai <span class="required">*</span></label>
+                                {{-- [PPLE-44] Range 0-100, [PPLE-46] required, [PPLE-48] error highlight --}}
                                 <input type="number"
                                        name="nilai[{{ $loop->index }}][angka]"
-                                       class="form-input"
+                                       id="nilai-input-{{ $loop->index }}"
+                                       class="form-input {{ $errors->has('nilai.'.$loop->index.'.angka') ? 'input-error' : '' }}"
                                        data-nilai
+                                       data-index="{{ $loop->index }}"
                                        placeholder="Pilih jenis nilai dulu"
-                                       min="1"
+                                       min="0"
                                        max="100"
-                                       oninput="batasNilai(this)"
+                                       oninput="batasNilaiRealtime(this)"
+                                       value="{{ old('nilai.'.$loop->index.'.angka') }}"
                                        disabled>
+                                {{-- [PPLE-48] Tampilkan pesan error per field dari server --}}
+                                @error('nilai.'.$loop->index.'.angka')
+                                    <div class="field-error-msg" id="err-nilai-{{ $loop->index }}">{{ $message }}</div>
+                                @enderror
+                                {{-- [PPLE-48] Pesan error client-side (diisi oleh JS) --}}
+                                <div class="field-error-msg" id="err-js-{{ $loop->index }}" style="display:none;"></div>
                             </div>
                             <div class="input-group catatan">
                                 <label>Catatan</label>
@@ -602,7 +676,7 @@
     if (warning) warning.style.display = 'none';
     allNilaiInputs.forEach(function(inp) {
       inp.disabled = false;
-      inp.placeholder = '1 - 100';
+      inp.placeholder = '0 - 100';
     });
     allCatatanInputs.forEach(function(inp) {
       inp.disabled = false;
@@ -623,23 +697,145 @@
         : null;
 
       if (nilaiData) {
+        // Nilai sudah tersimpan → tampilkan badge + tombol Edit
         badgeWrap.innerHTML =
           '<span class="badge-nilai-ada">✓ Nilai: ' + nilaiData.nilai_angka + '</span>' +
           '<a href="/nilai/' + nilaiData.id_nilai + '/edit" class="btn-edit-nilai">✏ Edit</a>';
-        if (inputNilai) inputNilai.value = nilaiData.nilai_angka;
-        if (inputCatatan) inputCatatan.value = nilaiData.deskripsi || '';
+
+        // Isi nilai ke input tapi LOCK input (tidak bisa diedit langsung)
+        if (inputNilai) {
+          inputNilai.value = nilaiData.nilai_angka;
+          inputNilai.readOnly = true;
+          inputNilai.classList.add('nilai-locked');
+          // Hapus hint lama jika ada, lalu tambah hint baru
+          const oldHint = inputNilai.parentElement.querySelector('.hint-edit-msg');
+          if (!oldHint) {
+            const hint = document.createElement('div');
+            hint.className = 'hint-edit-msg';
+            hint.textContent = 'Klik tombol Edit untuk mengubah nilai ini.';
+            inputNilai.parentElement.appendChild(hint);
+          }
+        }
+        if (inputCatatan) {
+          inputCatatan.value = nilaiData.deskripsi || '';
+          inputCatatan.readOnly = true;
+          inputCatatan.classList.add('nilai-locked');
+        }
       } else {
+        // Belum ada nilai → input aktif untuk diisi
         badgeWrap.innerHTML = '';
-        if (inputNilai) inputNilai.value = '';
-        if (inputCatatan) inputCatatan.value = '';
+        if (inputNilai) {
+          inputNilai.value = '';
+          inputNilai.readOnly = false;
+          inputNilai.classList.remove('nilai-locked');
+          const oldHint = inputNilai.parentElement.querySelector('.hint-edit-msg');
+          if (oldHint) oldHint.remove();
+        }
+        if (inputCatatan) {
+          inputCatatan.value = '';
+          inputCatatan.readOnly = false;
+          inputCatatan.classList.remove('nilai-locked');
+        }
       }
     });
   }
 
-  function batasNilai(input) {
-    if (input.value > 100) input.value = 100;
-    if (input.value < 1 && input.value !== '') input.value = 1;
+  // [PPLE-44] Batasi nilai saat user mengetik (realtime) - range 0-100
+  function batasNilaiRealtime(input) {
+    const val = parseFloat(input.value);
+    if (!isNaN(val)) {
+      if (val > 100) input.value = 100;
+      if (val < 0)   input.value = 0;
+    }
+    // Hapus error state jika user sudah mengetik nilai valid
+    clearFieldError(input);
   }
+
+  // [PPLE-48] Tampilkan error per field (client-side)
+  function showFieldError(input, message) {
+    input.classList.add('input-error');
+    const idx = input.getAttribute('data-index');
+    const errEl = document.getElementById('err-js-' + idx);
+    if (errEl) {
+      errEl.textContent = message;
+      errEl.style.display = 'flex';
+    }
+  }
+
+  // [PPLE-48] Bersihkan error per field
+  function clearFieldError(input) {
+    input.classList.remove('input-error');
+    const idx = input.getAttribute('data-index');
+    const errEl = document.getElementById('err-js-' + idx);
+    if (errEl) {
+      errEl.style.display = 'none';
+      errEl.textContent = '';
+    }
+  }
+
+  // [PPLE-50] Validasi form sebelum submit - blokir jika ada nilai tidak valid
+  function validateFormNilai(event) {
+    const jenis = document.getElementById('jenis_nilai_select') ? document.getElementById('jenis_nilai_select').value : '';
+
+    // Cek jenis nilai dipilih
+    if (!jenis) {
+      event.preventDefault();
+      const warning = document.getElementById('warning-jenis-nilai');
+      if (warning) { warning.style.display = 'flex'; warning.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+      return false;
+    }
+
+    const allNilaiInputs = document.querySelectorAll('input[data-nilai]:not([disabled])');
+    let hasError = false;
+
+    allNilaiInputs.forEach(function(input) {
+      // Skip input yang sudah dikunci (nilai sudah tersimpan, harus pakai tombol Edit)
+      if (input.readOnly) return;
+
+      const val = input.value.trim();
+      const numVal = Number(val);
+
+      // [PPLE-46] Cek kosong
+      if (val === '' || val === null) {
+        showFieldError(input, 'Nilai wajib diisi, tidak boleh dikosongkan.');
+        hasError = true;
+        return;
+      }
+
+      // [PPLE-44] Cek range 0-100
+      if (!Number.isInteger(numVal) || numVal < 0 || numVal > 100) {
+        showFieldError(input, 'Nilai harus berupa angka bulat antara 0 sampai 100.');
+        hasError = true;
+        return;
+      }
+
+      clearFieldError(input);
+    });
+
+    if (hasError) {
+      event.preventDefault();
+      // Scroll ke error pertama
+      const firstError = document.querySelector('.input-error');
+      if (firstError) firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+
+    return true;
+  }
+
+  // [PPLE-50] Auto-restore state saat halaman di-load dengan $errors (redirect back dari server)
+  // Jika jenis_nilai sudah dipilih (old value tersimpan), aktifkan input dan restore nilai
+  document.addEventListener('DOMContentLoaded', function () {
+    const select = document.getElementById('jenis_nilai_select');
+    if (select && select.value) {
+      // Trigger updateNilaiBadges untuk enable input dan isi badge
+      updateNilaiBadges();
+      // Setelah enable, restore nilai lama dari old() yang sudah di-embed di value attribute
+      document.querySelectorAll('input[data-nilai]').forEach(function(inp) {
+        if (inp.value) inp.placeholder = '0 - 100';
+      });
+    }
+  });
 </script>
 </script>
 </body>

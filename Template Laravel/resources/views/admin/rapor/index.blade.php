@@ -37,7 +37,7 @@
             <form action="{{ route('rapor.index') }}" method="GET" id="filterForm">
                 <label>Pilih Kelas:</label><br><br>
                 <div style="display: flex; gap: 10px;">
-                    <select name="kelas_id">
+                    <select name="kelas_id" onchange="document.getElementById('filterForm').submit()">
                         <option value="">-- Pilih Kelas --</option>
                         @foreach($kelasList as $kelas)
                             <option value="{{ $kelas->id_kelas }}" {{ $selectedKelas == $kelas->id_kelas ? 'selected' : '' }}>
@@ -78,6 +78,10 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        @else
+        <div style="background: #fed7d7; color: #742a2a; padding: 14px 18px; border-radius: 10px; margin-bottom: 20px;">
+            Silakan pilih kelas terlebih dahulu
         </div>
         @endif
     </div>

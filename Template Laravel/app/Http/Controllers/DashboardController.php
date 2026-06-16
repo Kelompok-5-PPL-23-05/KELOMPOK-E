@@ -171,6 +171,9 @@ class DashboardController extends Controller
         $validated = $request->validate([
             'mata_pelajaran_ids'   => 'required|array|min:1',
             'mata_pelajaran_ids.*' => 'exists:mata_pelajaran,id_mapel', // Pastikan nama tabel di DB tepat 'mata_pelajaran'
+        ], [
+            'mata_pelajaran_ids.required' => 'Mata pelajaran wajib dipilih minimal satu.',
+            'mata_pelajaran_ids.min'      => 'Mata pelajaran wajib dipilih minimal satu.',
         ]);
 
         $guru->mataPelajaran()->sync($validated['mata_pelajaran_ids']);
@@ -205,7 +208,7 @@ class DashboardController extends Controller
         $kelas = Kelas::orderBy('nama_kelas')->get();
 
         $siswa = collect();
-        if ($selectedKelas) {
+        if ($selectedKelas && $selectedMapel) {
             $siswa = Siswa::with('kelas')
                 ->where('Kelasid_kelas', $selectedKelas)
                 ->orderBy('nama_siswa')

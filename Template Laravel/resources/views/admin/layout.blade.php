@@ -343,6 +343,12 @@
         .btn-primary { background-color: #4a6fa5; color: #fff; }
         .btn-primary:hover { background-color: #3b5d8a; }
 
+        .btn-success { background-color: #27ae60; color: #fff; }
+        .btn-success:hover { background-color: #1e8449; }
+
+        .btn-secondary { background-color: #6c757d; color: #fff; }
+        .btn-secondary:hover { background-color: #5a6268; }
+
         .btn-warning { background-color: #e67e22; color: #fff; }
         .btn-warning:hover { background-color: #ca6f1e; }
 
@@ -399,9 +405,11 @@
             font-size: 12px;
             font-weight: 600;
         }
-        .badge-blue   { background: #d1ecf1; color: #0c5460; }
-        .badge-green  { background: #d4edda; color: #155724; }
-        .badge-count  { background: #e2e3e5; color: #383d41; }
+        .badge-blue    { background: #d1ecf1; color: #0c5460; }
+        .badge-green   { background: #d4edda; color: #155724; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger  { background: #f8d7da; color: #721c24; }
+        .badge-count   { background: #e2e3e5; color: #383d41; }
 
         /* ════════ MODAL ════════ */
         .modal-overlay {
@@ -610,11 +618,14 @@
     <!-- ════════════ MAIN CONTENT ════════════ -->
     <main class="main-content">
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success">✅ {{ session('success') }}</div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger">❌ {{ session('error') }}</div>
         @endif
         @if($errors->any())
             <div class="alert alert-danger">
-                @foreach($errors->all() as $error) {{ $error }}<br> @endforeach
+                ❌ @foreach($errors->all() as $error) {{ $error }}<br> @endforeach
             </div>
         @endif
 
