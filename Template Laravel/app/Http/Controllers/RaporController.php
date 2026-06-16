@@ -49,7 +49,7 @@ class RaporController extends Controller
             ->get();
 
         // Kelompokkan per mata pelajaran, hitung nilai akhir
-        $nilaiPerMapel = $semuaNilai
+        $nilaiPerMapel = $nilaiList
             ->groupBy('Mata_Pelajaranid_mapel')
             ->map(function ($nilaiMapel) {
                 $uts   = $nilaiMapel->firstWhere('jenis_nilai', 'UTS');

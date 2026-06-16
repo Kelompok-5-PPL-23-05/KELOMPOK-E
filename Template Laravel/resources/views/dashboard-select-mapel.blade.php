@@ -526,7 +526,7 @@
             </div>
 
             <!-- Masukkan Nilai -->
-            <a href="{{ route('input-nilai') }}" class="nav-item-single">
+            <a href="{{ route('dashboard') }}" class="nav-item-single">
                 Masukkan Nilai
             </a>
 
