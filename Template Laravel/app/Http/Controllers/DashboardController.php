@@ -80,6 +80,18 @@ class DashboardController extends Controller
             ? Siswa::where('Kelasid_kelas', $selectedKelas)->orderBy('nama_siswa')->get()
             : collect();
 
+        // [PPLE-11] Ambil semua nilai tersimpan per siswa per jenis_nilai (untuk badge & tombol Edit)
+        $nilaiTersimpanAll = [];
+        if ($selectedKelas && $selectedMapel && $siswa->isNotEmpty()) {
+            $siswaIds = $siswa->pluck('id_siswa');
+            $semuaNilai = Nilai::whereIn('Siswaid_siswa', $siswaIds)
+                ->where('Mata_Pelajaranid_mapel', $selectedMapel)
+                ->get();
+            foreach ($semuaNilai as $n) {
+                $nilaiTersimpanAll[$n->Siswaid_siswa][$n->jenis_nilai] = $n;
+            }
+        }
+
         return view('dashboard', compact(
             'guru',
             'kelasList',
@@ -91,7 +103,8 @@ class DashboardController extends Controller
             'selectedKelas',
             'selectedMapel',
             'kelasTerpilih',
-            'siswa'
+            'siswa',
+            'nilaiTersimpanAll'
         ));
     }
 
