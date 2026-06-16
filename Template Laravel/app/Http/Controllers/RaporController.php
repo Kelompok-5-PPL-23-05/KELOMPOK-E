@@ -38,43 +38,77 @@ class RaporController extends Controller
     public function generatePdf($id_siswa)
     {
         $siswa = Siswa::with('kelas')->findOrFail($id_siswa);
-        
-        // Ambil nilai beserta mata pelajaran
-        $nilaiList = Nilai::with('mataPelajaran')
+
+        // Ambil semua nilai siswa beserta mata pelajaran
+        $semuaNilai = Nilai::with('mataPelajaran')
             ->where('Siswaid_siswa', $id_siswa)
             ->get();
+
+        // Kelompokkan per mata pelajaran, hitung nilai akhir
+        $nilaiPerMapel = $semuaNilai
+            ->groupBy('Mata_Pelajaranid_mapel')
+            ->map(function ($nilaiMapel) {
+                $uts   = $nilaiMapel->firstWhere('jenis_nilai', 'UTS');
+                $uas   = $nilaiMapel->firstWhere('jenis_nilai', 'UAS');
+                $tugas = $nilaiMapel->firstWhere('jenis_nilai', 'Tugas');
+
+                $nilaiAkhir = null;
+                if ($uts && $uas && $tugas) {
+                    $nilaiAkhir = round(
+                        ($uts->nilai_angka * 0.30) +
+                        ($uas->nilai_angka * 0.30) +
+                        ($tugas->nilai_angka * 0.40)
+                    );
+                } elseif ($uts || $uas || $tugas) {
+                    // Jika belum lengkap, rata-rata yang ada saja
+                    $nilaiAkhir = round($nilaiMapel->avg('nilai_angka'));
+                }
+
+                // Ambil deskripsi dari catatan yang tersedia
+                $deskripsi = collect([$uts, $uas, $tugas])
+                    ->filter()
+                    ->pluck('deskripsi')
+                    ->filter()
+                    ->first() ?? '';
+
+                return (object) [
+                    'nama_mapel'  => optional($nilaiMapel->first()->mataPelajaran)->nama_mapel ?? '-',
+                    'uts'         => $uts?->nilai_angka,
+                    'uas'         => $uas?->nilai_angka,
+                    'tugas'       => $tugas?->nilai_angka,
+                    'nilai_akhir' => $nilaiAkhir,
+                    'deskripsi'   => $deskripsi,
+                    'lengkap'     => ($uts && $uas && $tugas),
+                ];
+            })->values();
 
         // Ambil absensi
         $absensi = Absensi::where('Siswaid_siswa', $id_siswa)->first();
 
-        // Hitung nilai akhir (rata-rata)
-        $rataRata = $nilaiList->avg('nilai_angka') ?? 0;
+        // Nilai akhir keseluruhan (rata-rata semua mapel)
+        $rataRata = $nilaiPerMapel->avg('nilai_akhir') ?? 0;
 
         $data = [
-            'siswa' => $siswa,
-            'nilaiList' => $nilaiList,
-            'absensi' => $absensi,
+            'siswa'           => $siswa,
+            'nilaiList'       => $nilaiPerMapel,
+            'absensi'         => $absensi,
             'tahun_pelajaran' => '2025/2026',
-            'semester' => 1
+            'semester'        => 1,
         ];
 
-        // Load view PDF
         $pdf = Pdf::loadView('admin.rapor.template_pdf', $data)
             ->setPaper('A4', 'portrait');
 
-        // Buat nama file yang unik
         $fileName = 'Rapor_' . str_replace(' ', '_', $siswa->nama_siswa) . '_' . time() . '.pdf';
         $filePath = 'arsip_rapor/' . $fileName;
 
-        // Simpan file PDF ke storage/app/public/arsip_rapor
         Storage::disk('public')->put($filePath, $pdf->output());
 
-        // Simpan data rapor ke database
         Rapor::create([
-            'nilai_akhir' => round($rataRata),
-            'Siswaid_siswa' => $siswa->id_siswa,
-            'file_path' => $filePath,
-            'mata_pelajaran' => 'Rapor'
+            'nilai_akhir'    => round($rataRata),
+            'Siswaid_siswa'  => $siswa->id_siswa,
+            'file_path'      => $filePath,
+            'mata_pelajaran' => 'Rapor',
         ]);
 
         return redirect()->route('rapor.arsip')
@@ -110,22 +144,55 @@ class RaporController extends Controller
      */
     public function cetakPdf($id_siswa)
     {
-        // Mengambil data siswa, dengan nilai (dan mapelnya), absen, dan kelas
         $siswa = Siswa::with(['kelas', 'nilai.mataPelajaran', 'absensi'])->findOrFail($id_siswa);
 
+        // Kelompokkan per mata pelajaran, hitung nilai akhir
+        $nilaiPerMapel = $siswa->nilai
+            ->groupBy('Mata_Pelajaranid_mapel')
+            ->map(function ($nilaiMapel) {
+                $uts   = $nilaiMapel->firstWhere('jenis_nilai', 'UTS');
+                $uas   = $nilaiMapel->firstWhere('jenis_nilai', 'UAS');
+                $tugas = $nilaiMapel->firstWhere('jenis_nilai', 'Tugas');
+
+                $nilaiAkhir = null;
+                if ($uts && $uas && $tugas) {
+                    $nilaiAkhir = round(
+                        ($uts->nilai_angka * 0.30) +
+                        ($uas->nilai_angka * 0.30) +
+                        ($tugas->nilai_angka * 0.40)
+                    );
+                } elseif ($uts || $uas || $tugas) {
+                    $nilaiAkhir = round($nilaiMapel->avg('nilai_angka'));
+                }
+
+                $deskripsi = collect([$uts, $uas, $tugas])
+                    ->filter()
+                    ->pluck('deskripsi')
+                    ->filter()
+                    ->first() ?? '';
+
+                return (object) [
+                    'nama_mapel'  => optional($nilaiMapel->first()->mataPelajaran)->nama_mapel ?? '-',
+                    'uts'         => $uts?->nilai_angka,
+                    'uas'         => $uas?->nilai_angka,
+                    'tugas'       => $tugas?->nilai_angka,
+                    'nilai_akhir' => $nilaiAkhir,
+                    'deskripsi'   => $deskripsi,
+                    'lengkap'     => ($uts && $uas && $tugas),
+                ];
+            })->values();
+
         $data = [
-            'siswa' => $siswa,
-            'nilaiList' => $siswa->nilai,
-            'absensi' => $siswa->absensi->first(), // Asumsi 1 siswa punya 1 record absensi semester ini
+            'siswa'           => $siswa,
+            'nilaiList'       => $nilaiPerMapel,
+            'absensi'         => $siswa->absensi->first(),
             'tahun_pelajaran' => '2025/2026',
-            'semester' => 1
+            'semester'        => 1,
         ];
 
-        // Passing data ke template PDF
         $pdf = Pdf::loadView('admin.rapor.template_pdf', $data)
             ->setPaper('A4', 'portrait');
-            
-        // Mengembalikan respon download agar file PDF langsung terunduh (Subtask 4)
+
         return $pdf->download('Rapor_' . str_replace(' ', '_', $siswa->nama_siswa) . '.pdf');
     }
 }

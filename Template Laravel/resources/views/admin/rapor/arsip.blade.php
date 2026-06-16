@@ -20,6 +20,7 @@
 <body>
     <div class="sidebar">
         <h2>E-Rapor Admin</h2>
+        <a href="{{ route('admin.dashboard') }}" style="display:inline-flex; align-items:center; color:#4a6fa5; text-decoration:none; margin-bottom:16px; font-size:18px;" title="Kembali ke Admin Dashboard">&#8592;</a>
         <br>
         <a href="{{ route('rapor.index') }}" style="display:block; margin-bottom: 10px; color: #333;">Cetak Rapor</a>
         <a href="{{ route('rapor.arsip') }}" style="display:block; color: #333; font-weight: bold;">Arsip Rapor</a>
@@ -27,6 +28,7 @@
     
     <div class="main-content">
         <h1>Arsip Rapor PDF</h1>
+        
         
         @if(session('success'))
             <div class="alert-success">{{ session('success') }}</div>
